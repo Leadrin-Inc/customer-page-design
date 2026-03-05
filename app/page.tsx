@@ -76,7 +76,7 @@ const sampleData = {
         position: { x: 70, y: 50 },
       },
     ],
-    walkaroundVideo: undefined,
+    walkaroundVideo: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
   },
   salesperson: {
     name: "Michael Chen",
