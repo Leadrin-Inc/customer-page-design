@@ -85,9 +85,6 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
       {/* Success State */}
       {step === "success" && (
         <div className="bg-background rounded-xl p-6 text-center">
-          <div className="h-12 w-12 rounded-full bg-foreground flex items-center justify-center mx-auto mb-4">
-            <Check className="h-5 w-5 text-background" />
-          </div>
           <h3 className="text-lg font-semibold mb-2 text-foreground">
             {"You're all set!"}
           </h3>

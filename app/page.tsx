@@ -5,6 +5,7 @@ import { Hero } from "@/components/leadrin/hero"
 import { ActionBar } from "@/components/leadrin/action-bar"
 import { VehicleMedia } from "@/components/leadrin/vehicle-media"
 import { VehicleDetails } from "@/components/leadrin/vehicle-details"
+import { SalespersonVideo } from "@/components/leadrin/salesperson-video"
 import { SalespersonProfile } from "@/components/leadrin/salesperson-profile"
 import { Reviews } from "@/components/leadrin/reviews"
 import { BookingForm } from "@/components/leadrin/booking-form"
@@ -84,7 +85,7 @@ const sampleData = {
     bio: "With over 10 years at Heritage Honda, I love helping families find the right Honda for their lifestyle. Whether it is your first Honda or your fifth, I am here to make the process easy and enjoyable.",
     phone: "(555) 987-6543",
     email: "david.nakamura@heritagehonda.com",
-    introVideo: undefined,
+    introVideo: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
   },
   reviews: [
     {
@@ -202,13 +203,21 @@ export default function CustomerPage() {
         carfaxUrl={vehicle.carfaxUrl}
       />
 
+      {/* Salesperson Video Intro */}
+      {salesperson.introVideo && (
+        <SalespersonVideo
+          salespersonName={salesperson.name}
+          salespersonPhoto={salesperson.photo}
+          videoUrl={salesperson.introVideo}
+        />
+      )}
+
       {/* Salesperson Profile */}
       <SalespersonProfile
         name={salesperson.name}
         title={salesperson.title}
         bio={salesperson.bio}
         photo={salesperson.photo}
-        introVideo={salesperson.introVideo}
         phone={salesperson.phone}
       />
 
@@ -236,7 +245,7 @@ export default function CustomerPage() {
         isVisible={showStickyBar}
         salespersonFirstName={salesperson.name.split(" ")[0]}
         phone={salesperson.phone}
-        email={salesperson.email}
+        price={vehicle.price}
         onBook={scrollToBooking}
       />
     </main>

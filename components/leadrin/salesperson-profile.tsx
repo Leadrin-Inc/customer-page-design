@@ -1,7 +1,4 @@
-"use client"
-
-import { useState } from "react"
-import { Play, Phone, Award, Clock, Shield } from "lucide-react"
+import { Phone, Award, Clock, Shield } from "lucide-react"
 import Image from "next/image"
 
 interface SalespersonProfileProps {
@@ -9,7 +6,6 @@ interface SalespersonProfileProps {
   title: string
   bio: string
   photo: string
-  introVideo?: string
   phone?: string
 }
 
@@ -18,11 +14,8 @@ export function SalespersonProfile({
   title,
   bio,
   photo,
-  introVideo,
   phone,
 }: SalespersonProfileProps) {
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
-
   const firstName = name.split(" ")[0]
 
   return (
@@ -39,7 +32,7 @@ export function SalespersonProfile({
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-[22px] font-semibold text-foreground">
-            Hosted by {firstName}
+            Meet {firstName}, your specialist
           </h3>
           <p className="text-sm text-muted-foreground">{title}</p>
         </div>
@@ -74,39 +67,6 @@ export function SalespersonProfile({
       <p className="text-[15px] text-foreground leading-relaxed mb-6">
         {bio}
       </p>
-
-      {/* Intro Video - if available */}
-      {introVideo && (
-        <div className="relative aspect-video overflow-hidden rounded-xl mb-6 bg-secondary">
-          {!isVideoPlaying ? (
-            <button
-              onClick={() => setIsVideoPlaying(true)}
-              className="absolute inset-0 flex flex-col items-center justify-center group"
-              aria-label={`Watch ${name}'s introduction video`}
-            >
-              <Image
-                src={photo}
-                alt={`${name} introduction video`}
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-foreground/30" />
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="h-14 w-14 rounded-full bg-white flex items-center justify-center transition-transform group-hover:scale-105">
-                  <Play className="h-5 w-5 text-foreground ml-0.5" fill="currentColor" />
-                </div>
-              </div>
-            </button>
-          ) : (
-            <video
-              src={introVideo}
-              controls
-              autoPlay
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          )}
-        </div>
-      )}
 
       {/* Contact Button - Airbnb style */}
       {phone && (
