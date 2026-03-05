@@ -39,7 +39,7 @@ export function SalespersonProfile({
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-[22px] font-semibold text-foreground">
-            Hosted by {firstName}
+            Meet {firstName}, your specialist
           </h3>
           <p className="text-sm text-muted-foreground">{title}</p>
         </div>
