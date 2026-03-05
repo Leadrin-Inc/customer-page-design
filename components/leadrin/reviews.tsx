@@ -74,18 +74,13 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
             className="flex-shrink-0 w-[300px] p-5 border border-border rounded-xl bg-background"
           >
             {/* Reviewer Info */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-foreground font-semibold text-sm">
-                {review.reviewerName.charAt(0)}
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {review.reviewerName}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {sourceLabels[review.source]}
-                </p>
-              </div>
+            <div className="mb-4">
+              <p className="text-sm font-semibold text-foreground">
+                {review.reviewerName}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {sourceLabels[review.source]}
+              </p>
             </div>
 
             {/* Rating */}
