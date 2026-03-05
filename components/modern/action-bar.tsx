@@ -20,7 +20,7 @@ export function ActionBar({
       {/* Primary CTA */}
       <button
         onClick={onBook}
-        className="w-full py-3.5 px-6 bg-neutral-900 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors mb-3"
+        className="w-full py-3.5 px-6 bg-blue-600 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors mb-3"
       >
         Schedule with {salespersonFirstName}
         <ArrowRight className="h-4 w-4" />

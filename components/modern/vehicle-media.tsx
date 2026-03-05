@@ -78,7 +78,7 @@ export function VehicleMedia({
             <div className="px-6 pb-8">
               <button
                 onClick={() => setSelectedFeature(null)}
-                className="w-full py-3.5 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-800 transition-colors"
+                className="w-full py-3.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Back to Vehicle
               </button>
@@ -118,8 +118,8 @@ export function VehicleMedia({
       {/* Features View */}
       {activeTab === "features" && (
         <div className="px-6 py-6">
-          {/* Hero Image */}
-          <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-neutral-100 mb-4">
+          {/* Hero Image with hotspots only */}
+          <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-neutral-100">
             <Image
               src={heroImage}
               alt={vehicleTitle}
@@ -128,7 +128,7 @@ export function VehicleMedia({
               priority
             />
             
-            {/* Subtle hotspots */}
+            {/* Hotspots on image - tap to open modal */}
             {features.map((feature) => (
               <button
                 key={feature.id}
@@ -137,30 +137,18 @@ export function VehicleMedia({
                 style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
                 aria-label={`View ${feature.name} details`}
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm border border-white/50 shadow-lg text-xs font-semibold text-neutral-700 group-hover:scale-110 transition-transform">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold shadow-lg group-hover:scale-110 transition-transform ring-2 ring-white">
                   {feature.id}
                 </span>
               </button>
             ))}
-          </div>
 
-          {/* Feature List - Clean rows */}
-          <div className="space-y-1">
-            {features.map((feature) => (
-              <button
-                key={feature.id}
-                onClick={() => setSelectedFeature(feature)}
-                className="w-full flex items-center justify-between py-3 px-1 text-left group hover:bg-neutral-50 -mx-1 rounded-lg transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-100 text-xs font-medium text-neutral-500">
-                    {feature.id}
-                  </span>
-                  <span className="text-sm font-medium text-neutral-900">{feature.name}</span>
-                </div>
-                <ChevronRight className="h-4 w-4 text-neutral-300 group-hover:text-neutral-500 transition-colors" />
-              </button>
-            ))}
+            {/* Hint text */}
+            <div className="absolute bottom-3 left-3 right-3">
+              <p className="text-xs text-white/90 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full inline-block">
+                Tap hotspots to explore features
+              </p>
+            </div>
           </div>
         </div>
       )}

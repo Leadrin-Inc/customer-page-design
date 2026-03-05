@@ -70,7 +70,7 @@ export function BookingForm({
                 onClick={() => setSelectedDate(date.full)}
                 className={`p-3 rounded-lg text-center transition-colors ${
                   selectedDate === date.full
-                    ? "bg-neutral-900 text-white"
+                    ? "bg-blue-600 text-white"
                     : "bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
                 }`}
               >
@@ -86,7 +86,7 @@ export function BookingForm({
                 onClick={() => setSelectedDate(date.full)}
                 className={`p-3 rounded-lg text-center transition-colors ${
                   selectedDate === date.full
-                    ? "bg-neutral-900 text-white"
+                    ? "bg-blue-600 text-white"
                     : "bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
                 }`}
               >
@@ -98,7 +98,7 @@ export function BookingForm({
           {selectedDate && (
             <button
               onClick={() => setStep("time")}
-              className="w-full mt-4 py-3 bg-neutral-900 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors"
+              className="w-full mt-4 py-3 bg-blue-600 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
             >
               Continue
               <ArrowRight className="h-4 w-4" />
@@ -121,7 +121,7 @@ export function BookingForm({
                 onClick={() => setSelectedTime(time)}
                 className={`py-3 px-4 rounded-lg text-sm font-medium transition-colors ${
                   selectedTime === time
-                    ? "bg-neutral-900 text-white"
+                    ? "bg-blue-600 text-white"
                     : "bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
                 }`}
               >
@@ -132,7 +132,7 @@ export function BookingForm({
           {selectedTime && (
             <button
               onClick={() => setStep("confirm")}
-              className="w-full py-3 bg-neutral-900 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors"
+              className="w-full py-3 bg-blue-600 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
             >
               Continue
               <ArrowRight className="h-4 w-4" />
@@ -167,7 +167,7 @@ export function BookingForm({
           </div>
           <button
             onClick={handleConfirm}
-            className="w-full py-3 bg-neutral-900 text-white font-medium text-sm rounded-lg hover:bg-neutral-800 transition-colors"
+            className="w-full py-3 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 transition-colors"
           >
             Confirm Appointment
           </button>

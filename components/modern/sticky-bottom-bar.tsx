@@ -40,7 +40,7 @@ export function StickyBottomBar({
           )}
           <button
             onClick={onBook}
-            className="h-10 px-5 bg-neutral-900 text-white font-medium text-sm rounded-lg hover:bg-neutral-800 transition-colors"
+            className="h-10 px-5 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 transition-colors"
           >
             Book Visit
           </button>
