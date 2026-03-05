@@ -14,8 +14,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Your Personalized Experience | Leadrin',
-  description: 'A personalized vehicle experience prepared just for you',
+  title: 'Customer Page Themes | Leadrin',
+  description: 'Choose a design theme for your dealership customer pages',
   generator: 'v0.app',
   icons: {
     icon: [
