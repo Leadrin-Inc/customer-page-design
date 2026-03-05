@@ -42,7 +42,7 @@ export default function ModernPage() {
 
   return (
     <main className="theme-modern min-h-screen bg-background max-w-lg mx-auto">
-      {/* Hero */}
+      {/* Hero - Compact */}
       <Hero
         buyerName={buyer.name}
         dealershipName={dealership.name}
@@ -52,7 +52,15 @@ export default function ModernPage() {
         salespersonRating={dealership.rating.stars}
       />
 
-      {/* Action Bar */}
+      {/* Vehicle Media - Features & Video - Front and Center */}
+      <VehicleMedia
+        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        heroImage={vehicle.photos[0]}
+        features={vehicle.features}
+        walkaroundVideo={vehicle.walkaroundVideo}
+      />
+
+      {/* Action Bar - CTA after features */}
       <div ref={actionBarRef}>
         <ActionBar
           salespersonFirstName={salesperson.name.split(" ")[0]}
@@ -62,15 +70,7 @@ export default function ModernPage() {
         />
       </div>
 
-      {/* Vehicle Media - Features & Video */}
-      <VehicleMedia
-        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-        heroImage={vehicle.photos[0]}
-        features={vehicle.features}
-        walkaroundVideo={vehicle.walkaroundVideo}
-      />
-
-      {/* Vehicle Details */}
+      {/* Vehicle Details - Photos */}
       <VehicleDetails
         photos={vehicle.photos}
         price={vehicle.price}

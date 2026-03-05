@@ -47,12 +47,14 @@ export default function ClassicPage() {
         dealershipName={dealership.name}
         dealershipLogo={dealership.logo}
         vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-        salesperson={{
-          name: salesperson.name,
-          title: salesperson.title,
-          photo: salesperson.photo,
-        }}
         rating={dealership.rating}
+      />
+
+      <VehicleMedia
+        vehicleImage={vehicle.photos[0]}
+        features={vehicle.features}
+        walkaroundVideo={vehicle.walkaroundVideo}
+        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
       />
 
       <div ref={actionBarRef}>
@@ -63,13 +65,6 @@ export default function ClassicPage() {
           onBook={scrollToBooking}
         />
       </div>
-
-      <VehicleMedia
-        vehicleImage={vehicle.photos[0]}
-        features={vehicle.features}
-        walkaroundVideo={vehicle.walkaroundVideo}
-        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-      />
 
       <VehicleDetails
         photos={vehicle.photos}

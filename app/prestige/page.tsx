@@ -44,15 +44,15 @@ export default function PrestigePage() {
     <main className="theme-prestige min-h-screen bg-background max-w-lg mx-auto font-sans">
       <PrestigeHero
         buyerName={buyer.name}
-        dealershipName={dealership.name}
-        dealershipLogo={dealership.logo}
         vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-        salesperson={{
-          name: salesperson.name,
-          title: salesperson.title,
-          photo: salesperson.photo,
-        }}
         rating={dealership.rating}
+      />
+
+      <PrestigeVehicleMedia
+        vehicleImage={vehicle.photos[0]}
+        features={vehicle.features}
+        walkaroundVideo={vehicle.walkaroundVideo}
+        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
       />
 
       <div ref={actionBarRef}>
@@ -63,13 +63,6 @@ export default function PrestigePage() {
           onBook={scrollToBooking}
         />
       </div>
-
-      <PrestigeVehicleMedia
-        vehicleImage={vehicle.photos[0]}
-        features={vehicle.features}
-        walkaroundVideo={vehicle.walkaroundVideo}
-        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-      />
 
       <PrestigeVehicleDetails
         photos={vehicle.photos}
