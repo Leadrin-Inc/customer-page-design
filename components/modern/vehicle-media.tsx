@@ -126,20 +126,19 @@ export function VehicleMedia({
             </div>
           )}
 
-          {/* Feature List - Stripe style */}
+          {/* Feature Chips - Compact horizontal scroll */}
           {!selectedFeature && (
-            <div className="space-y-3">
-              {features.slice(0, 4).map((feature) => (
+            <div className="flex gap-2 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide">
+              {features.map((feature) => (
                 <button
                   key={feature.id}
                   onClick={() => setSelectedFeature(feature)}
-                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-border hover:border-violet-200 hover:bg-violet-50/50 transition-all text-left"
+                  className="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full border border-border hover:border-violet-300 hover:bg-violet-50 transition-all text-left"
                 >
-                  <div className="w-1 h-10 rounded-full bg-gradient-to-b from-violet-500 to-indigo-500" />
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{feature.name}</p>
-                    <p className="text-xs text-muted-foreground">{feature.category}</p>
-                  </div>
+                  <span className="w-5 h-5 rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 flex items-center justify-center text-[10px] font-bold text-white">
+                    {feature.id}
+                  </span>
+                  <span className="text-sm font-medium text-foreground whitespace-nowrap">{feature.name}</span>
                 </button>
               ))}
             </div>
