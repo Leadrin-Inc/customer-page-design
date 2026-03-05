@@ -23,11 +23,11 @@ export const sampleData = {
     fuelType: "Hybrid",
     transmission: "CVT",
     photos: [
-      "https://images.unsplash.com/photo-1568844293986-8d0400f3a7ca?w=800&q=80",
-      "https://images.unsplash.com/photo-1619682817481-e994891cd1f5?w=800&q=80",
-      "https://images.unsplash.com/photo-1583267746897-2cf415887172?w=800&q=80",
-      "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&q=80",
-      "https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=800&q=80",
+      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80",
+      "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80",
+      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80",
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80",
+      "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&q=80",
     ],
     carfaxUrl: "https://www.carfax.com",
     features: [
@@ -37,7 +37,7 @@ export const sampleData = {
         description: "Expansive glass roof that floods the cabin with natural light. One-touch open and tilt controls.",
         category: "Comfort",
         position: { x: 50, y: 20 },
-        closeUpImage: "https://images.unsplash.com/photo-1583267746897-2cf415887172?w=400&q=80",
+        closeUpImage: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&q=80",
       },
       {
         id: "2",
@@ -45,7 +45,7 @@ export const sampleData = {
         description: "Heated and ventilated front seats with 12-way power adjustment and memory settings.",
         category: "Interior",
         position: { x: 35, y: 55 },
-        closeUpImage: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&q=80",
+        closeUpImage: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&q=80",
       },
       {
         id: "3",
@@ -67,7 +67,7 @@ export const sampleData = {
   salesperson: {
     name: "David Nakamura",
     title: "Honda Brand Specialist",
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80",
     bio: "With over 10 years at Heritage Honda, I love helping families find the right Honda for their lifestyle. Whether it is your first Honda or your fifth, I am here to make the process easy and enjoyable.",
     phone: "(555) 987-6543",
     email: "david.nakamura@heritagehonda.com",
