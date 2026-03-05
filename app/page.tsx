@@ -15,6 +15,13 @@ const themes = [
     bestFor: "BMW, Mercedes, Audi, Lexus",
     colors: ["#0a0a0a", "#faf9f7", "#c4a962", "#ffffff"],
   },
+  {
+    id: "modern",
+    name: "Modern",
+    description: "Tech-forward and sleek. Inspired by Stripe's clean design with purple/indigo gradients, rounded elements, and a contemporary feel.",
+    bestFor: "Tesla, Rivian, Polestar, Lucid",
+    colors: ["#ffffff", "#7c3aed", "#6366f1", "#f5f3ff"],
+  },
 ]
 
 export default function ThemeSelectionPage() {
@@ -85,7 +92,7 @@ export default function ThemeSelectionPage() {
       {/* Footer */}
       <footer className="px-6 py-8 text-center border-t border-border">
         <p className="text-xs text-muted-foreground">
-          More themes coming soon: Modern, Sport, Eco
+          More themes coming soon: Sport, Eco
         </p>
       </footer>
     </main>

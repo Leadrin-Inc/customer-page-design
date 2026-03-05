@@ -1,0 +1,20 @@
+/* Modern Theme - Stripe-inspired */
+/* Purple/indigo accents, gradient CTAs, clean minimal aesthetic */
+
+.theme-modern {
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.2 0.02 270);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.02 270);
+  --primary: oklch(0.55 0.2 270);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0.01 270);
+  --secondary-foreground: oklch(0.2 0.02 270);
+  --muted: oklch(0.96 0.005 270);
+  --muted-foreground: oklch(0.5 0.02 270);
+  --accent: oklch(0.55 0.2 270);
+  --accent-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0.005 270);
+  --ring: oklch(0.55 0.2 270);
+  --radius: 0.5rem;
+}

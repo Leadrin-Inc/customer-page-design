@@ -114,6 +114,122 @@ export const sampleData = {
   ],
 }
 
+// Modern theme sample data - tech-forward dealership (Tesla-style)
+export const sampleDataModern = {
+  buyer: {
+    name: "Sarah",
+    email: "sarah.johnson@email.com",
+    phone: "(555) 123-4567",
+  },
+  dealership: {
+    name: "Velocity Auto",
+    logo: undefined as string | undefined,
+    rating: {
+      stars: 4.8,
+      count: 2156,
+    },
+  },
+  vehicle: {
+    year: 2025,
+    make: "Tesla",
+    model: "Model Y",
+    trim: "Long Range AWD",
+    price: 52990,
+    mileage: 156,
+    fuelType: "Electric",
+    transmission: "Single-Speed",
+    photos: [
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+      "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=800&q=80",
+      "https://images.unsplash.com/photo-1620891549027-942fdc95d3f5?w=800&q=80",
+      "https://images.unsplash.com/photo-1619317142793-219f04b42a6c?w=800&q=80",
+      "https://images.unsplash.com/photo-1571127236794-81c0bbfe1ce3?w=800&q=80",
+    ],
+    carfaxUrl: "https://www.carfax.com",
+    features: [
+      {
+        id: "1",
+        name: "Full Self-Driving",
+        description: "Navigate on Autopilot, Auto Lane Change, Autopark, and Summon capabilities with continuous software updates.",
+        category: "Technology",
+        position: { x: 50, y: 25 },
+        closeUpImage: "https://images.unsplash.com/photo-1620891549027-942fdc95d3f5?w=400&q=80",
+      },
+      {
+        id: "2",
+        name: "Premium Interior",
+        description: "Vegan leather seating, 15-inch touchscreen, immersive sound system, and panoramic glass roof.",
+        category: "Interior",
+        position: { x: 35, y: 55 },
+        closeUpImage: "https://images.unsplash.com/photo-1619317142793-219f04b42a6c?w=400&q=80",
+      },
+      {
+        id: "3",
+        name: "330mi Range",
+        description: "Estimated EPA range of 330 miles on a single charge with access to 45,000+ Superchargers.",
+        category: "Performance",
+        position: { x: 15, y: 75 },
+      },
+      {
+        id: "4",
+        name: "Over-the-Air Updates",
+        description: "Continuous improvements and new features delivered wirelessly while you sleep.",
+        category: "Software",
+        position: { x: 70, y: 45 },
+      },
+    ],
+    walkaroundVideo: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+  },
+  salesperson: {
+    name: "Alex Rivera",
+    title: "EV Specialist",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+    bio: "As a certified EV specialist, I help customers transition to electric with confidence. From charging infrastructure to software features, I make the future of driving accessible.",
+    phone: "(555) 987-6543",
+    email: "alex.rivera@velocityauto.com",
+    introVideo: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+  },
+  reviews: [
+    {
+      id: "1",
+      reviewerName: "Chris M.",
+      rating: 5,
+      excerpt: "Alex made my first EV purchase seamless. Walked me through every feature and even helped set up home charging. Incredible service!",
+      source: "google" as const,
+      isSalespersonReview: true,
+    },
+    {
+      id: "2",
+      reviewerName: "Priya S.",
+      rating: 5,
+      excerpt: "Velocity Auto has the best EV selection in the area. The team really understands electric vehicles inside and out.",
+      source: "dealerrater" as const,
+    },
+    {
+      id: "3",
+      reviewerName: "Jordan T.",
+      rating: 4,
+      excerpt: "Great experience overall. The online booking and paperless process made everything super efficient.",
+      source: "yelp" as const,
+    },
+    {
+      id: "4",
+      reviewerName: "Michelle K.",
+      rating: 5,
+      excerpt: "Alex answered every question I had about range anxiety and charging. Now I cant imagine going back to gas!",
+      source: "facebook" as const,
+      isSalespersonReview: true,
+    },
+    {
+      id: "5",
+      reviewerName: "David H.",
+      rating: 5,
+      excerpt: "The future is electric, and Velocity Auto is leading the way. Professional, knowledgeable, and genuinely helpful.",
+      source: "carscom" as const,
+    },
+  ],
+}
+
 // Prestige theme sample data - luxury dealership
 export const prestigeData = {
   buyer: {
