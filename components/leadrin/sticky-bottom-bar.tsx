@@ -1,13 +1,13 @@
 "use client"
 
-import { Phone, Mail, Calendar } from "lucide-react"
+import { Phone } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface StickyBottomBarProps {
   isVisible: boolean
   salespersonFirstName: string
   phone?: string
-  email: string
+  price: number
   onBook: () => void
 }
 
@@ -15,45 +15,33 @@ export function StickyBottomBar({
   isVisible,
   salespersonFirstName,
   phone,
-  email,
+  price,
   onBook,
 }: StickyBottomBarProps) {
   return (
     <div
       className={cn(
         "fixed bottom-0 left-0 right-0 z-50",
-        "bg-foreground border-t border-primary-foreground/8",
-        "px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
+        "bg-background border-t border-border",
+        "px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]",
         "transition-transform duration-300 ease-out",
         isVisible ? "translate-y-0" : "translate-y-full"
       )}
     >
-      <div className="flex items-center gap-2.5 max-w-lg mx-auto">
-        {/* Primary Call Button */}
-        <a
-          href={phone ? `tel:${phone}` : undefined}
-          className="flex-1 flex items-center justify-center gap-2 h-11 rounded-full bg-primary-foreground text-foreground text-xs font-semibold uppercase tracking-[0.1em]"
-        >
-          <Phone className="h-3.5 w-3.5" />
-          Call {salespersonFirstName}
-        </a>
+      <div className="flex items-center justify-between max-w-lg mx-auto">
+        {/* Price */}
+        <div>
+          <p className="text-lg font-semibold text-foreground">
+            ${price.toLocaleString()}
+          </p>
+        </div>
 
-        {/* Email Button */}
-        <a
-          href={`mailto:${email}`}
-          className="h-11 w-11 rounded-full border border-primary-foreground/20 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/8 transition-colors"
-          aria-label={`Email ${salespersonFirstName}`}
-        >
-          <Mail className="h-4 w-4" />
-        </a>
-
-        {/* Book Button */}
+        {/* Reserve Button - Airbnb coral */}
         <button
           onClick={onBook}
-          className="h-11 w-11 rounded-full border border-primary-foreground/20 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/8 transition-colors"
-          aria-label="Book a visit"
+          className="px-6 h-12 rounded-lg bg-primary text-primary-foreground font-semibold transition-all hover:brightness-95"
         >
-          <Calendar className="h-4 w-4" />
+          Reserve
         </button>
       </div>
     </div>

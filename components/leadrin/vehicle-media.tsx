@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Play, X, Video, Crosshair } from "lucide-react"
+import { Play, X, Video, Sparkles } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
@@ -27,8 +27,8 @@ export function VehicleMedia({
   walkaroundVideo,
   vehicleTitle,
 }: VehicleMediaProps) {
-  const [activeTab, setActiveTab] = useState<"features" | "walkthrough">(
-    features.length > 0 ? "features" : "walkthrough"
+  const [activeTab, setActiveTab] = useState<"features" | "video">(
+    features.length > 0 ? "features" : "video"
   )
   const [selectedFeature, setSelectedFeature] = useState<Feature | null>(null)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
@@ -41,58 +41,53 @@ export function VehicleMedia({
   const showTabs = hasFeatures && hasVideo
 
   return (
-    <section className="bg-background">
+    <section className="bg-background border-b border-border">
       {/* Section Header */}
-      <div className="px-6 pt-14 pb-4 text-center">
-        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground mb-4">
-          Explore Your Vehicle
-        </p>
-        <h2 className="font-serif text-[1.75rem] leading-tight text-balance text-foreground">
-          Discover What Makes
-          <br />
-          This One Special
+      <div className="px-6 pt-6 pb-4">
+        <h2 className="text-[22px] font-semibold text-foreground">
+          Explore this vehicle
         </h2>
       </div>
 
-      {/* Sotheby's-style Media Action Buttons */}
+      {/* Airbnb-style pill buttons */}
       {showTabs && (
-        <div className="flex flex-wrap justify-center gap-2.5 px-6 py-6">
+        <div className="flex gap-2 px-6 pb-4">
           <button
             onClick={() => {
               setActiveTab("features")
               setIsVideoPlaying(false)
             }}
             className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-[0.08em] transition-all border",
+              "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border",
               activeTab === "features"
-                ? "bg-foreground text-primary-foreground border-foreground"
-                : "bg-transparent text-foreground border-border hover:border-foreground"
+                ? "bg-foreground text-background border-foreground"
+                : "bg-background text-foreground border-border hover:border-foreground"
             )}
           >
-            <Crosshair className="h-3.5 w-3.5" />
+            <Sparkles className="h-4 w-4" />
             Features
           </button>
           <button
             onClick={() => {
-              setActiveTab("walkthrough")
+              setActiveTab("video")
               setSelectedFeature(null)
             }}
             className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-[0.08em] transition-all border",
-              activeTab === "walkthrough"
-                ? "bg-foreground text-primary-foreground border-foreground"
-                : "bg-transparent text-foreground border-border hover:border-foreground"
+              "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border",
+              activeTab === "video"
+                ? "bg-foreground text-background border-foreground"
+                : "bg-background text-foreground border-border hover:border-foreground"
             )}
           >
-            <Video className="h-3.5 w-3.5" />
-            Video Walkthrough
+            <Video className="h-4 w-4" />
+            Video
           </button>
         </div>
       )}
 
       {/* Features View */}
       {(activeTab === "features" || (!showTabs && hasFeatures)) && hasFeatures && (
-        <div className="relative mx-6 mb-8 overflow-hidden">
+        <div className="relative mx-6 mb-6 overflow-hidden rounded-xl">
           <div className="relative aspect-[4/3]">
             <Image
               src={vehicleImage}
@@ -107,12 +102,11 @@ export function VehicleMedia({
                 key={feature.id}
                 onClick={() => setSelectedFeature(feature)}
                 className={cn(
-                  "absolute h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full",
-                  "bg-foreground/90 text-primary-foreground",
+                  "absolute h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full",
+                  "bg-white text-foreground",
                   "flex items-center justify-center",
-                  "ring-[3px] ring-background/50",
-                  "transition-transform hover:scale-110 active:scale-95",
-                  "shadow-lg backdrop-blur-sm"
+                  "shadow-lg border border-border",
+                  "transition-transform hover:scale-110 active:scale-95"
                 )}
                 style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
                 aria-label={`View ${feature.name} details`}
@@ -124,26 +118,14 @@ export function VehicleMedia({
 
           {/* Feature Detail Panel */}
           {selectedFeature && (
-            <div className="absolute inset-0 bg-foreground text-primary-foreground flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="absolute inset-0 bg-white flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-300">
               <button
                 onClick={() => setSelectedFeature(null)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-primary-foreground/10 transition-colors z-10"
+                className="absolute top-3 right-3 p-2 rounded-full hover:bg-secondary transition-colors z-10"
                 aria-label="Close feature details"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 text-foreground" />
               </button>
-
-              <div className="p-6 flex-1 flex flex-col justify-center">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent mb-3">
-                  {selectedFeature.category}
-                </span>
-                <h3 className="font-serif text-2xl mb-4 leading-tight">
-                  {selectedFeature.name}
-                </h3>
-                <p className="text-sm text-primary-foreground/65 leading-loose mb-6">
-                  {selectedFeature.description}
-                </p>
-              </div>
 
               {selectedFeature.closeUpImage && (
                 <div className="relative h-40 w-full overflow-hidden">
@@ -155,25 +137,37 @@ export function VehicleMedia({
                   />
                 </div>
               )}
+
+              <div className="p-5 flex-1">
+                <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+                  {selectedFeature.category}
+                </span>
+                <h3 className="text-lg font-semibold text-foreground mt-1 mb-2">
+                  {selectedFeature.name}
+                </h3>
+                <p className="text-[15px] text-muted-foreground leading-relaxed">
+                  {selectedFeature.description}
+                </p>
+              </div>
             </div>
           )}
         </div>
       )}
 
       {/* Video View */}
-      {(activeTab === "walkthrough" || (!showTabs && hasVideo)) && hasVideo && (
-        <div className="relative aspect-video mx-6 mb-8 bg-foreground overflow-hidden">
+      {(activeTab === "video" || (!showTabs && hasVideo)) && hasVideo && (
+        <div className="relative aspect-video mx-6 mb-6 bg-secondary rounded-xl overflow-hidden">
           {!isVideoPlaying ? (
             <button
               onClick={() => setIsVideoPlaying(true)}
               className="absolute inset-0 flex flex-col items-center justify-center group"
               aria-label="Play vehicle walkthrough video"
             >
-              <div className="h-16 w-16 rounded-full bg-primary-foreground/10 border border-primary-foreground/30 flex items-center justify-center mb-4 transition-all group-hover:bg-primary-foreground/20 group-hover:scale-105">
-                <Play className="h-6 w-6 text-primary-foreground ml-0.5" fill="currentColor" />
+              <div className="h-16 w-16 rounded-full bg-foreground flex items-center justify-center mb-3 transition-transform group-hover:scale-105">
+                <Play className="h-6 w-6 text-background ml-0.5" fill="currentColor" />
               </div>
-              <span className="text-[11px] uppercase tracking-[0.15em] text-primary-foreground/50 font-medium">
-                Play Walkthrough
+              <span className="text-sm font-medium text-foreground">
+                Play video
               </span>
             </button>
           ) : (

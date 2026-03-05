@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { Star, Quote } from "lucide-react"
+import { Star } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type ReviewSource = "google" | "yelp" | "dealerrater" | "facebook" | "carscom"
@@ -29,17 +29,15 @@ const sourceLabels: Record<ReviewSource, string> = {
   carscom: "Cars.com",
 }
 
-function StarRating({ rating }: { rating: number }) {
+function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }) {
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
           className={cn(
-            "h-3 w-3",
-            star <= rating
-              ? "fill-current text-accent"
-              : "fill-current text-border"
+            star <= rating ? "fill-foreground text-foreground" : "fill-border text-border",
+            size === "sm" ? "h-3 w-3" : "h-4 w-4"
           )}
         />
       ))}
@@ -53,33 +51,15 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
   if (reviews.length === 0) return null
 
   return (
-    <section className="bg-foreground text-primary-foreground py-16">
-      {/* Header */}
-      <div className="px-6 text-center mb-10">
-        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-primary-foreground/30 mb-6">
-          Customer Reviews
-        </p>
-        <div className="font-serif text-5xl mb-3">
-          {aggregateRating.toFixed(1)}
+    <section className="bg-background border-b border-border py-8">
+      {/* Header - Airbnb style */}
+      <div className="px-6 mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Star className="h-5 w-5 fill-foreground text-foreground" />
+          <span className="text-[22px] font-semibold">{aggregateRating.toFixed(2)}</span>
+          <span className="text-[22px] font-semibold">·</span>
+          <span className="text-[22px] font-semibold underline">{totalReviews.toLocaleString()} reviews</span>
         </div>
-        <div className="flex justify-center mb-2.5">
-          <div className="flex gap-0.5">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className={cn(
-                  "h-4 w-4",
-                  star <= Math.round(aggregateRating)
-                    ? "fill-primary-foreground text-primary-foreground"
-                    : "fill-primary-foreground/15 text-primary-foreground/15"
-                )}
-              />
-            ))}
-          </div>
-        </div>
-        <p className="text-[11px] text-primary-foreground/35">
-          Based on {totalReviews.toLocaleString()} reviews
-        </p>
       </div>
 
       {/* Reviews Carousel */}
@@ -91,36 +71,36 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
         {reviews.map((review) => (
           <div
             key={review.id}
-            className={cn(
-              "flex-shrink-0 w-[280px] p-6 border rounded-xl",
-              review.isSalespersonReview
-                ? "border-primary-foreground/20 bg-primary-foreground/5"
-                : "border-primary-foreground/8"
-            )}
+            className="flex-shrink-0 w-[300px] p-5 border border-border rounded-xl bg-background"
           >
-            <Quote className="h-5 w-5 text-primary-foreground/15 mb-4" />
-
-            {/* Review Text */}
-            <p className="text-[14px] text-primary-foreground/70 leading-loose line-clamp-4 mb-6 italic">
-              {review.excerpt}
-            </p>
-
-            {/* Reviewer */}
-            <div className="flex items-center justify-between">
+            {/* Reviewer Info */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-full bg-foreground flex items-center justify-center text-background font-semibold text-sm">
+                {review.reviewerName.charAt(0)}
+              </div>
               <div>
-                <p className="text-sm font-medium text-primary-foreground">
+                <p className="text-sm font-semibold text-foreground">
                   {review.reviewerName}
                 </p>
-                <p className="text-[10px] uppercase tracking-[0.1em] text-primary-foreground/35 mt-0.5">
+                <p className="text-xs text-muted-foreground">
                   {sourceLabels[review.source]}
                 </p>
               </div>
+            </div>
+
+            {/* Rating */}
+            <div className="flex items-center gap-2 mb-3">
               <StarRating rating={review.rating} />
             </div>
 
+            {/* Review Text */}
+            <p className="text-sm text-foreground leading-relaxed line-clamp-4">
+              {review.excerpt}
+            </p>
+
             {review.isSalespersonReview && (
-              <span className="inline-block mt-5 text-[10px] font-semibold uppercase tracking-[0.1em] text-accent border-t border-primary-foreground/8 pt-4 w-full">
-                Mentions your consultant
+              <span className="inline-block mt-4 text-xs font-medium text-primary">
+                Mentions your host
               </span>
             )}
           </div>

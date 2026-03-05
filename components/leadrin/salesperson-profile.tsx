@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Play, Phone } from "lucide-react"
+import { Play, Phone, Award, Clock, Shield } from "lucide-react"
 import Image from "next/image"
 
 interface SalespersonProfileProps {
@@ -23,53 +23,13 @@ export function SalespersonProfile({
 }: SalespersonProfileProps) {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
+  const firstName = name.split(" ")[0]
+
   return (
-    <section className="bg-background px-6 py-16">
-      <div className="text-center">
-        {/* Thin rule accent */}
-        <div className="w-10 h-px bg-border mx-auto mb-10" />
-
-        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground mb-8">
-          Your Sales Consultant
-        </p>
-
-        {/* Intro Video */}
-        {introVideo && (
-          <div className="relative aspect-video overflow-hidden mb-10 bg-foreground">
-            {!isVideoPlaying ? (
-              <button
-                onClick={() => setIsVideoPlaying(true)}
-                className="absolute inset-0 flex flex-col items-center justify-center group"
-                aria-label={`Watch ${name}'s introduction video`}
-              >
-                <Image
-                  src={photo}
-                  alt={`${name} introduction video`}
-                  fill
-                  className="object-cover opacity-50"
-                />
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="h-16 w-16 rounded-full bg-primary-foreground/10 border border-primary-foreground/30 flex items-center justify-center mb-3 transition-all group-hover:bg-primary-foreground/20 group-hover:scale-105">
-                    <Play className="h-6 w-6 text-primary-foreground ml-0.5" fill="currentColor" />
-                  </div>
-                  <span className="text-[11px] uppercase tracking-[0.15em] text-primary-foreground/50 font-medium">
-                    Watch Introduction
-                  </span>
-                </div>
-              </button>
-            ) : (
-              <video
-                src={introVideo}
-                controls
-                autoPlay
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            )}
-          </div>
-        )}
-
-        {/* Profile Photo */}
-        <div className="relative h-24 w-24 mx-auto overflow-hidden rounded-full mb-6 ring-2 ring-border">
+    <section className="bg-background px-6 py-8 border-b border-border">
+      {/* Host Header - Airbnb style */}
+      <div className="flex items-start gap-4 mb-6">
+        <div className="relative h-14 w-14 overflow-hidden rounded-full flex-shrink-0">
           <Image
             src={photo}
             alt={name}
@@ -77,29 +37,87 @@ export function SalespersonProfile({
             className="object-cover"
           />
         </div>
-
-        {/* Name and Title */}
-        <h3 className="font-serif text-2xl mb-1.5 text-foreground">
-          {name}
-        </h3>
-        <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-7">{title}</p>
-
-        {/* Bio */}
-        <p className="text-[15px] text-muted-foreground leading-loose max-w-[300px] mx-auto mb-9">
-          {bio}
-        </p>
-
-        {/* Call Button */}
-        {phone && (
-          <a
-            href={`tel:${phone}`}
-            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-foreground text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] hover:opacity-90 transition-opacity"
-          >
-            <Phone className="h-4 w-4" />
-            Call {name.split(" ")[0]}
-          </a>
-        )}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-[22px] font-semibold text-foreground">
+            Hosted by {firstName}
+          </h3>
+          <p className="text-sm text-muted-foreground">{title}</p>
+        </div>
       </div>
+
+      {/* Host Highlights - Airbnb style icons */}
+      <div className="space-y-4 mb-6">
+        <div className="flex items-start gap-4">
+          <Award className="h-6 w-6 text-foreground flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-foreground">Experienced specialist</p>
+            <p className="text-sm text-muted-foreground">10+ years helping customers find the right vehicle</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-4">
+          <Clock className="h-6 w-6 text-foreground flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-foreground">Fast response time</p>
+            <p className="text-sm text-muted-foreground">Usually responds within an hour</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-4">
+          <Shield className="h-6 w-6 text-foreground flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-foreground">Verified professional</p>
+            <p className="text-sm text-muted-foreground">Identity and credentials confirmed</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bio */}
+      <p className="text-[15px] text-foreground leading-relaxed mb-6">
+        {bio}
+      </p>
+
+      {/* Intro Video - if available */}
+      {introVideo && (
+        <div className="relative aspect-video overflow-hidden rounded-xl mb-6 bg-secondary">
+          {!isVideoPlaying ? (
+            <button
+              onClick={() => setIsVideoPlaying(true)}
+              className="absolute inset-0 flex flex-col items-center justify-center group"
+              aria-label={`Watch ${name}'s introduction video`}
+            >
+              <Image
+                src={photo}
+                alt={`${name} introduction video`}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-foreground/30" />
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="h-14 w-14 rounded-full bg-white flex items-center justify-center transition-transform group-hover:scale-105">
+                  <Play className="h-5 w-5 text-foreground ml-0.5" fill="currentColor" />
+                </div>
+              </div>
+            </button>
+          ) : (
+            <video
+              src={introVideo}
+              controls
+              autoPlay
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
+        </div>
+      )}
+
+      {/* Contact Button - Airbnb style */}
+      {phone && (
+        <a
+          href={`tel:${phone}`}
+          className="flex items-center justify-center gap-2 w-full h-12 rounded-lg border border-foreground text-foreground font-semibold text-sm transition-colors hover:bg-secondary"
+        >
+          <Phone className="h-4 w-4" />
+          Contact {firstName}
+        </a>
+      )}
     </section>
   )
 }

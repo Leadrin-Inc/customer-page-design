@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, forwardRef } from "react"
-import { Calendar, Clock, Check, ArrowLeft } from "lucide-react"
+import { Calendar, Clock, Check, ChevronLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface BookingFormProps {
@@ -72,24 +72,24 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
   }
 
   return (
-    <section ref={ref} className="bg-secondary px-6 py-16">
-      <div className="text-center mb-10">
-        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground mb-4">
-          Schedule Your Visit
-        </p>
-        <h2 className="font-serif text-[1.75rem] leading-tight text-foreground text-balance">
-          Book an Appointment
+    <section ref={ref} className="bg-secondary px-6 py-8">
+      <div className="mb-6">
+        <h2 className="text-[22px] font-semibold text-foreground">
+          Schedule a visit
         </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Book a time to see this vehicle in person
+        </p>
       </div>
 
       {/* Success State */}
       {step === "success" && (
-        <div className="text-center py-8">
-          <div className="h-14 w-14 rounded-full bg-foreground flex items-center justify-center mx-auto mb-6">
-            <Check className="h-6 w-6 text-primary-foreground" />
+        <div className="bg-background rounded-xl p-6 text-center">
+          <div className="h-12 w-12 rounded-full bg-foreground flex items-center justify-center mx-auto mb-4">
+            <Check className="h-5 w-5 text-background" />
           </div>
-          <h3 className="font-serif text-2xl mb-3 text-foreground">
-            {"You're All Set"}
+          <h3 className="text-lg font-semibold mb-2 text-foreground">
+            {"You're all set!"}
           </h3>
           <p className="text-sm text-muted-foreground mb-1">
             {selectedDate && formatDateFull(selectedDate)} at {selectedTime}
@@ -102,12 +102,12 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
 
       {/* Date Selection */}
       {step === "date" && (
-        <div>
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-6">
-            <Calendar className="h-3.5 w-3.5" />
-            <span className="uppercase tracking-[0.1em] font-medium">Select a date</span>
+        <div className="bg-background rounded-xl p-6">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+            <Calendar className="h-4 w-4" />
+            <span>Select a date</span>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {availableDates.map((date) => (
               <button
                 key={date.toISOString()}
@@ -115,16 +115,13 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
                   setSelectedDate(date)
                   setStep("time")
                 }}
-                className="p-4 bg-card border border-border text-center transition-all hover:border-foreground group rounded-xl"
+                className="p-3 bg-background border border-border text-center transition-all hover:border-foreground rounded-xl"
               >
-                <p className="text-[10px] uppercase tracking-wide text-muted-foreground group-hover:text-foreground">
+                <p className="text-xs text-muted-foreground">
                   {date.toLocaleDateString("en-US", { weekday: "short" })}
                 </p>
-                <p className="text-xl font-serif text-foreground mt-1">
+                <p className="text-lg font-semibold text-foreground">
                   {date.getDate()}
-                </p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">
-                  {date.toLocaleDateString("en-US", { month: "short" })}
                 </p>
               </button>
             ))}
@@ -134,19 +131,19 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
 
       {/* Time Selection */}
       {step === "time" && selectedDate && (
-        <div>
+        <div className="bg-background rounded-xl p-6">
           <button
             onClick={() => setStep("date")}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground mb-6 hover:text-foreground transition-colors mx-auto font-medium"
+            className="flex items-center gap-1 text-sm text-muted-foreground mb-4 hover:text-foreground transition-colors"
           >
-            <ArrowLeft className="h-3 w-3" />
+            <ChevronLeft className="h-4 w-4" />
             {formatDate(selectedDate)}
           </button>
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-6">
-            <Clock className="h-3.5 w-3.5" />
-            <span className="uppercase tracking-[0.1em] font-medium">Select a time</span>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+            <Clock className="h-4 w-4" />
+            <span>Select a time</span>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {timeSlots.map((time) => (
               <button
                 key={time}
@@ -154,7 +151,7 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
                   setSelectedTime(time)
                   setStep("confirm")
                 }}
-                className="py-3 px-4 bg-card border border-border text-sm font-medium transition-all hover:border-foreground text-foreground rounded-xl"
+                className="py-3 px-2 bg-background border border-border text-sm font-medium transition-all hover:border-foreground text-foreground rounded-xl"
               >
                 {time}
               </button>
@@ -165,58 +162,59 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
 
       {/* Confirmation */}
       {step === "confirm" && selectedDate && selectedTime && (
-        <div>
+        <div className="bg-background rounded-xl p-6">
           <button
             onClick={() => setStep("time")}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground mb-8 hover:text-foreground transition-colors mx-auto font-medium"
+            className="flex items-center gap-1 text-sm text-muted-foreground mb-6 hover:text-foreground transition-colors"
           >
-            <ArrowLeft className="h-3 w-3" />
+            <ChevronLeft className="h-4 w-4" />
             {formatDate(selectedDate)} at {selectedTime}
           </button>
 
-          <div className="space-y-6 mb-10">
+          <div className="space-y-4 mb-6">
             <div>
-              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground mb-2.5 block text-center">
+              <label className="text-sm font-medium text-foreground mb-1.5 block">
                 Name
               </label>
               <input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full h-12 px-4 bg-card border-b border-border text-center text-foreground focus:outline-none focus:border-foreground transition-colors"
+                className="w-full h-11 px-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-foreground transition-colors"
               />
             </div>
             <div>
-              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground mb-2.5 block text-center">
+              <label className="text-sm font-medium text-foreground mb-1.5 block">
                 Email
               </label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full h-12 px-4 bg-card border-b border-border text-center text-foreground focus:outline-none focus:border-foreground transition-colors"
+                className="w-full h-11 px-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-foreground transition-colors"
               />
             </div>
             <div>
-              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground mb-2.5 block text-center">
+              <label className="text-sm font-medium text-foreground mb-1.5 block">
                 Phone
               </label>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full h-12 px-4 bg-card border-b border-border text-center text-foreground focus:outline-none focus:border-foreground transition-colors"
+                className="w-full h-11 px-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-foreground transition-colors"
               />
             </div>
           </div>
 
-          <div className="text-center">
-            <button
-              onClick={handleSubmit}
-              className="inline-flex items-center justify-center px-10 py-3.5 rounded-full bg-foreground text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] hover:opacity-90 transition-opacity"
-            >
-              Book Visit at {dealershipName}
-            </button>
-          </div>
+          <button
+            onClick={handleSubmit}
+            className="w-full h-12 rounded-lg bg-primary text-primary-foreground font-semibold transition-all hover:brightness-95"
+          >
+            Reserve
+          </button>
+          <p className="text-xs text-muted-foreground text-center mt-3">
+            {"You won't be charged yet"}
+          </p>
         </div>
       )}
     </section>

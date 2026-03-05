@@ -28,79 +28,61 @@ export function Hero({
   rating,
 }: HeroProps) {
   return (
-    <section className="bg-foreground text-primary-foreground px-6 pt-14 pb-14">
-      {/* Dealership Logo/Name */}
-      <div className="text-center mb-12">
+    <section className="bg-background px-6 pt-6 pb-4">
+      {/* Dealership Name - subtle */}
+      <div className="text-center mb-6">
         {dealershipLogo ? (
           <Image
             src={dealershipLogo}
             alt={dealershipName}
-            width={120}
-            height={32}
-            className="h-5 w-auto mx-auto brightness-0 invert opacity-60"
+            width={100}
+            height={28}
+            className="h-5 w-auto mx-auto opacity-60"
           />
         ) : (
-          <span className="text-[11px] font-medium uppercase tracking-[0.3em] text-primary-foreground/40">
+          <span className="text-xs text-muted-foreground">
             {dealershipName}
           </span>
         )}
       </div>
 
-      {/* Prepared For Label */}
-      <p className="text-center text-[10px] font-medium uppercase tracking-[0.25em] text-primary-foreground/35 mb-5">
-        Prepared for you
-      </p>
-
-      {/* Main Headline */}
-      <h1 className="font-serif text-[2.5rem] leading-[1.08] text-center text-balance mb-4">
-        Hi {buyerName}.
-        <br />
-        <span className="italic">Your ride awaits.</span>
+      {/* Main Headline - Airbnb style */}
+      <h1 className="text-[22px] font-semibold leading-tight text-foreground mb-1">
+        Hi {buyerName}, your vehicle is ready
       </h1>
 
       {/* Subtitle */}
       {vehicleTitle && (
-        <p className="text-center text-primary-foreground/55 text-[15px] leading-loose max-w-[300px] mx-auto mb-12">
-          {"We've prepared a personalized experience for your"} {vehicleTitle}.
+        <p className="text-muted-foreground text-[15px] leading-relaxed mb-6">
+          {vehicleTitle}
         </p>
       )}
 
-      {/* Thin Divider */}
-      <div className="w-12 h-px bg-primary-foreground/15 mx-auto mb-10" />
-
-      {/* Salesperson + Rating Row */}
-      <div className="flex justify-center gap-10">
-        <div className="text-center">
-          <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/30 mb-2">
-            Your Consultant
-          </p>
-          <div className="flex items-center justify-center gap-3">
-            <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-primary-foreground/10">
-              <Image
-                src={salesperson.photo}
-                alt={salesperson.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="text-left">
-              <span className="text-sm font-medium block">{salesperson.name}</span>
-              <span className="text-[11px] text-primary-foreground/40">{salesperson.title}</span>
-            </div>
+      {/* Guest Favorite style badge - like Airbnb */}
+      <div className="flex items-center justify-between py-5 border-y border-border">
+        <div className="flex items-center gap-3">
+          <div className="relative h-10 w-10 overflow-hidden rounded-full">
+            <Image
+              src={salesperson.photo}
+              alt={salesperson.name}
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-foreground">Hosted by {salesperson.name.split(" ")[0]}</p>
+            <p className="text-xs text-muted-foreground">{salesperson.title}</p>
           </div>
         </div>
-        <div className="w-px bg-primary-foreground/10" />
-        <div className="text-center">
-          <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/30 mb-2">
-            Dealer Rating
-          </p>
-          <div className="flex items-center justify-center gap-1.5 mb-1">
-            <Star className="h-4 w-4 fill-primary-foreground text-primary-foreground" />
-            <span className="text-xl font-serif">{rating.stars.toFixed(1)}</span>
+        <div className="flex items-center gap-4 text-right">
+          <div className="flex items-center gap-1">
+            <Star className="h-4 w-4 fill-foreground text-foreground" />
+            <span className="text-sm font-semibold">{rating.stars.toFixed(2)}</span>
           </div>
-          <p className="text-[10px] text-primary-foreground/35">
+          <div className="h-4 w-px bg-border" />
+          <span className="text-sm font-semibold underline">
             {rating.count.toLocaleString()} reviews
-          </p>
+          </span>
         </div>
       </div>
     </section>
