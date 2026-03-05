@@ -115,7 +115,7 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
                   setSelectedDate(date)
                   setStep("time")
                 }}
-                className="p-4 bg-card border border-border text-center transition-all hover:border-foreground group rounded-sm"
+                className="p-4 bg-card border border-border text-center transition-all hover:border-foreground group rounded-xl"
               >
                 <p className="text-[10px] uppercase tracking-wide text-muted-foreground group-hover:text-foreground">
                   {date.toLocaleDateString("en-US", { weekday: "short" })}
@@ -154,7 +154,7 @@ export const BookingForm = forwardRef<HTMLElement, BookingFormProps>(function Bo
                   setSelectedTime(time)
                   setStep("confirm")
                 }}
-                className="py-3 px-4 bg-card border border-border text-sm font-medium transition-all hover:border-foreground text-foreground rounded-sm"
+                className="py-3 px-4 bg-card border border-border text-sm font-medium transition-all hover:border-foreground text-foreground rounded-xl"
               >
                 {time}
               </button>

@@ -85,7 +85,7 @@ export function SalespersonProfile({
         <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-7">{title}</p>
 
         {/* Bio */}
-        <p className="text-[15px] text-muted-foreground leading-relaxed max-w-[300px] mx-auto mb-9">
+        <p className="text-[15px] text-muted-foreground leading-loose max-w-[300px] mx-auto mb-9">
           {bio}
         </p>
 

@@ -60,7 +60,7 @@ export function Hero({
 
       {/* Subtitle */}
       {vehicleTitle && (
-        <p className="text-center text-primary-foreground/55 text-[15px] leading-relaxed max-w-[300px] mx-auto mb-12">
+        <p className="text-center text-primary-foreground/55 text-[15px] leading-loose max-w-[300px] mx-auto mb-12">
           {"We've prepared a personalized experience for your"} {vehicleTitle}.
         </p>
       )}

@@ -60,7 +60,7 @@ export function VehicleDetails({
   if (noVehicleMessage || photos.length === 0) {
     return (
       <section className="px-6 py-16 bg-foreground text-center">
-        <p className="text-sm text-primary-foreground/55 leading-relaxed max-w-[280px] mx-auto">
+        <p className="text-sm text-primary-foreground/55 leading-loose max-w-[280px] mx-auto">
           {noVehicleMessage || "Based on what you're looking for, we'll find the perfect match for you."}
         </p>
       </section>

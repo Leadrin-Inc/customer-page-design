@@ -92,7 +92,7 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
           <div
             key={review.id}
             className={cn(
-              "flex-shrink-0 w-[280px] p-6 border rounded-sm",
+              "flex-shrink-0 w-[280px] p-6 border rounded-xl",
               review.isSalespersonReview
                 ? "border-primary-foreground/20 bg-primary-foreground/5"
                 : "border-primary-foreground/8"
@@ -101,7 +101,7 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
             <Quote className="h-5 w-5 text-primary-foreground/15 mb-4" />
 
             {/* Review Text */}
-            <p className="text-[14px] text-primary-foreground/70 leading-relaxed line-clamp-4 mb-6 italic">
+            <p className="text-[14px] text-primary-foreground/70 leading-loose line-clamp-4 mb-6 italic">
               {review.excerpt}
             </p>
 

@@ -140,7 +140,7 @@ export function VehicleMedia({
                 <h3 className="font-serif text-2xl mb-4 leading-tight">
                   {selectedFeature.name}
                 </h3>
-                <p className="text-sm text-primary-foreground/65 leading-relaxed mb-6">
+                <p className="text-sm text-primary-foreground/65 leading-loose mb-6">
                   {selectedFeature.description}
                 </p>
               </div>
