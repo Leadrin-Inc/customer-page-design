@@ -75,7 +75,7 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
           >
             {/* Reviewer Info */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 rounded-full bg-foreground flex items-center justify-center text-background font-semibold text-sm">
+              <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-foreground font-semibold text-sm">
                 {review.reviewerName.charAt(0)}
               </div>
               <div>
