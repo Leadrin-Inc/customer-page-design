@@ -1,8 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { Star } from "lucide-react"
-import Image from "next/image"
+import { Star, Quote } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type ReviewSource = "google" | "yelp" | "dealerrater" | "facebook" | "carscom"
@@ -22,16 +21,16 @@ interface ReviewsProps {
   reviews: Review[]
 }
 
-const sourceLogos: Record<ReviewSource, { name: string; color: string }> = {
-  google: { name: "Google", color: "#4285F4" },
-  yelp: { name: "Yelp", color: "#D32323" },
-  dealerrater: { name: "DealerRater", color: "#2B5BBE" },
-  facebook: { name: "Facebook", color: "#1877F2" },
-  carscom: { name: "Cars.com", color: "#5D3FD3" },
+const sourceLabels: Record<ReviewSource, string> = {
+  google: "Google",
+  yelp: "Yelp",
+  dealerrater: "DealerRater",
+  facebook: "Facebook",
+  carscom: "Cars.com",
 }
 
 function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "lg" }) {
-  const iconSize = size === "lg" ? "h-5 w-5" : "h-3.5 w-3.5"
+  const iconSize = size === "lg" ? "h-4 w-4" : "h-3 w-3"
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -40,8 +39,8 @@ function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "lg
           className={cn(
             iconSize,
             star <= rating
-              ? "fill-amber-400 text-amber-400"
-              : "fill-muted text-muted"
+              ? "fill-current text-foreground"
+              : "fill-current text-border"
           )}
         />
       ))}
@@ -55,68 +54,74 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
   if (reviews.length === 0) return null
 
   return (
-    <section className="py-8 bg-card">
+    <section className="bg-foreground text-primary-foreground py-14">
       {/* Header */}
-      <div className="px-5 mb-5">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">
+      <div className="px-6 text-center mb-10">
+        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-primary-foreground/40 mb-6">
           Customer Reviews
         </p>
-        <div className="flex items-center gap-3">
-          <span className="font-serif text-4xl font-medium text-foreground">
-            {aggregateRating.toFixed(1)}
-          </span>
-          <div>
-            <StarRating rating={Math.round(aggregateRating)} size="lg" />
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {totalReviews.toLocaleString()} reviews
-            </p>
+        <div className="font-serif text-5xl mb-3">
+          {aggregateRating.toFixed(1)}
+        </div>
+        <div className="flex justify-center mb-2">
+          <div className="flex gap-0.5">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Star
+                key={star}
+                className={cn(
+                  "h-4 w-4",
+                  star <= Math.round(aggregateRating)
+                    ? "fill-primary-foreground text-primary-foreground"
+                    : "fill-primary-foreground/20 text-primary-foreground/20"
+                )}
+              />
+            ))}
           </div>
         </div>
+        <p className="text-xs text-primary-foreground/40">
+          Based on {totalReviews.toLocaleString()} reviews
+        </p>
       </div>
 
       {/* Reviews Carousel */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto px-5 pb-2 scrollbar-hide"
+        className="flex gap-4 overflow-x-auto px-6 pb-2"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {reviews.map((review) => (
           <div
             key={review.id}
             className={cn(
-              "flex-shrink-0 w-[280px] p-4 rounded-xl border",
+              "flex-shrink-0 w-[280px] p-5 border",
               review.isSalespersonReview
-                ? "bg-primary/5 border-primary/20"
-                : "bg-card border-border"
+                ? "border-primary-foreground/20 bg-primary-foreground/5"
+                : "border-primary-foreground/10"
             )}
           >
-            {/* Reviewer Info */}
-            <div className="flex items-center justify-between mb-3">
-              <span className="font-medium text-sm text-foreground">
-                {review.reviewerName}
-              </span>
-              <div
-                className="px-2 py-0.5 rounded text-[10px] font-semibold text-primary-foreground"
-                style={{ backgroundColor: sourceLogos[review.source].color }}
-              >
-                {sourceLogos[review.source].name}
-              </div>
-            </div>
-
-            {/* Rating */}
-            <div className="mb-2">
-              <StarRating rating={review.rating} />
-            </div>
+            <Quote className="h-5 w-5 text-primary-foreground/20 mb-4" />
 
             {/* Review Text */}
-            <p className="text-sm text-foreground/80 leading-relaxed line-clamp-4">
+            <p className="text-sm text-primary-foreground/80 leading-relaxed line-clamp-4 mb-5 italic">
               {review.excerpt}
             </p>
 
-            {/* Salesperson Review Badge */}
+            {/* Reviewer */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-primary-foreground">
+                  {review.reviewerName}
+                </p>
+                <p className="text-[10px] uppercase tracking-[0.1em] text-primary-foreground/40 mt-0.5">
+                  {sourceLabels[review.source]}
+                </p>
+              </div>
+              <StarRating rating={review.rating} />
+            </div>
+
             {review.isSalespersonReview && (
-              <span className="inline-block mt-3 text-[10px] font-semibold uppercase tracking-wide text-primary">
-                Your consultant mentioned
+              <span className="inline-block mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-primary-foreground/50 border-t border-primary-foreground/10 pt-3 w-full">
+                Mentions your consultant
               </span>
             )}
           </div>

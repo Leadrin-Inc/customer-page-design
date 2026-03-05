@@ -1,7 +1,6 @@
 "use client"
 
 import { Phone, Mail, Calendar } from "lucide-react"
-import { Button } from "@/components/ui/button"
 
 interface ActionBarProps {
   salespersonFirstName: string
@@ -12,39 +11,31 @@ interface ActionBarProps {
 
 export function ActionBar({ salespersonFirstName, phone, email, onBook }: ActionBarProps) {
   return (
-    <section className="px-5 py-6 bg-card border-b border-border">
-      {/* Primary CTA */}
-      <Button
-        asChild
-        className="w-full h-14 text-base font-semibold mb-3"
-        disabled={!phone}
-      >
-        <a href={phone ? `tel:${phone}` : undefined}>
-          <Phone className="h-5 w-5 mr-2" />
-          Call {salespersonFirstName}
-        </a>
-      </Button>
-
-      {/* Secondary CTAs */}
-      <div className="flex gap-3">
-        <Button
-          variant="outline"
-          asChild
-          className="flex-1 h-12"
-        >
-          <a href={`mailto:${email}`}>
-            <Mail className="h-4 w-4 mr-2" />
-            Email
+    <section className="bg-foreground text-primary-foreground px-6 pb-12">
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex items-center gap-3 w-full">
+          <a
+            href={phone ? `tel:${phone}` : undefined}
+            className="flex-1 flex items-center justify-center gap-2 h-12 rounded-full bg-primary-foreground text-foreground text-sm font-semibold tracking-wide uppercase transition-opacity hover:opacity-90"
+          >
+            <Phone className="h-4 w-4" />
+            Call {salespersonFirstName}
           </a>
-        </Button>
-        <Button
-          variant="outline"
-          className="flex-1 h-12"
-          onClick={onBook}
+          <button
+            onClick={onBook}
+            className="flex-1 flex items-center justify-center gap-2 h-12 rounded-full border border-primary-foreground/30 text-primary-foreground text-sm font-semibold tracking-wide uppercase transition-colors hover:bg-primary-foreground/10"
+          >
+            <Calendar className="h-4 w-4" />
+            Book Visit
+          </button>
+        </div>
+        <a
+          href={`mailto:${email}`}
+          className="flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors py-2"
         >
-          <Calendar className="h-4 w-4 mr-2" />
-          Book a Visit
-        </Button>
+          <Mail className="h-3.5 w-3.5" />
+          Send an email
+        </a>
       </div>
     </section>
   )

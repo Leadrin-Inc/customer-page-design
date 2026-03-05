@@ -35,7 +35,6 @@ export function VehicleDetails({
   const [currentIndex, setCurrentIndex] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  // Handle scroll to update current index
   useEffect(() => {
     const container = scrollRef.current
     if (!container) return
@@ -58,11 +57,10 @@ export function VehicleDetails({
     })
   }
 
-  // No vehicle match state
   if (noVehicleMessage || photos.length === 0) {
     return (
-      <section className="px-5 py-8 bg-secondary">
-        <p className="text-sm text-muted-foreground leading-relaxed">
+      <section className="px-6 py-14 bg-foreground text-center">
+        <p className="text-sm text-primary-foreground/60 leading-relaxed">
           {noVehicleMessage || "Based on what you're looking for, we'll find the perfect match for you."}
         </p>
       </section>
@@ -72,12 +70,12 @@ export function VehicleDetails({
   const vehicleTitle = `${year} ${make} ${model}${trim ? ` ${trim}` : ""}`
 
   return (
-    <section className="bg-card">
+    <section className="bg-foreground text-primary-foreground">
       {/* Photo Gallery */}
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+          className="flex overflow-x-auto snap-x snap-mandatory"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {photos.map((photo, index) => (
@@ -102,85 +100,107 @@ export function VehicleDetails({
               onClick={() => scrollTo(currentIndex - 1)}
               disabled={currentIndex === 0}
               className={cn(
-                "absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-card/90 flex items-center justify-center shadow-md transition-opacity",
-                currentIndex === 0 ? "opacity-0" : "opacity-100"
+                "absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-primary-foreground/20 bg-foreground/60 backdrop-blur flex items-center justify-center transition-opacity",
+                currentIndex === 0 ? "opacity-0 pointer-events-none" : "opacity-100"
               )}
+              aria-label="Previous photo"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-5 w-5 text-primary-foreground" />
             </button>
             <button
               onClick={() => scrollTo(currentIndex + 1)}
               disabled={currentIndex === photos.length - 1}
               className={cn(
-                "absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-card/90 flex items-center justify-center shadow-md transition-opacity",
-                currentIndex === photos.length - 1 ? "opacity-0" : "opacity-100"
+                "absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-primary-foreground/20 bg-foreground/60 backdrop-blur flex items-center justify-center transition-opacity",
+                currentIndex === photos.length - 1 ? "opacity-0 pointer-events-none" : "opacity-100"
               )}
+              aria-label="Next photo"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5 text-primary-foreground" />
             </button>
           </>
         )}
 
-        {/* Counter */}
+        {/* Dot indicators */}
         {photos.length > 1 && (
-          <div className="absolute bottom-4 right-4 px-2.5 py-1 rounded-full bg-foreground/80 text-primary-foreground text-xs font-medium">
-            {currentIndex + 1} / {photos.length}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {photos.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => scrollTo(index)}
+                className={cn(
+                  "h-1.5 rounded-full transition-all",
+                  index === currentIndex
+                    ? "w-6 bg-primary-foreground"
+                    : "w-1.5 bg-primary-foreground/30"
+                )}
+                aria-label={`Go to photo ${index + 1}`}
+              />
+            ))}
           </div>
         )}
       </div>
 
-      {/* Vehicle Info */}
-      <div className="px-5 py-6">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div>
-            <h2 className="font-serif text-2xl font-medium text-foreground">
-              {vehicleTitle}
-            </h2>
+      {/* Vehicle Info - Centered editorial style */}
+      <div className="px-6 py-12 text-center">
+        <h2 className="font-serif text-3xl text-balance mb-3">
+          {vehicleTitle}
+        </h2>
+
+        {/* Price and Stats */}
+        <div className="flex justify-center gap-8 mt-8 mb-8">
+          <div className="text-center">
+            <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/40 mb-1">
+              Price
+            </p>
+            <p className="text-2xl font-serif">${price.toLocaleString()}</p>
           </div>
-          <p className="text-xl font-semibold text-foreground whitespace-nowrap">
-            ${price.toLocaleString()}
-          </p>
+          {mileage && (
+            <>
+              <div className="w-px bg-primary-foreground/15" />
+              <div className="text-center">
+                <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/40 mb-1">
+                  Mileage
+                </p>
+                <p className="text-2xl font-serif">{mileage.toLocaleString()}</p>
+                <p className="text-[10px] text-primary-foreground/40 mt-0.5">miles</p>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Specs */}
-        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-5">
-          {mileage && (
-            <div className="flex items-center gap-1.5">
-              <Gauge className="h-4 w-4" />
-              <span>{mileage.toLocaleString()} mi</span>
-            </div>
-          )}
+        <div className="flex justify-center gap-6 text-xs text-primary-foreground/50 mb-10">
           {fuelType && (
             <div className="flex items-center gap-1.5">
-              <Fuel className="h-4 w-4" />
+              <Fuel className="h-3.5 w-3.5" />
               <span>{fuelType}</span>
             </div>
           )}
           {transmission && (
             <div className="flex items-center gap-1.5">
-              <Settings className="h-4 w-4" />
+              <Settings className="h-3.5 w-3.5" />
               <span>{transmission}</span>
+            </div>
+          )}
+          {mileage && (
+            <div className="flex items-center gap-1.5">
+              <Gauge className="h-3.5 w-3.5" />
+              <span>{mileage.toLocaleString()} mi</span>
             </div>
           )}
         </div>
 
-        {/* Carfax Badge */}
+        {/* Carfax */}
         {carfaxUrl && (
           <a
             href={carfaxUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-secondary text-foreground text-sm font-medium hover:bg-border transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-primary-foreground/30 text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] hover:bg-primary-foreground/10 transition-colors"
           >
-            <Image
-              src="/carfax-badge.svg"
-              alt="Carfax"
-              width={60}
-              height={20}
-              className="h-5 w-auto"
-            />
-            <span>View Vehicle History</span>
-            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+            View Vehicle History
+            <ExternalLink className="h-3.5 w-3.5" />
           </a>
         )}
       </div>

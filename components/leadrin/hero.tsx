@@ -7,7 +7,6 @@ interface HeroProps {
   buyerName: string
   dealershipName: string
   dealershipLogo?: string
-  primaryColor: string
   vehicleTitle?: string
   salesperson: {
     name: string
@@ -24,76 +23,76 @@ export function Hero({
   buyerName,
   dealershipName,
   dealershipLogo,
-  primaryColor,
   vehicleTitle,
   salesperson,
   rating,
 }: HeroProps) {
   return (
-    <section
-      className="relative px-5 pt-12 pb-8"
-      style={{
-        background: `linear-gradient(180deg, ${primaryColor} 0%, ${primaryColor}dd 50%, ${primaryColor}99 100%)`,
-      }}
-    >
+    <section className="bg-foreground text-primary-foreground px-6 pt-14 pb-12">
       {/* Dealership Logo/Name */}
-      <div className="mb-8">
+      <div className="text-center mb-10">
         {dealershipLogo ? (
           <Image
             src={dealershipLogo}
             alt={dealershipName}
             width={120}
             height={32}
-            className="h-8 w-auto brightness-0 invert"
+            className="h-6 w-auto mx-auto brightness-0 invert"
           />
         ) : (
-          <span className="text-sm font-medium tracking-wide text-primary-foreground/90">
+          <span className="text-xs font-medium uppercase tracking-[0.25em] text-primary-foreground/50">
             {dealershipName}
           </span>
         )}
       </div>
 
-      {/* Prepared Label */}
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary-foreground/70 mb-2">
-        Prepared for you
-      </p>
-
-      {/* Greeting */}
-      <h1 className="font-serif text-4xl font-medium tracking-tight text-primary-foreground mb-3">
-        Hi {buyerName}
+      {/* Main Headline */}
+      <h1 className="font-serif text-[2.75rem] leading-[1.1] text-center text-balance mb-6">
+        Hi {buyerName}.
+        <br />
+        <span className="italic">Your ride awaits.</span>
       </h1>
 
       {/* Subtitle */}
       {vehicleTitle && (
-        <p className="text-base text-primary-foreground/90 mb-6 leading-relaxed">
-          Your {vehicleTitle} is ready to explore
+        <p className="text-center text-primary-foreground/70 text-sm leading-relaxed max-w-[280px] mx-auto mb-10">
+          We've prepared a personalized experience for your {vehicleTitle}. Explore everything below.
         </p>
       )}
 
-      {/* Salesperson Row */}
-      <div className="flex items-center gap-3">
-        <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-primary-foreground/20">
-          <Image
-            src={salesperson.photo}
-            alt={salesperson.name}
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-primary-foreground">
-            {salesperson.name}
+      {/* Stats Row */}
+      <div className="flex justify-center gap-10 mb-10">
+        <div className="text-center">
+          <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/40 mb-1">
+            Rating
           </p>
-          <p className="text-xs text-primary-foreground/70">{salesperson.title}</p>
+          <div className="flex items-center justify-center gap-1.5">
+            <Star className="h-4 w-4 fill-primary-foreground text-primary-foreground" />
+            <span className="text-2xl font-serif">{rating.stars.toFixed(1)}</span>
+          </div>
+          <p className="text-[10px] text-primary-foreground/40 mt-0.5">
+            {rating.count.toLocaleString()} reviews
+          </p>
         </div>
-        <div className="flex items-center gap-1">
-          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-          <span className="text-sm font-medium text-primary-foreground">
-            {rating.stars.toFixed(1)}
-          </span>
-          <span className="text-xs text-primary-foreground/60">
-            ({rating.count.toLocaleString()})
-          </span>
+        <div className="w-px bg-primary-foreground/15" />
+        <div className="text-center">
+          <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/40 mb-1">
+            Your Consultant
+          </p>
+          <div className="flex items-center justify-center gap-2">
+            <div className="relative h-7 w-7 overflow-hidden rounded-full">
+              <Image
+                src={salesperson.photo}
+                alt={salesperson.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <span className="text-sm font-medium">{salesperson.name}</span>
+          </div>
+          <p className="text-[10px] text-primary-foreground/40 mt-0.5">
+            {salesperson.title}
+          </p>
         </div>
       </div>
     </section>

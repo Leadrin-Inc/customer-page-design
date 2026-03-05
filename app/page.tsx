@@ -21,7 +21,6 @@ const sampleData = {
   dealership: {
     name: "Prestige Motors",
     logo: undefined,
-    primaryColor: "#1a1a2e",
     rating: {
       stars: 4.8,
       count: 2847,
@@ -162,7 +161,6 @@ export default function CustomerPage() {
         buyerName={buyer.name}
         dealershipName={dealership.name}
         dealershipLogo={dealership.logo}
-        primaryColor={dealership.primaryColor}
         vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
         salesperson={{
           name: salesperson.name,

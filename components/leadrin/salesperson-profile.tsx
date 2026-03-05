@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Play, Phone } from "lucide-react"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
 
 interface SalespersonProfileProps {
   name: string
@@ -25,50 +24,49 @@ export function SalespersonProfile({
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
   return (
-    <section className="px-5 py-8 bg-secondary">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-4">
-        Your Sales Consultant
-      </p>
+    <section className="bg-background px-6 py-14">
+      <div className="text-center">
+        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground mb-8">
+          Your Sales Consultant
+        </p>
 
-      {/* Intro Video */}
-      {introVideo && (
-        <div className="relative aspect-video rounded-xl overflow-hidden mb-6 bg-foreground">
-          {!isVideoPlaying ? (
-            <>
-              {/* Video Thumbnail with Salesperson Photo */}
-              <Image
-                src={photo}
-                alt={`${name} introduction video`}
-                fill
-                className="object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+        {/* Intro Video */}
+        {introVideo && (
+          <div className="relative aspect-video overflow-hidden mb-10 bg-foreground">
+            {!isVideoPlaying ? (
               <button
                 onClick={() => setIsVideoPlaying(true)}
                 className="absolute inset-0 flex flex-col items-center justify-center"
+                aria-label={`Watch ${name}'s introduction video`}
               >
-                <div className="h-16 w-16 rounded-full bg-card flex items-center justify-center shadow-xl mb-3">
-                  <Play className="h-7 w-7 text-foreground ml-1" fill="currentColor" />
+                <Image
+                  src={photo}
+                  alt={`${name} introduction video`}
+                  fill
+                  className="object-cover opacity-60"
+                />
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="h-16 w-16 rounded-full border-2 border-primary-foreground/40 flex items-center justify-center mb-3 transition-colors hover:border-primary-foreground/70">
+                    <Play className="h-6 w-6 text-primary-foreground ml-0.5" fill="currentColor" />
+                  </div>
+                  <span className="text-xs uppercase tracking-[0.15em] text-primary-foreground/60">
+                    Watch Introduction
+                  </span>
                 </div>
-                <span className="text-sm font-medium text-primary-foreground">
-                  Watch personal introduction
-                </span>
               </button>
-            </>
-          ) : (
-            <video
-              src={introVideo}
-              controls
-              autoPlay
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          )}
-        </div>
-      )}
+            ) : (
+              <video
+                src={introVideo}
+                controls
+                autoPlay
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            )}
+          </div>
+        )}
 
-      {/* Profile Info */}
-      <div className="flex items-start gap-4 mb-5">
-        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-full border-2 border-border">
+        {/* Profile Photo */}
+        <div className="relative h-20 w-20 mx-auto overflow-hidden rounded-full mb-5">
           <Image
             src={photo}
             alt={name}
@@ -76,27 +74,29 @@ export function SalespersonProfile({
             className="object-cover"
           />
         </div>
-        <div>
-          <h3 className="font-serif text-xl font-medium text-foreground mb-0.5">
-            {name}
-          </h3>
-          <p className="text-sm text-muted-foreground mb-2">{title}</p>
-        </div>
-      </div>
 
-      <p className="text-sm text-foreground/80 leading-relaxed mb-5">
-        {bio}
-      </p>
+        {/* Name and Title */}
+        <h3 className="font-serif text-2xl mb-1">
+          {name}
+        </h3>
+        <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-6">{title}</p>
 
-      {/* Call Button */}
-      {phone && (
-        <Button asChild className="w-full h-12">
-          <a href={`tel:${phone}`}>
-            <Phone className="h-4 w-4 mr-2" />
+        {/* Bio */}
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-[300px] mx-auto mb-8">
+          {bio}
+        </p>
+
+        {/* Call Button */}
+        {phone && (
+          <a
+            href={`tel:${phone}`}
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-foreground text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] hover:opacity-90 transition-opacity"
+          >
+            <Phone className="h-4 w-4" />
             Call {name.split(" ")[0]}
           </a>
-        </Button>
-      )}
+        )}
+      </div>
     </section>
   )
 }

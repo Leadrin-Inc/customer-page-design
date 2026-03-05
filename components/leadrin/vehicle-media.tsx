@@ -36,34 +36,49 @@ export function VehicleMedia({
   const hasFeatures = features.length > 0 && vehicleImage
   const hasVideo = !!walkaroundVideo
 
-  // If neither exists, don't render
   if (!hasFeatures && !hasVideo) return null
 
   const showTabs = hasFeatures && hasVideo
 
   return (
-    <section className="bg-card">
-      {/* Tabs (only if both exist) */}
+    <section className="bg-background">
+      {/* Section Header */}
+      <div className="px-6 pt-12 pb-6 text-center">
+        <h2 className="font-serif text-3xl text-balance">
+          Explore Your Vehicle
+        </h2>
+        <p className="text-sm text-muted-foreground mt-3 max-w-[280px] mx-auto leading-relaxed">
+          Tap the hotspots to discover key features, or watch a full walkthrough.
+        </p>
+      </div>
+
+      {/* Tab Switcher */}
       {showTabs && (
-        <div className="flex border-b border-border">
+        <div className="flex items-center justify-center gap-3 px-6 pb-6">
           <button
-            onClick={() => setActiveTab("features")}
+            onClick={() => {
+              setActiveTab("features")
+              setIsVideoPlaying(false)
+            }}
             className={cn(
-              "flex-1 py-3 text-xs font-semibold uppercase tracking-wide transition-colors",
+              "px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-[0.1em] transition-all",
               activeTab === "features"
-                ? "text-foreground border-b-2 border-foreground"
-                : "text-muted-foreground"
+                ? "bg-foreground text-primary-foreground"
+                : "border border-border text-muted-foreground hover:border-foreground hover:text-foreground"
             )}
           >
             Features
           </button>
           <button
-            onClick={() => setActiveTab("walkthrough")}
+            onClick={() => {
+              setActiveTab("walkthrough")
+              setSelectedFeature(null)
+            }}
             className={cn(
-              "flex-1 py-3 text-xs font-semibold uppercase tracking-wide transition-colors",
+              "px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-[0.1em] transition-all",
               activeTab === "walkthrough"
-                ? "text-foreground border-b-2 border-foreground"
-                : "text-muted-foreground"
+                ? "bg-foreground text-primary-foreground"
+                : "border border-border text-muted-foreground hover:border-foreground hover:text-foreground"
             )}
           >
             Walkthrough
@@ -74,7 +89,6 @@ export function VehicleMedia({
       {/* Features View */}
       {(activeTab === "features" || (!showTabs && hasFeatures)) && hasFeatures && (
         <div className="relative">
-          {/* Vehicle Image with Hotspots */}
           <div className="relative aspect-[4/3]">
             <Image
               src={vehicleImage}
@@ -82,49 +96,51 @@ export function VehicleMedia({
               fill
               className="object-cover"
             />
-            
+
             {/* Hotspot Markers */}
             {features.map((feature) => (
               <button
                 key={feature.id}
                 onClick={() => setSelectedFeature(feature)}
                 className={cn(
-                  "absolute h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full",
-                  "bg-primary text-primary-foreground",
+                  "absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full",
+                  "bg-foreground text-primary-foreground",
                   "flex items-center justify-center",
-                  "ring-2 ring-primary-foreground/50",
+                  "ring-2 ring-background/60",
                   "transition-transform hover:scale-110 active:scale-95",
                   "shadow-lg"
                 )}
                 style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
+                aria-label={`View ${feature.name} details`}
               >
                 <span className="text-xs font-bold">+</span>
               </button>
             ))}
           </div>
 
-          {/* Feature Detail Panel */}
+          {/* Feature Detail Overlay */}
           {selectedFeature && (
-            <div className="absolute inset-0 bg-foreground/95 text-primary-foreground p-5 flex flex-col">
+            <div className="absolute inset-0 bg-foreground text-primary-foreground p-6 flex flex-col animate-in fade-in duration-200">
               <button
                 onClick={() => setSelectedFeature(null)}
-                className="absolute top-4 right-4 p-2 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-primary-foreground/10 transition-colors"
+                aria-label="Close feature details"
               >
                 <X className="h-5 w-5" />
               </button>
 
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/60 mb-2">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary-foreground/40 mb-3">
                 {selectedFeature.category}
               </span>
-              <h3 className="font-serif text-2xl font-medium mb-3">
+              <h3 className="font-serif text-2xl mb-4">
                 {selectedFeature.name}
               </h3>
-              <p className="text-sm text-primary-foreground/80 leading-relaxed mb-4">
+              <p className="text-sm text-primary-foreground/70 leading-relaxed mb-6">
                 {selectedFeature.description}
               </p>
 
               {selectedFeature.closeUpImage && (
-                <div className="relative flex-1 min-h-[120px] rounded-lg overflow-hidden">
+                <div className="relative flex-1 min-h-[120px] overflow-hidden">
                   <Image
                     src={selectedFeature.closeUpImage}
                     alt={selectedFeature.name}
@@ -140,35 +156,28 @@ export function VehicleMedia({
 
       {/* Video View */}
       {(activeTab === "walkthrough" || (!showTabs && hasVideo)) && hasVideo && (
-        <div className="relative">
-          {!showTabs && (
-            <p className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-              Vehicle Walkthrough
-            </p>
+        <div className="relative aspect-video bg-foreground">
+          {!isVideoPlaying ? (
+            <button
+              onClick={() => setIsVideoPlaying(true)}
+              className="absolute inset-0 flex flex-col items-center justify-center"
+              aria-label="Play vehicle walkthrough video"
+            >
+              <div className="h-16 w-16 rounded-full border-2 border-primary-foreground/40 flex items-center justify-center mb-4 transition-colors hover:border-primary-foreground/70">
+                <Play className="h-6 w-6 text-primary-foreground ml-0.5" fill="currentColor" />
+              </div>
+              <span className="text-xs uppercase tracking-[0.15em] text-primary-foreground/50">
+                Play Walkthrough
+              </span>
+            </button>
+          ) : (
+            <video
+              src={walkaroundVideo}
+              controls
+              autoPlay
+              className="absolute inset-0 h-full w-full object-cover"
+            />
           )}
-          <div className="relative aspect-video bg-muted">
-            {!isVideoPlaying ? (
-              <>
-                {/* Video Thumbnail */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-foreground/20" />
-                <button
-                  onClick={() => setIsVideoPlaying(true)}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <div className="h-16 w-16 rounded-full bg-primary-foreground flex items-center justify-center shadow-xl">
-                    <Play className="h-7 w-7 text-foreground ml-1" fill="currentColor" />
-                  </div>
-                </button>
-              </>
-            ) : (
-              <video
-                src={walkaroundVideo}
-                controls
-                autoPlay
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            )}
-          </div>
         </div>
       )}
     </section>
