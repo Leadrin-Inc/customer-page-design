@@ -19,30 +19,29 @@ export function SalespersonVideo({
   const firstName = salespersonName.split(" ")[0]
 
   return (
-    <section className="bg-white px-6 py-8 border-t border-neutral-100">
-      <h2 className="text-lg font-semibold text-neutral-900 mb-1">A message from {firstName}</h2>
-      <p className="text-sm text-neutral-500 mb-4">
-        A personal video recorded just for you.
-      </p>
+    <section className="px-5 py-8 border-t border-slate-100">
+      {/* Header */}
+      <div className="mb-4">
+        <p className="text-[10px] font-semibold tracking-widest text-blue-600 uppercase mb-1">Personal Message</p>
+        <h2 className="text-xl font-bold text-slate-900">From {firstName}</h2>
+      </div>
 
-      {/* Video Player */}
-      <div className="relative aspect-video rounded-lg overflow-hidden bg-neutral-100">
+      {/* Video */}
+      <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900">
         {!isPlaying ? (
           <button
             onClick={() => setIsPlaying(true)}
             className="absolute inset-0 flex flex-col items-center justify-center group"
-            aria-label={`Play video from ${salespersonName}`}
           >
             <Image
               src={salespersonPhoto}
-              alt={`${salespersonName} video`}
+              alt={salespersonName}
               fill
-              className="object-cover"
+              className="object-cover opacity-90"
             />
-            <div className="absolute inset-0 bg-neutral-900/30" />
             <div className="relative z-10">
-              <div className="h-14 w-14 rounded-full bg-white flex items-center justify-center transition-transform group-hover:scale-105 shadow-xl">
-                <Play className="h-5 w-5 text-neutral-900 ml-0.5" fill="currentColor" />
+              <div className="h-16 w-16 rounded-full bg-white flex items-center justify-center transition-transform group-hover:scale-105 shadow-2xl">
+                <Play className="h-6 w-6 text-slate-900 ml-1" fill="currentColor" />
               </div>
             </div>
           </button>

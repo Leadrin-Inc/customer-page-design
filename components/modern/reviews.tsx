@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { Star, ChevronLeft, ChevronRight } from "lucide-react"
+import { Star } from "lucide-react"
 
 interface Review {
   id: string
@@ -23,100 +23,58 @@ export function Reviews({
   reviews,
   aggregateRating,
   totalReviews,
-  salespersonName,
 }: ReviewsProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
-  const firstName = salespersonName.split(" ")[0]
-
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = 300
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      })
-    }
-  }
 
   return (
-    <section className="bg-white py-8 border-t border-neutral-100">
+    <section className="py-8 border-t border-slate-100">
       {/* Header */}
-      <div className="px-6 mb-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-neutral-900">Reviews</h2>
-          <div className="flex gap-1">
-            <button
-              onClick={() => scroll("left")}
-              className="h-8 w-8 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors"
-              aria-label="Previous reviews"
-            >
-              <ChevronLeft className="h-4 w-4 text-neutral-600" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              className="h-8 w-8 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors"
-              aria-label="Next reviews"
-            >
-              <ChevronRight className="h-4 w-4 text-neutral-600" />
-            </button>
-          </div>
-        </div>
-
-        {/* Rating */}
-        <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-semibold text-neutral-900">{aggregateRating}</span>
+      <div className="px-5 mb-5">
+        <div className="flex items-baseline gap-3">
+          <span className="text-4xl font-bold text-slate-900">{aggregateRating}</span>
           <div className="flex gap-0.5">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
                 className={`h-4 w-4 ${
-                  i < Math.floor(aggregateRating)
-                    ? "text-neutral-900 fill-neutral-900"
-                    : "text-neutral-200"
+                  i < Math.floor(aggregateRating) ? "text-amber-400 fill-amber-400" : "text-slate-200"
                 }`}
               />
             ))}
           </div>
-          <span className="text-sm text-neutral-500">{totalReviews.toLocaleString()} reviews</span>
         </div>
+        <p className="text-sm text-slate-500 mt-1">{totalReviews.toLocaleString()} reviews</p>
       </div>
 
-      {/* Review Cards */}
+      {/* Review Cards - Horizontal scroll */}
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-x-auto scrollbar-hide px-6 pb-2"
-        style={{ scrollSnapType: "x mandatory" }}
+        className="flex gap-3 overflow-x-auto scrollbar-hide px-5 pb-2"
       >
         {reviews.map((review) => (
           <div
             key={review.id}
-            className="flex-shrink-0 w-[260px] p-4 rounded-lg border border-neutral-200 bg-white"
-            style={{ scrollSnapAlign: "start" }}
+            className="flex-shrink-0 w-[280px] p-5 rounded-2xl bg-slate-50"
           >
             {/* Stars */}
-            <div className="flex gap-0.5 mb-2">
+            <div className="flex gap-0.5 mb-3">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={`h-3.5 w-3.5 ${
-                    i < review.rating ? "text-neutral-900 fill-neutral-900" : "text-neutral-200"
+                    i < review.rating ? "text-amber-400 fill-amber-400" : "text-slate-200"
                   }`}
                 />
               ))}
             </div>
 
-            {/* Text */}
-            <p className="text-sm text-neutral-700 leading-relaxed line-clamp-4 mb-3">
-              {review.excerpt}
+            {/* Quote */}
+            <p className="text-sm text-slate-700 leading-relaxed line-clamp-4 mb-4">
+              &ldquo;{review.excerpt}&rdquo;
             </p>
 
-            {/* Reviewer */}
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-neutral-900">{review.reviewerName}</p>
-              {review.isSalespersonReview && (
-                <span className="text-xs text-neutral-500">Re: {firstName}</span>
-              )}
-            </div>
+            {/* Author */}
+            <p className="text-xs font-semibold text-slate-900">{review.reviewerName}</p>
           </div>
         ))}
       </div>

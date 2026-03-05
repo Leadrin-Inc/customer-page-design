@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Calendar, Clock, Check, ArrowRight } from "lucide-react"
+import { Check, ArrowRight } from "lucide-react"
 
 interface BookingFormProps {
   salespersonName: string
@@ -13,7 +13,6 @@ interface BookingFormProps {
 export function BookingForm({
   salespersonName,
   buyerName,
-  buyerPhone,
   dealershipName,
 }: BookingFormProps) {
   const [step, setStep] = useState<"date" | "time" | "confirm" | "success">("date")
@@ -28,54 +27,51 @@ export function BookingForm({
     return {
       dayName: date.toLocaleDateString("en-US", { weekday: "short" }),
       dayNum: date.getDate(),
+      month: date.toLocaleDateString("en-US", { month: "short" }),
       full: date.toISOString().split("T")[0],
     }
   })
 
-  const times = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"]
-
-  const handleConfirm = () => setStep("success")
+  const times = ["9:00 AM", "10:30 AM", "12:00 PM", "2:00 PM", "3:30 PM", "5:00 PM"]
 
   return (
-    <section id="booking" className="bg-neutral-50 px-6 py-8">
-      <h2 className="text-lg font-semibold text-neutral-900 mb-1">Schedule a visit</h2>
-      <p className="text-sm text-neutral-500 mb-5">
-        Meet with {firstName} at {dealershipName}.
-      </p>
+    <section id="booking" className="px-5 py-8 bg-slate-50">
+      <p className="text-[10px] font-semibold tracking-widest text-blue-600 uppercase mb-1">Book a Visit</p>
+      <h2 className="text-xl font-bold text-slate-900 mb-1">Meet at {dealershipName}</h2>
+      <p className="text-sm text-slate-500 mb-6">{firstName} will confirm your appointment.</p>
 
       {/* Success */}
       {step === "success" && (
-        <div className="bg-white rounded-lg p-5 border border-neutral-200 text-center">
-          <div className="h-10 w-10 rounded-full bg-neutral-900 flex items-center justify-center mx-auto mb-3">
-            <Check className="h-5 w-5 text-white" />
+        <div className="bg-white rounded-2xl p-6 text-center">
+          <div className="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center mx-auto mb-4">
+            <Check className="h-6 w-6 text-white" />
           </div>
-          <h3 className="text-base font-semibold text-neutral-900 mb-1">Confirmed</h3>
-          <p className="text-sm text-neutral-500">
+          <h3 className="text-lg font-bold text-slate-900 mb-1">All set!</h3>
+          <p className="text-sm text-slate-500">
             {firstName} will reach out to confirm your visit on {selectedDate} at {selectedTime}.
           </p>
         </div>
       )}
 
-      {/* Date */}
+      {/* Date Selection */}
       {step === "date" && (
-        <div className="bg-white rounded-lg p-5 border border-neutral-200">
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar className="h-4 w-4 text-neutral-500" />
-            <span className="text-sm font-medium text-neutral-900">Select a date</span>
-          </div>
-          <div className="grid grid-cols-4 gap-2 mb-3">
+        <div className="bg-white rounded-2xl p-5">
+          <p className="text-sm font-semibold text-slate-900 mb-4">Pick a day</p>
+          <div className="grid grid-cols-4 gap-2 mb-2">
             {dates.slice(0, 4).map((date) => (
               <button
                 key={date.full}
                 onClick={() => setSelectedDate(date.full)}
-                className={`p-3 rounded-lg text-center transition-colors ${
+                className={`p-3 rounded-xl text-center transition-all ${
                   selectedDate === date.full
-                    ? "bg-blue-600 text-white"
-                    : "bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                    : "bg-slate-50 text-slate-900 hover:bg-slate-100"
                 }`}
               >
-                <p className="text-xs opacity-60">{date.dayName}</p>
-                <p className="text-lg font-semibold">{date.dayNum}</p>
+                <p className={`text-[10px] font-medium ${selectedDate === date.full ? "text-blue-100" : "text-slate-400"}`}>
+                  {date.dayName}
+                </p>
+                <p className="text-xl font-bold">{date.dayNum}</p>
               </button>
             ))}
           </div>
@@ -84,21 +80,23 @@ export function BookingForm({
               <button
                 key={date.full}
                 onClick={() => setSelectedDate(date.full)}
-                className={`p-3 rounded-lg text-center transition-colors ${
+                className={`p-3 rounded-xl text-center transition-all ${
                   selectedDate === date.full
-                    ? "bg-blue-600 text-white"
-                    : "bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                    : "bg-slate-50 text-slate-900 hover:bg-slate-100"
                 }`}
               >
-                <p className="text-xs opacity-60">{date.dayName}</p>
-                <p className="text-lg font-semibold">{date.dayNum}</p>
+                <p className={`text-[10px] font-medium ${selectedDate === date.full ? "text-blue-100" : "text-slate-400"}`}>
+                  {date.dayName}
+                </p>
+                <p className="text-xl font-bold">{date.dayNum}</p>
               </button>
             ))}
           </div>
           {selectedDate && (
             <button
               onClick={() => setStep("time")}
-              className="w-full mt-4 py-3 bg-blue-600 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+              className="w-full h-12 mt-5 bg-slate-900 text-white font-semibold text-sm rounded-full flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors"
             >
               Continue
               <ArrowRight className="h-4 w-4" />
@@ -107,22 +105,19 @@ export function BookingForm({
         </div>
       )}
 
-      {/* Time */}
+      {/* Time Selection */}
       {step === "time" && (
-        <div className="bg-white rounded-lg p-5 border border-neutral-200">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="h-4 w-4 text-neutral-500" />
-            <span className="text-sm font-medium text-neutral-900">Select a time</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
+        <div className="bg-white rounded-2xl p-5">
+          <p className="text-sm font-semibold text-slate-900 mb-4">Pick a time</p>
+          <div className="grid grid-cols-2 gap-2 mb-5">
             {times.map((time) => (
               <button
                 key={time}
                 onClick={() => setSelectedTime(time)}
-                className={`py-3 px-4 rounded-lg text-sm font-medium transition-colors ${
+                className={`h-12 rounded-xl text-sm font-medium transition-all ${
                   selectedTime === time
-                    ? "bg-blue-600 text-white"
-                    : "bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                    : "bg-slate-50 text-slate-900 hover:bg-slate-100"
                 }`}
               >
                 {time}
@@ -132,7 +127,7 @@ export function BookingForm({
           {selectedTime && (
             <button
               onClick={() => setStep("confirm")}
-              className="w-full py-3 bg-blue-600 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+              className="w-full h-12 bg-slate-900 text-white font-semibold text-sm rounded-full flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors"
             >
               Continue
               <ArrowRight className="h-4 w-4" />
@@ -143,31 +138,25 @@ export function BookingForm({
 
       {/* Confirm */}
       {step === "confirm" && (
-        <div className="bg-white rounded-lg p-5 border border-neutral-200">
-          <h3 className="text-sm font-medium text-neutral-900 mb-4">Confirm details</h3>
-          <div className="space-y-3 mb-4">
+        <div className="bg-white rounded-2xl p-5">
+          <p className="text-sm font-semibold text-slate-900 mb-4">Confirm your visit</p>
+          <div className="space-y-3 mb-5 p-4 rounded-xl bg-slate-50">
             <div className="flex justify-between text-sm">
-              <span className="text-neutral-500">Name</span>
-              <span className="font-medium text-neutral-900">{buyerName}</span>
+              <span className="text-slate-500">Name</span>
+              <span className="font-medium text-slate-900">{buyerName}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-neutral-500">Date</span>
-              <span className="font-medium text-neutral-900">{selectedDate}</span>
+              <span className="text-slate-500">Date</span>
+              <span className="font-medium text-slate-900">{selectedDate}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-neutral-500">Time</span>
-              <span className="font-medium text-neutral-900">{selectedTime}</span>
+              <span className="text-slate-500">Time</span>
+              <span className="font-medium text-slate-900">{selectedTime}</span>
             </div>
-            {buyerPhone && (
-              <div className="flex justify-between text-sm">
-                <span className="text-neutral-500">Phone</span>
-                <span className="font-medium text-neutral-900">{buyerPhone}</span>
-              </div>
-            )}
           </div>
           <button
-            onClick={handleConfirm}
-            className="w-full py-3 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 transition-colors"
+            onClick={() => setStep("success")}
+            className="w-full h-12 bg-blue-600 text-white font-semibold text-sm rounded-full hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/25"
           >
             Confirm Appointment
           </button>
