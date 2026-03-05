@@ -24,8 +24,11 @@ export function SalespersonProfile({
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
   return (
-    <section className="bg-background px-6 py-14">
+    <section className="bg-background px-6 py-16">
       <div className="text-center">
+        {/* Thin rule accent */}
+        <div className="w-10 h-px bg-border mx-auto mb-10" />
+
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground mb-8">
           Your Sales Consultant
         </p>
@@ -36,20 +39,20 @@ export function SalespersonProfile({
             {!isVideoPlaying ? (
               <button
                 onClick={() => setIsVideoPlaying(true)}
-                className="absolute inset-0 flex flex-col items-center justify-center"
+                className="absolute inset-0 flex flex-col items-center justify-center group"
                 aria-label={`Watch ${name}'s introduction video`}
               >
                 <Image
                   src={photo}
                   alt={`${name} introduction video`}
                   fill
-                  className="object-cover opacity-60"
+                  className="object-cover opacity-50"
                 />
                 <div className="relative z-10 flex flex-col items-center">
-                  <div className="h-16 w-16 rounded-full border-2 border-primary-foreground/40 flex items-center justify-center mb-3 transition-colors hover:border-primary-foreground/70">
+                  <div className="h-16 w-16 rounded-full bg-primary-foreground/10 border border-primary-foreground/30 flex items-center justify-center mb-3 transition-all group-hover:bg-primary-foreground/20 group-hover:scale-105">
                     <Play className="h-6 w-6 text-primary-foreground ml-0.5" fill="currentColor" />
                   </div>
-                  <span className="text-xs uppercase tracking-[0.15em] text-primary-foreground/60">
+                  <span className="text-[11px] uppercase tracking-[0.15em] text-primary-foreground/50 font-medium">
                     Watch Introduction
                   </span>
                 </div>
@@ -66,7 +69,7 @@ export function SalespersonProfile({
         )}
 
         {/* Profile Photo */}
-        <div className="relative h-20 w-20 mx-auto overflow-hidden rounded-full mb-5">
+        <div className="relative h-24 w-24 mx-auto overflow-hidden rounded-full mb-6 ring-2 ring-border">
           <Image
             src={photo}
             alt={name}
@@ -76,13 +79,13 @@ export function SalespersonProfile({
         </div>
 
         {/* Name and Title */}
-        <h3 className="font-serif text-2xl mb-1">
+        <h3 className="font-serif text-2xl mb-1.5 text-foreground">
           {name}
         </h3>
-        <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-6">{title}</p>
+        <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-7">{title}</p>
 
         {/* Bio */}
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-[300px] mx-auto mb-8">
+        <p className="text-[15px] text-muted-foreground leading-relaxed max-w-[300px] mx-auto mb-9">
           {bio}
         </p>
 
@@ -90,7 +93,7 @@ export function SalespersonProfile({
         {phone && (
           <a
             href={`tel:${phone}`}
-            className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-foreground text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-foreground text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] hover:opacity-90 transition-opacity"
           >
             <Phone className="h-4 w-4" />
             Call {name.split(" ")[0]}

@@ -22,13 +22,13 @@ export function StickyBottomBar({
     <div
       className={cn(
         "fixed bottom-0 left-0 right-0 z-50",
-        "bg-foreground",
+        "bg-foreground border-t border-primary-foreground/8",
         "px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
         "transition-transform duration-300 ease-out",
         isVisible ? "translate-y-0" : "translate-y-full"
       )}
     >
-      <div className="flex items-center gap-2 max-w-lg mx-auto">
+      <div className="flex items-center gap-2.5 max-w-lg mx-auto">
         {/* Primary Call Button */}
         <a
           href={phone ? `tel:${phone}` : undefined}
@@ -41,7 +41,7 @@ export function StickyBottomBar({
         {/* Email Button */}
         <a
           href={`mailto:${email}`}
-          className="h-11 w-11 rounded-full border border-primary-foreground/30 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
+          className="h-11 w-11 rounded-full border border-primary-foreground/20 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/8 transition-colors"
           aria-label={`Email ${salespersonFirstName}`}
         >
           <Mail className="h-4 w-4" />
@@ -50,7 +50,7 @@ export function StickyBottomBar({
         {/* Book Button */}
         <button
           onClick={onBook}
-          className="h-11 w-11 rounded-full border border-primary-foreground/30 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
+          className="h-11 w-11 rounded-full border border-primary-foreground/20 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/8 transition-colors"
           aria-label="Book a visit"
         >
           <Calendar className="h-4 w-4" />

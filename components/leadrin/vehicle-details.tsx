@@ -59,8 +59,8 @@ export function VehicleDetails({
 
   if (noVehicleMessage || photos.length === 0) {
     return (
-      <section className="px-6 py-14 bg-foreground text-center">
-        <p className="text-sm text-primary-foreground/60 leading-relaxed">
+      <section className="px-6 py-16 bg-foreground text-center">
+        <p className="text-sm text-primary-foreground/55 leading-relaxed max-w-[280px] mx-auto">
           {noVehicleMessage || "Based on what you're looking for, we'll find the perfect match for you."}
         </p>
       </section>
@@ -93,6 +93,13 @@ export function VehicleDetails({
           ))}
         </div>
 
+        {/* Photo Counter */}
+        {photos.length > 1 && (
+          <div className="absolute top-4 right-4 bg-foreground/70 backdrop-blur-sm text-primary-foreground text-[11px] font-medium tracking-wider px-3 py-1.5 rounded-full">
+            {currentIndex + 1}/{photos.length}
+          </div>
+        )}
+
         {/* Navigation Arrows */}
         {photos.length > 1 && (
           <>
@@ -100,7 +107,7 @@ export function VehicleDetails({
               onClick={() => scrollTo(currentIndex - 1)}
               disabled={currentIndex === 0}
               className={cn(
-                "absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-primary-foreground/20 bg-foreground/60 backdrop-blur flex items-center justify-center transition-opacity",
+                "absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-foreground/50 backdrop-blur-sm flex items-center justify-center transition-opacity",
                 currentIndex === 0 ? "opacity-0 pointer-events-none" : "opacity-100"
               )}
               aria-label="Previous photo"
@@ -111,7 +118,7 @@ export function VehicleDetails({
               onClick={() => scrollTo(currentIndex + 1)}
               disabled={currentIndex === photos.length - 1}
               className={cn(
-                "absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-primary-foreground/20 bg-foreground/60 backdrop-blur flex items-center justify-center transition-opacity",
+                "absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-foreground/50 backdrop-blur-sm flex items-center justify-center transition-opacity",
                 currentIndex === photos.length - 1 ? "opacity-0 pointer-events-none" : "opacity-100"
               )}
               aria-label="Next photo"
@@ -120,90 +127,86 @@ export function VehicleDetails({
             </button>
           </>
         )}
-
-        {/* Dot indicators */}
-        {photos.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {photos.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => scrollTo(index)}
-                className={cn(
-                  "h-1.5 rounded-full transition-all",
-                  index === currentIndex
-                    ? "w-6 bg-primary-foreground"
-                    : "w-1.5 bg-primary-foreground/30"
-                )}
-                aria-label={`Go to photo ${index + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
-      {/* Vehicle Info - Centered editorial style */}
-      <div className="px-6 py-12 text-center">
-        <h2 className="font-serif text-3xl text-balance mb-3">
+      {/* Vehicle Info - Sotheby's structured layout */}
+      <div className="px-6 pt-10 pb-12">
+        {/* Location-style label */}
+        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-primary-foreground/35 mb-2">
+          {make} {model}
+        </p>
+        <h2 className="font-serif text-[1.65rem] leading-tight text-balance mb-8">
           {vehicleTitle}
         </h2>
 
-        {/* Price and Stats */}
-        <div className="flex justify-center gap-8 mt-8 mb-8">
-          <div className="text-center">
-            <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/40 mb-1">
+        {/* Structured Detail Grid - Sotheby's style */}
+        <div className="grid grid-cols-3 gap-x-6 gap-y-6 mb-8">
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/35 mb-1.5">
               Price
             </p>
-            <p className="text-2xl font-serif">${price.toLocaleString()}</p>
+            <p className="text-lg font-serif">${price.toLocaleString()}</p>
           </div>
-          {mileage && (
-            <>
-              <div className="w-px bg-primary-foreground/15" />
-              <div className="text-center">
-                <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/40 mb-1">
-                  Mileage
-                </p>
-                <p className="text-2xl font-serif">{mileage.toLocaleString()}</p>
-                <p className="text-[10px] text-primary-foreground/40 mt-0.5">miles</p>
-              </div>
-            </>
+          {mileage !== undefined && (
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/35 mb-1.5">
+                Mileage
+              </p>
+              <p className="text-lg font-serif">{mileage.toLocaleString()}</p>
+              <p className="text-[10px] text-primary-foreground/30">miles</p>
+            </div>
           )}
-        </div>
-
-        {/* Specs */}
-        <div className="flex justify-center gap-6 text-xs text-primary-foreground/50 mb-10">
           {fuelType && (
-            <div className="flex items-center gap-1.5">
-              <Fuel className="h-3.5 w-3.5" />
-              <span>{fuelType}</span>
-            </div>
-          )}
-          {transmission && (
-            <div className="flex items-center gap-1.5">
-              <Settings className="h-3.5 w-3.5" />
-              <span>{transmission}</span>
-            </div>
-          )}
-          {mileage && (
-            <div className="flex items-center gap-1.5">
-              <Gauge className="h-3.5 w-3.5" />
-              <span>{mileage.toLocaleString()} mi</span>
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/35 mb-1.5">
+                Fuel
+              </p>
+              <p className="text-lg font-serif">{fuelType}</p>
             </div>
           )}
         </div>
 
-        {/* Carfax */}
+        {/* Specs Row */}
+        {transmission && (
+          <div className="border-t border-primary-foreground/10 pt-6 mb-8">
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/35 mb-1.5">
+                  Transmission
+                </p>
+                <p className="text-sm font-medium">{transmission}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-primary-foreground/35 mb-1.5">
+                  Year
+                </p>
+                <p className="text-sm font-medium">{year}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Carfax Link */}
         {carfaxUrl && (
           <a
             href={carfaxUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-primary-foreground/30 text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] hover:bg-primary-foreground/10 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-primary-foreground/60 hover:text-primary-foreground transition-colors"
           >
             View Vehicle History
-            <ExternalLink className="h-3.5 w-3.5" />
+            <ArrowRight className="h-3 w-3" />
           </a>
         )}
       </div>
     </section>
+  )
+}
+
+function ArrowRight({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className={className}>
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   )
 }

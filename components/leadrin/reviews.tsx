@@ -29,17 +29,16 @@ const sourceLabels: Record<ReviewSource, string> = {
   carscom: "Cars.com",
 }
 
-function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "lg" }) {
-  const iconSize = size === "lg" ? "h-4 w-4" : "h-3 w-3"
+function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
           className={cn(
-            iconSize,
+            "h-3 w-3",
             star <= rating
-              ? "fill-current text-foreground"
+              ? "fill-current text-accent"
               : "fill-current text-border"
           )}
         />
@@ -54,16 +53,16 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
   if (reviews.length === 0) return null
 
   return (
-    <section className="bg-foreground text-primary-foreground py-14">
+    <section className="bg-foreground text-primary-foreground py-16">
       {/* Header */}
       <div className="px-6 text-center mb-10">
-        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-primary-foreground/40 mb-6">
+        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-primary-foreground/30 mb-6">
           Customer Reviews
         </p>
         <div className="font-serif text-5xl mb-3">
           {aggregateRating.toFixed(1)}
         </div>
-        <div className="flex justify-center mb-2">
+        <div className="flex justify-center mb-2.5">
           <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
@@ -72,13 +71,13 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
                   "h-4 w-4",
                   star <= Math.round(aggregateRating)
                     ? "fill-primary-foreground text-primary-foreground"
-                    : "fill-primary-foreground/20 text-primary-foreground/20"
+                    : "fill-primary-foreground/15 text-primary-foreground/15"
                 )}
               />
             ))}
           </div>
         </div>
-        <p className="text-xs text-primary-foreground/40">
+        <p className="text-[11px] text-primary-foreground/35">
           Based on {totalReviews.toLocaleString()} reviews
         </p>
       </div>
@@ -93,16 +92,16 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
           <div
             key={review.id}
             className={cn(
-              "flex-shrink-0 w-[280px] p-5 border",
+              "flex-shrink-0 w-[280px] p-6 border rounded-sm",
               review.isSalespersonReview
                 ? "border-primary-foreground/20 bg-primary-foreground/5"
-                : "border-primary-foreground/10"
+                : "border-primary-foreground/8"
             )}
           >
-            <Quote className="h-5 w-5 text-primary-foreground/20 mb-4" />
+            <Quote className="h-5 w-5 text-primary-foreground/15 mb-4" />
 
             {/* Review Text */}
-            <p className="text-sm text-primary-foreground/80 leading-relaxed line-clamp-4 mb-5 italic">
+            <p className="text-[14px] text-primary-foreground/70 leading-relaxed line-clamp-4 mb-6 italic">
               {review.excerpt}
             </p>
 
@@ -112,7 +111,7 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
                 <p className="text-sm font-medium text-primary-foreground">
                   {review.reviewerName}
                 </p>
-                <p className="text-[10px] uppercase tracking-[0.1em] text-primary-foreground/40 mt-0.5">
+                <p className="text-[10px] uppercase tracking-[0.1em] text-primary-foreground/35 mt-0.5">
                   {sourceLabels[review.source]}
                 </p>
               </div>
@@ -120,7 +119,7 @@ export function Reviews({ aggregateRating, totalReviews, reviews }: ReviewsProps
             </div>
 
             {review.isSalespersonReview && (
-              <span className="inline-block mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-primary-foreground/50 border-t border-primary-foreground/10 pt-3 w-full">
+              <span className="inline-block mt-5 text-[10px] font-semibold uppercase tracking-[0.1em] text-accent border-t border-primary-foreground/8 pt-4 w-full">
                 Mentions your consultant
               </span>
             )}

@@ -1,6 +1,6 @@
 "use client"
 
-import { Phone, Mail, Calendar } from "lucide-react"
+import { Phone, Mail, Calendar, ArrowRight } from "lucide-react"
 
 interface ActionBarProps {
   salespersonFirstName: string
@@ -11,31 +11,40 @@ interface ActionBarProps {
 
 export function ActionBar({ salespersonFirstName, phone, email, onBook }: ActionBarProps) {
   return (
-    <section className="bg-foreground text-primary-foreground px-6 pb-12">
-      <div className="flex flex-col items-center gap-3">
-        <div className="flex items-center gap-3 w-full">
-          <a
-            href={phone ? `tel:${phone}` : undefined}
-            className="flex-1 flex items-center justify-center gap-2 h-12 rounded-full bg-primary-foreground text-foreground text-sm font-semibold tracking-wide uppercase transition-opacity hover:opacity-90"
-          >
-            <Phone className="h-4 w-4" />
-            Call {salespersonFirstName}
-          </a>
-          <button
-            onClick={onBook}
-            className="flex-1 flex items-center justify-center gap-2 h-12 rounded-full border border-primary-foreground/30 text-primary-foreground text-sm font-semibold tracking-wide uppercase transition-colors hover:bg-primary-foreground/10"
-          >
-            <Calendar className="h-4 w-4" />
-            Book Visit
-          </button>
-        </div>
+    <section className="bg-foreground text-primary-foreground px-6 pb-10">
+      {/* Divider line */}
+      <div className="h-px bg-primary-foreground/10 mb-8" />
+
+      <p className="text-center font-serif text-xl mb-5">
+        {"Let's get in touch"}
+      </p>
+
+      {/* Primary CTA */}
+      <a
+        href={phone ? `tel:${phone}` : undefined}
+        className="flex items-center justify-center gap-2.5 h-[52px] w-full rounded-full bg-primary-foreground text-foreground text-[13px] font-semibold uppercase tracking-[0.12em] mb-4 transition-opacity hover:opacity-90"
+      >
+        <Phone className="h-4 w-4" />
+        Call {salespersonFirstName}
+        <ArrowRight className="h-3.5 w-3.5 ml-1" />
+      </a>
+
+      {/* Secondary Buttons Row */}
+      <div className="flex gap-3">
         <a
           href={`mailto:${email}`}
-          className="flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors py-2"
+          className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-full border border-primary-foreground/25 text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] transition-colors hover:bg-primary-foreground/8"
         >
           <Mail className="h-3.5 w-3.5" />
-          Send an email
+          Email
         </a>
+        <button
+          onClick={onBook}
+          className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-full border border-primary-foreground/25 text-primary-foreground text-xs font-semibold uppercase tracking-[0.1em] transition-colors hover:bg-primary-foreground/8"
+        >
+          <Calendar className="h-3.5 w-3.5" />
+          Book a Visit
+        </button>
       </div>
     </section>
   )
