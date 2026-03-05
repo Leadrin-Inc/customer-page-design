@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist, Playfair_Display } from 'next/font/google'
+import { Geist } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -8,10 +8,7 @@ const geist = Geist({
   variable: '--font-sans'
 });
 
-const playfair = Playfair_Display({ 
-  subsets: ["latin"],
-  variable: '--font-serif'
-});
+
 
 export const metadata: Metadata = {
   title: 'Your Personalized Experience | Leadrin',
@@ -51,7 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geist.variable} ${playfair.variable} font-sans antialiased`}>
+      <body className={`${geist.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
