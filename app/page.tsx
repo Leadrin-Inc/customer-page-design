@@ -218,7 +218,6 @@ export default function CustomerPage() {
         title={salesperson.title}
         bio={salesperson.bio}
         photo={salesperson.photo}
-        introVideo={salesperson.introVideo}
         phone={salesperson.phone}
       />
 
