@@ -76,6 +76,7 @@
 
 @theme inline {
   --font-sans: var(--font-sans), 'Geist', system-ui, sans-serif;
+  --font-serif: var(--font-serif), 'Playfair Display', Georgia, serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);

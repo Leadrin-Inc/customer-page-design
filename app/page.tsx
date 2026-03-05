@@ -236,7 +236,7 @@ export default function CustomerPage() {
         isVisible={showStickyBar}
         salespersonFirstName={salesperson.name.split(" ")[0]}
         phone={salesperson.phone}
-        price={vehicle.price}
+        email={salesperson.email}
         onBook={scrollToBooking}
       />
     </main>

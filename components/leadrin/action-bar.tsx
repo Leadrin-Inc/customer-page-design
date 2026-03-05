@@ -2,7 +2,6 @@
 
 import { Phone, Mail, Calendar } from "lucide-react"
 
-
 interface ActionBarProps {
   salespersonFirstName: string
   phone?: string
