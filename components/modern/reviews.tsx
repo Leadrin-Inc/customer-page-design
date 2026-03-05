@@ -39,91 +39,82 @@ export function Reviews({
   }
 
   return (
-    <section className="bg-white py-8 border-t border-border">
-      {/* Section Header */}
-      <div className="px-6 mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-1 h-6 rounded-full bg-gradient-to-b from-violet-500 to-indigo-500" />
-          <h2 className="text-xl font-semibold text-foreground">What customers say</h2>
-        </div>
-
-        {/* Aggregate Rating - Stripe style stat */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600">
-              {aggregateRating}
-            </span>
-            <div className="flex flex-col">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${
-                      i < Math.floor(aggregateRating)
-                        ? "text-violet-500 fill-violet-500"
-                        : "text-gray-200"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-xs text-muted-foreground">{totalReviews.toLocaleString()} reviews</span>
-            </div>
+    <section className="bg-white py-8 border-t border-neutral-100">
+      {/* Header */}
+      <div className="px-6 mb-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-neutral-900">Reviews</h2>
+          <div className="flex gap-1">
+            <button
+              onClick={() => scroll("left")}
+              className="h-8 w-8 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors"
+              aria-label="Previous reviews"
+            >
+              <ChevronLeft className="h-4 w-4 text-neutral-600" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="h-8 w-8 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors"
+              aria-label="Next reviews"
+            >
+              <ChevronRight className="h-4 w-4 text-neutral-600" />
+            </button>
           </div>
         </div>
+
+        {/* Rating */}
+        <div className="flex items-baseline gap-2">
+          <span className="text-3xl font-semibold text-neutral-900">{aggregateRating}</span>
+          <div className="flex gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`h-4 w-4 ${
+                  i < Math.floor(aggregateRating)
+                    ? "text-neutral-900 fill-neutral-900"
+                    : "text-neutral-200"
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-sm text-neutral-500">{totalReviews.toLocaleString()} reviews</span>
+        </div>
       </div>
 
-      {/* Scroll Controls */}
-      <div className="flex justify-end gap-2 px-6 mb-4">
-        <button
-          onClick={() => scroll("left")}
-          className="h-8 w-8 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors"
-          aria-label="Previous reviews"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => scroll("right")}
-          className="h-8 w-8 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors"
-          aria-label="Next reviews"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      </div>
-
-      {/* Review Cards - Horizontal Scroll */}
+      {/* Review Cards */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide px-6 pb-2"
+        className="flex gap-3 overflow-x-auto scrollbar-hide px-6 pb-2"
         style={{ scrollSnapType: "x mandatory" }}
       >
         {reviews.map((review) => (
           <div
             key={review.id}
-            className="flex-shrink-0 w-[280px] p-5 rounded-xl border border-border bg-white hover:border-violet-200 transition-colors"
+            className="flex-shrink-0 w-[260px] p-4 rounded-lg border border-neutral-200 bg-white"
             style={{ scrollSnapAlign: "start" }}
           >
             {/* Stars */}
-            <div className="flex gap-0.5 mb-3">
+            <div className="flex gap-0.5 mb-2">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-4 w-4 ${
-                    i < review.rating ? "text-violet-500 fill-violet-500" : "text-gray-200"
+                  className={`h-3.5 w-3.5 ${
+                    i < review.rating ? "text-neutral-900 fill-neutral-900" : "text-neutral-200"
                   }`}
                 />
               ))}
             </div>
 
-            {/* Review Text */}
-            <p className="text-sm text-foreground leading-relaxed line-clamp-4 mb-4">
-              &ldquo;{review.excerpt}&rdquo;
+            {/* Text */}
+            <p className="text-sm text-neutral-700 leading-relaxed line-clamp-4 mb-3">
+              {review.excerpt}
             </p>
 
             {/* Reviewer */}
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-foreground">{review.reviewerName}</p>
+              <p className="text-sm font-medium text-neutral-900">{review.reviewerName}</p>
               {review.isSalespersonReview && (
-                <span className="text-xs text-violet-600 font-medium">About {firstName}</span>
+                <span className="text-xs text-neutral-500">Re: {firstName}</span>
               )}
             </div>
           </div>

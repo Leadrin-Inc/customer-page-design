@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Play, Sparkles, Video } from "lucide-react"
+import { Play, X, ChevronRight, Sparkles, Video } from "lucide-react"
 import Image from "next/image"
 
 interface Feature {
@@ -35,16 +35,67 @@ export function VehicleMedia({
   const showTabs = hasFeatures && hasVideo
 
   return (
-    <section className="bg-white">
-      {/* Tab Buttons - Stripe style pill buttons */}
+    <section className="bg-white relative">
+      {/* Full-page Feature Modal */}
+      {selectedFeature && (
+        <div className="fixed inset-0 z-50 bg-white animate-in fade-in duration-200">
+          <div className="h-full flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+              <span className="text-xs font-medium text-neutral-400 uppercase tracking-wider">
+                {selectedFeature.category}
+              </span>
+              <button
+                onClick={() => setSelectedFeature(null)}
+                className="p-2 -mr-2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                aria-label="Close"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Feature Image */}
+            <div className="relative aspect-[4/3] bg-neutral-100">
+              <Image
+                src={selectedFeature.closeUpImage || heroImage}
+                alt={selectedFeature.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            {/* Feature Content */}
+            <div className="flex-1 px-6 py-6">
+              <h3 className="text-2xl font-semibold text-neutral-900 mb-3">
+                {selectedFeature.name}
+              </h3>
+              <p className="text-base text-neutral-600 leading-relaxed">
+                {selectedFeature.description}
+              </p>
+            </div>
+
+            {/* Close Button */}
+            <div className="px-6 pb-8">
+              <button
+                onClick={() => setSelectedFeature(null)}
+                className="w-full py-3.5 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-800 transition-colors"
+              >
+                Back to Vehicle
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab Buttons - Clean, minimal */}
       {showTabs && (
-        <div className="px-6 py-4 flex gap-2">
+        <div className="px-6 py-3 flex gap-6 border-b border-neutral-100">
           <button
             onClick={() => { setActiveTab("features"); setIsVideoPlaying(false); }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 text-sm font-medium pb-3 -mb-3 border-b-2 transition-colors ${
               activeTab === "features"
-                ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white"
-                : "bg-secondary text-foreground hover:bg-violet-50"
+                ? "border-neutral-900 text-neutral-900"
+                : "border-transparent text-neutral-400 hover:text-neutral-600"
             }`}
           >
             <Sparkles className="h-4 w-4" />
@@ -52,23 +103,23 @@ export function VehicleMedia({
           </button>
           <button
             onClick={() => setActiveTab("video")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 text-sm font-medium pb-3 -mb-3 border-b-2 transition-colors ${
               activeTab === "video"
-                ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white"
-                : "bg-secondary text-foreground hover:bg-violet-50"
+                ? "border-neutral-900 text-neutral-900"
+                : "border-transparent text-neutral-400 hover:text-neutral-600"
             }`}
           >
             <Video className="h-4 w-4" />
-            Video Tour
+            Video
           </button>
         </div>
       )}
 
       {/* Features View */}
       {activeTab === "features" && (
-        <div className="px-6 pb-6">
-          {/* Hero Image with Hotspots */}
-          <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-secondary mb-6">
+        <div className="px-6 py-6">
+          {/* Hero Image */}
+          <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-neutral-100 mb-4">
             <Image
               src={heroImage}
               alt={vehicleTitle}
@@ -77,79 +128,47 @@ export function VehicleMedia({
               priority
             />
             
-            {/* Feature Hotspots */}
+            {/* Subtle hotspots */}
             {features.map((feature) => (
               <button
                 key={feature.id}
-                onClick={() => setSelectedFeature(selectedFeature?.id === feature.id ? null : feature)}
-                className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all ${
-                  selectedFeature?.id === feature.id ? "scale-125 z-20" : "z-10"
-                }`}
+                onClick={() => setSelectedFeature(feature)}
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10 group"
                 style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
                 aria-label={`View ${feature.name} details`}
               >
-                <span className="relative flex h-6 w-6">
-                  <span className={`absolute inset-0 rounded-full ${
-                    selectedFeature?.id === feature.id 
-                      ? "bg-violet-500" 
-                      : "bg-white animate-ping opacity-75"
-                  }`} />
-                  <span className={`relative flex h-6 w-6 rounded-full items-center justify-center text-[10px] font-bold ${
-                    selectedFeature?.id === feature.id
-                      ? "bg-violet-500 text-white"
-                      : "bg-white text-violet-600 border-2 border-violet-500"
-                  }`}>
-                    {feature.id}
-                  </span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm border border-white/50 shadow-lg text-xs font-semibold text-neutral-700 group-hover:scale-110 transition-transform">
+                  {feature.id}
                 </span>
               </button>
             ))}
           </div>
 
-          {/* Selected Feature Detail - Stripe style card */}
-          {selectedFeature && (
-            <div className="rounded-xl border border-violet-100 bg-gradient-to-br from-violet-50 to-white p-5 animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <div className="flex items-start gap-4">
-                <div className="w-1 h-12 rounded-full bg-gradient-to-b from-violet-500 to-indigo-500 flex-shrink-0" />
-                <div className="flex-1">
-                  <span className="text-xs font-medium text-violet-600 uppercase tracking-wide">
-                    {selectedFeature.category}
-                  </span>
-                  <h4 className="text-lg font-semibold text-foreground mt-1 mb-2">
-                    {selectedFeature.name}
-                  </h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {selectedFeature.description}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Feature Chips - Compact horizontal scroll */}
-          {!selectedFeature && (
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide">
-              {features.map((feature) => (
-                <button
-                  key={feature.id}
-                  onClick={() => setSelectedFeature(feature)}
-                  className="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full border border-border hover:border-violet-300 hover:bg-violet-50 transition-all text-left"
-                >
-                  <span className="w-5 h-5 rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 flex items-center justify-center text-[10px] font-bold text-white">
+          {/* Feature List - Clean rows */}
+          <div className="space-y-1">
+            {features.map((feature) => (
+              <button
+                key={feature.id}
+                onClick={() => setSelectedFeature(feature)}
+                className="w-full flex items-center justify-between py-3 px-1 text-left group hover:bg-neutral-50 -mx-1 rounded-lg transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-100 text-xs font-medium text-neutral-500">
                     {feature.id}
                   </span>
-                  <span className="text-sm font-medium text-foreground whitespace-nowrap">{feature.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
+                  <span className="text-sm font-medium text-neutral-900">{feature.name}</span>
+                </div>
+                <ChevronRight className="h-4 w-4 text-neutral-300 group-hover:text-neutral-500 transition-colors" />
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Video View */}
       {activeTab === "video" && walkaroundVideo && (
-        <div className="px-6 pb-6">
-          <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-secondary">
+        <div className="px-6 py-6">
+          <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-neutral-100">
             {!isVideoPlaying ? (
               <button
                 onClick={() => setIsVideoPlaying(true)}
@@ -161,12 +180,12 @@ export function VehicleMedia({
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-foreground/20" />
+                <div className="absolute inset-0 bg-neutral-900/30" />
                 <div className="relative z-10 flex flex-col items-center">
-                  <div className="h-16 w-16 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg">
-                    <Play className="h-6 w-6 text-white ml-1" fill="white" />
+                  <div className="h-14 w-14 rounded-full bg-white flex items-center justify-center transition-transform group-hover:scale-105 shadow-xl">
+                    <Play className="h-5 w-5 text-neutral-900 ml-0.5" fill="currentColor" />
                   </div>
-                  <p className="mt-3 text-white text-sm font-medium">Watch Video Tour</p>
+                  <p className="mt-3 text-white text-sm font-medium">Watch walkthrough</p>
                 </div>
               </button>
             ) : (

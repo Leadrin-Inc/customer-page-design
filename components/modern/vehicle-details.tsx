@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, ChevronRight, Fuel, Gauge, Settings, ExternalLink } from "lucide-react"
+import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react"
 import Image from "next/image"
 
 interface VehicleDetailsProps {
@@ -28,22 +28,13 @@ export function VehicleDetails({
   const nextPhoto = () => setCurrentPhotoIndex((i) => (i + 1) % photos.length)
   const prevPhoto = () => setCurrentPhotoIndex((i) => (i - 1 + photos.length) % photos.length)
 
-  const specs = [
-    { icon: Gauge, label: "Mileage", value: `${mileage.toLocaleString()} mi` },
-    { icon: Fuel, label: "Fuel", value: fuelType },
-    { icon: Settings, label: "Transmission", value: transmission },
-  ]
-
   return (
-    <section className="bg-white px-6 py-8 border-t border-border">
-      {/* Section Header with Stripe accent */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-1 h-6 rounded-full bg-gradient-to-b from-violet-500 to-indigo-500" />
-        <h2 className="text-xl font-semibold text-foreground">Vehicle Details</h2>
-      </div>
+    <section className="bg-white px-6 py-8">
+      {/* Section Header */}
+      <h2 className="text-lg font-semibold text-neutral-900 mb-4">Photos</h2>
 
       {/* Photo Gallery */}
-      <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-secondary mb-6">
+      <div className="relative aspect-[16/10] rounded-lg overflow-hidden bg-neutral-100 mb-6">
         <Image
           src={photos[currentPhotoIndex]}
           alt={`${vehicleTitle} photo ${currentPhotoIndex + 1}`}
@@ -55,45 +46,64 @@ export function VehicleDetails({
           <>
             <button
               onClick={prevPhoto}
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center hover:bg-white transition-colors shadow-sm"
               aria-label="Previous photo"
             >
-              <ChevronLeft className="h-5 w-5 text-foreground" />
+              <ChevronLeft className="h-4 w-4 text-neutral-700" />
             </button>
             <button
               onClick={nextPhoto}
-              className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+              className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center hover:bg-white transition-colors shadow-sm"
               aria-label="Next photo"
             >
-              <ChevronRight className="h-5 w-5 text-foreground" />
+              <ChevronRight className="h-4 w-4 text-neutral-700" />
             </button>
-            <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-medium text-foreground">
-              {currentPhotoIndex + 1} / {photos.length}
+            <div className="absolute bottom-3 right-3 px-2 py-1 rounded bg-neutral-900/70 text-xs font-medium text-white">
+              {currentPhotoIndex + 1}/{photos.length}
             </div>
           </>
         )}
       </div>
 
-      {/* Price - Large gradient text */}
+      {/* Thumbnail Strip */}
+      {photos.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-6 px-6 scrollbar-hide">
+          {photos.map((photo, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPhotoIndex(index)}
+              className={`relative flex-shrink-0 w-16 h-12 rounded overflow-hidden ${
+                index === currentPhotoIndex ? "ring-2 ring-neutral-900" : "opacity-60 hover:opacity-100"
+              } transition-all`}
+            >
+              <Image src={photo} alt="" fill className="object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Price */}
       <div className="mb-6">
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Price</p>
-        <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600">
+        <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">Price</p>
+        <p className="text-2xl font-semibold text-neutral-900">
           ${price.toLocaleString()}
         </p>
       </div>
 
-      {/* Specs - Stripe style cards */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        {specs.map((spec) => (
-          <div
-            key={spec.label}
-            className="p-4 rounded-xl bg-secondary/50 border border-border"
-          >
-            <spec.icon className="h-5 w-5 text-violet-500 mb-2" />
-            <p className="text-xs text-muted-foreground mb-0.5">{spec.label}</p>
-            <p className="text-sm font-semibold text-foreground">{spec.value}</p>
-          </div>
-        ))}
+      {/* Specs - Simple list */}
+      <div className="space-y-3 mb-6">
+        <div className="flex justify-between py-2 border-b border-neutral-100">
+          <span className="text-sm text-neutral-500">Mileage</span>
+          <span className="text-sm font-medium text-neutral-900">{mileage.toLocaleString()} mi</span>
+        </div>
+        <div className="flex justify-between py-2 border-b border-neutral-100">
+          <span className="text-sm text-neutral-500">Fuel Type</span>
+          <span className="text-sm font-medium text-neutral-900">{fuelType}</span>
+        </div>
+        <div className="flex justify-between py-2 border-b border-neutral-100">
+          <span className="text-sm text-neutral-500">Transmission</span>
+          <span className="text-sm font-medium text-neutral-900">{transmission}</span>
+        </div>
       </div>
 
       {/* Carfax Link */}
@@ -102,10 +112,10 @@ export function VehicleDetails({
           href={carfaxUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-sm font-medium text-violet-600 hover:text-violet-700 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
         >
           View Carfax Report
-          <ExternalLink className="h-4 w-4" />
+          <ExternalLink className="h-3.5 w-3.5" />
         </a>
       )}
     </section>
