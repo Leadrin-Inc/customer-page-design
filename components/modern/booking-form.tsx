@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Check, ArrowRight } from "lucide-react"
 
 interface BookingFormProps {
@@ -8,6 +8,13 @@ interface BookingFormProps {
   buyerName: string
   buyerPhone?: string
   dealershipName: string
+}
+
+interface DateOption {
+  dayName: string
+  dayNum: number
+  month: string
+  full: string
 }
 
 export function BookingForm({
@@ -18,19 +25,23 @@ export function BookingForm({
   const [step, setStep] = useState<"date" | "time" | "confirm" | "success">("date")
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
+  const [dates, setDates] = useState<DateOption[]>([])
 
   const firstName = salespersonName.split(" ")[0]
 
-  const dates = [...Array(7)].map((_, i) => {
-    const date = new Date()
-    date.setDate(date.getDate() + i)
-    return {
-      dayName: date.toLocaleDateString("en-US", { weekday: "short" }),
-      dayNum: date.getDate(),
-      month: date.toLocaleDateString("en-US", { month: "short" }),
-      full: date.toISOString().split("T")[0],
-    }
-  })
+  useEffect(() => {
+    const generatedDates = [...Array(7)].map((_, i) => {
+      const date = new Date()
+      date.setDate(date.getDate() + i)
+      return {
+        dayName: date.toLocaleDateString("en-US", { weekday: "short" }),
+        dayNum: date.getDate(),
+        month: date.toLocaleDateString("en-US", { month: "short" }),
+        full: date.toISOString().split("T")[0],
+      }
+    })
+    setDates(generatedDates)
+  }, [])
 
   const times = ["9:00 AM", "10:30 AM", "12:00 PM", "2:00 PM", "3:30 PM", "5:00 PM"]
 
@@ -57,6 +68,13 @@ export function BookingForm({
       {step === "date" && (
         <div className="bg-white rounded-2xl p-5">
           <p className="text-sm font-semibold text-slate-900 mb-4">Pick a day</p>
+          {dates.length === 0 ? (
+            <div className="grid grid-cols-4 gap-2 mb-2">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="p-3 rounded-xl bg-slate-50 animate-pulse h-16" />
+              ))}
+            </div>
+          ) : (
           <div className="grid grid-cols-4 gap-2 mb-2">
             {dates.slice(0, 4).map((date) => (
               <button
@@ -75,6 +93,8 @@ export function BookingForm({
               </button>
             ))}
           </div>
+          )}
+          {dates.length > 0 && (
           <div className="grid grid-cols-3 gap-2">
             {dates.slice(4).map((date) => (
               <button
@@ -93,6 +113,7 @@ export function BookingForm({
               </button>
             ))}
           </div>
+          )}
           {selectedDate && (
             <button
               onClick={() => setStep("time")}
