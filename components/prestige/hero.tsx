@@ -15,10 +15,10 @@ export function PrestigeHero({
   rating,
 }: PrestigeHeroProps) {
   return (
-    <section className="bg-foreground text-background px-6 pt-6 pb-6">
+    <section className="bg-foreground text-background px-5 pt-4 pb-4">
       {/* Compact Header */}
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-background/50">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[10px] uppercase tracking-[0.15em] text-background/50">
           Curated for {buyerName}
         </p>
         {rating && (
@@ -30,8 +30,8 @@ export function PrestigeHero({
         )}
       </div>
 
-      {/* Vehicle Title - Serif but smaller */}
-      <h1 className="font-serif text-[28px] leading-tight font-normal text-balance">
+      {/* Vehicle Title */}
+      <h1 className="font-serif text-[26px] leading-tight font-normal text-balance">
         {vehicleTitle}
       </h1>
     </section>

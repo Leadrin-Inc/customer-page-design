@@ -19,20 +19,20 @@ export function PrestigeSalespersonProfile({
   const firstName = name.split(" ")[0]
 
   return (
-    <section className="bg-background text-foreground px-6 py-16">
+    <section className="bg-background text-foreground px-5 py-10">
       {/* Header */}
-      <div className="text-center mb-10">
-        <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-4">
+      <div className="text-center mb-6">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
           Your Specialist
         </p>
-        <h2 className="font-serif text-[32px] leading-tight">
+        <h2 className="font-serif text-[26px] leading-tight">
           Meet {firstName}
         </h2>
       </div>
 
       {/* Profile Card */}
-      <div className="text-center mb-10">
-        <div className="relative h-24 w-24 mx-auto mb-4">
+      <div className="text-center mb-6">
+        <div className="relative h-20 w-20 mx-auto mb-3">
           <Image
             src={photo}
             alt={name}
@@ -40,26 +40,26 @@ export function PrestigeSalespersonProfile({
             className="object-cover"
           />
         </div>
-        <h3 className="text-lg font-semibold mb-1">{name}</h3>
-        <p className="text-sm text-muted-foreground mb-6">{title}</p>
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+        <h3 className="text-base font-semibold mb-0.5">{name}</h3>
+        <p className="text-xs text-muted-foreground mb-4">{title}</p>
+        <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
           {bio}
         </p>
       </div>
 
       {/* Highlights */}
-      <div className="grid grid-cols-3 gap-4 mb-10">
-        <div className="text-center py-4 border-t border-border">
-          <Award className="h-5 w-5 mx-auto mb-2 text-muted-foreground" />
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Top Rated</p>
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="text-center py-3 border-t border-border">
+          <Award className="h-4 w-4 mx-auto mb-1.5 text-muted-foreground" />
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Top Rated</p>
         </div>
-        <div className="text-center py-4 border-t border-border">
-          <Clock className="h-5 w-5 mx-auto mb-2 text-muted-foreground" />
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">12+ Years</p>
+        <div className="text-center py-3 border-t border-border">
+          <Clock className="h-4 w-4 mx-auto mb-1.5 text-muted-foreground" />
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">12+ Years</p>
         </div>
-        <div className="text-center py-4 border-t border-border">
-          <Shield className="h-5 w-5 mx-auto mb-2 text-muted-foreground" />
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Certified</p>
+        <div className="text-center py-3 border-t border-border">
+          <Shield className="h-4 w-4 mx-auto mb-1.5 text-muted-foreground" />
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Certified</p>
         </div>
       </div>
 
@@ -67,9 +67,9 @@ export function PrestigeSalespersonProfile({
       {phone && (
         <a
           href={`tel:${phone}`}
-          className="flex items-center justify-center gap-2 py-4 border border-foreground text-foreground text-xs uppercase tracking-[0.15em] hover:bg-foreground hover:text-background transition-colors"
+          className="flex items-center justify-center gap-2 py-3 border border-foreground text-foreground text-[10px] uppercase tracking-[0.12em] hover:bg-foreground hover:text-background transition-colors"
         >
-          <Phone className="h-4 w-4" />
+          <Phone className="h-3.5 w-3.5" />
           Call {firstName} Directly
         </a>
       )}

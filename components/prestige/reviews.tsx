@@ -38,20 +38,20 @@ export function PrestigeReviews({
   return (
     <section className="bg-foreground text-background">
       {/* Header */}
-      <div className="px-6 pt-16 pb-10 text-center">
-        <h2 className="font-serif text-[32px] leading-tight mb-6">
+      <div className="px-5 pt-8 pb-5 text-center">
+        <h2 className="font-serif text-[26px] leading-tight mb-4">
           What Our Clients Say
         </h2>
         
         {/* Aggregate Rating */}
-        <div className="flex items-center justify-center gap-4">
-          <span className="font-serif text-5xl">{aggregateRating}</span>
+        <div className="flex items-center justify-center gap-3">
+          <span className="font-serif text-4xl">{aggregateRating}</span>
           <div className="text-left">
-            <div className="flex gap-0.5 mb-1">
+            <div className="flex gap-0.5 mb-0.5">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  className={`h-4 w-4 ${
+                  className={`h-3.5 w-3.5 ${
                     star <= Math.round(aggregateRating)
                       ? "fill-background text-background"
                       : "text-background/30"
@@ -59,7 +59,7 @@ export function PrestigeReviews({
                 />
               ))}
             </div>
-            <p className="text-xs text-background/60 uppercase tracking-wider">
+            <p className="text-[10px] text-background/60 uppercase tracking-wider">
               {totalReviews.toLocaleString()} Reviews
             </p>
           </div>
@@ -67,7 +67,7 @@ export function PrestigeReviews({
       </div>
 
       {/* Scroll Controls */}
-      <div className="flex justify-center gap-2 pb-6">
+      <div className="flex justify-center gap-2 pb-4">
         <button
           onClick={() => scroll("left")}
           className="h-10 w-10 border border-background/40 flex items-center justify-center hover:border-background transition-colors"
@@ -87,20 +87,20 @@ export function PrestigeReviews({
       {/* Reviews Carousel */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide px-6 pb-16 snap-x snap-mandatory"
+        className="flex gap-3 overflow-x-auto scrollbar-hide px-5 pb-10 snap-x snap-mandatory"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {reviews.map((review) => (
           <div
             key={review.id}
-            className="flex-shrink-0 w-[280px] p-6 bg-background text-foreground snap-start"
+            className="flex-shrink-0 w-[240px] p-4 bg-background text-foreground snap-start"
           >
             {/* Rating */}
-            <div className="flex gap-0.5 mb-4">
+            <div className="flex gap-0.5 mb-3">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  className={`h-3.5 w-3.5 ${
+                  className={`h-3 w-3 ${
                     star <= review.rating
                       ? "fill-foreground text-foreground"
                       : "text-border"
@@ -110,13 +110,13 @@ export function PrestigeReviews({
             </div>
 
             {/* Excerpt */}
-            <p className="text-sm leading-relaxed mb-6 line-clamp-4">
+            <p className="text-xs leading-relaxed mb-4 line-clamp-4">
               &ldquo;{review.excerpt}&rdquo;
             </p>
 
             {/* Reviewer */}
-            <p className="text-xs font-semibold">{review.reviewerName}</p>
-            <p className="text-xs text-muted-foreground capitalize">
+            <p className="text-[11px] font-semibold">{review.reviewerName}</p>
+            <p className="text-[10px] text-muted-foreground capitalize">
               via {review.source === "carscom" ? "Cars.com" : review.source}
             </p>
           </div>

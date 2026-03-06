@@ -36,18 +36,18 @@ export function PrestigeVehicleMedia({
   return (
     <section className="bg-foreground text-background">
       {/* Section Header */}
-      <div className="px-6 pt-16 pb-8 text-center">
-        <h2 className="font-serif text-[32px] leading-tight mb-3">
+      <div className="px-5 pt-8 pb-4 text-center">
+        <h2 className="font-serif text-[26px] leading-tight mb-2">
           Explore Every Detail
         </h2>
-        <p className="text-sm text-background/60 max-w-xs mx-auto">
-          Discover the craftsmanship and innovation that define this vehicle.
+        <p className="text-xs text-background/60 max-w-xs mx-auto">
+          Discover the craftsmanship that defines this vehicle.
         </p>
       </div>
 
       {/* Tab Switcher */}
       {hasFeatures && hasVideo && (
-        <div className="flex justify-center gap-4 pb-8">
+        <div className="flex justify-center gap-3 pb-5">
           <button
             onClick={() => setActiveTab("features")}
             className={`px-6 py-2 text-xs uppercase tracking-[0.15em] border transition-colors ${
@@ -73,9 +73,9 @@ export function PrestigeVehicleMedia({
 
       {/* Features View */}
       {activeTab === "features" && (
-        <div className="px-6 pb-16">
+        <div className="px-5 pb-10">
           {/* Vehicle Image with Hotspots */}
-          <div className="relative aspect-[4/3] mb-8">
+          <div className="relative aspect-[4/3] mb-5">
             <Image
               src={vehicleImage}
               alt={vehicleTitle}
@@ -107,13 +107,13 @@ export function PrestigeVehicleMedia({
               <button
                 key={feature.id}
                 onClick={() => setActiveFeature(feature)}
-                className="w-full flex items-center justify-between py-4 border-b border-background/20 text-left group"
+                className="w-full flex items-center justify-between py-3 border-b border-background/20 text-left group"
               >
                 <div>
-                  <p className="text-xs uppercase tracking-[0.15em] text-background/50 mb-1">
+                  <p className="text-[10px] uppercase tracking-[0.12em] text-background/50 mb-0.5">
                     {feature.category}
                   </p>
-                  <p className="text-base font-medium">{feature.name}</p>
+                  <p className="text-sm font-medium">{feature.name}</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-background/40 group-hover:text-background transition-colors" />
               </button>
@@ -124,7 +124,7 @@ export function PrestigeVehicleMedia({
 
       {/* Video View */}
       {activeTab === "video" && walkaroundVideo && (
-        <div className="px-6 pb-16">
+        <div className="px-5 pb-10">
           <div className="relative aspect-video">
             {!isVideoPlaying ? (
               <button

@@ -42,15 +42,15 @@ export function PrestigeVehicleDetails({
   return (
     <section className="bg-background text-foreground">
       {/* Section Header */}
-      <div className="px-6 pt-16 pb-10 text-center">
-        <h2 className="font-serif text-[32px] leading-tight mb-3">
+      <div className="px-5 pt-8 pb-5 text-center">
+        <h2 className="font-serif text-[26px] leading-tight mb-1">
           {year} {make} {model}
         </h2>
-        <p className="text-sm text-muted-foreground">{trim}</p>
+        <p className="text-xs text-muted-foreground">{trim}</p>
       </div>
 
       {/* Photo Gallery */}
-      <div className="relative aspect-[4/3] mx-6 mb-10">
+      <div className="relative aspect-[4/3] mx-5 mb-6">
         <Image
           src={photos[currentPhotoIndex]}
           alt={`${year} ${make} ${model} - Photo ${currentPhotoIndex + 1}`}
@@ -85,48 +85,48 @@ export function PrestigeVehicleDetails({
       </div>
 
       {/* Price */}
-      <div className="px-6 pb-8 text-center">
-        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+      <div className="px-5 pb-5 text-center">
+        <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
           Price
         </p>
-        <p className="font-serif text-[40px]">
+        <p className="font-serif text-[32px]">
           ${price.toLocaleString()}
         </p>
       </div>
 
       {/* Specs Grid */}
-      <div className="px-6 pb-12">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="text-center py-6 border-t border-border">
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+      <div className="px-5 pb-8">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center py-4 border-t border-border">
+            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
               Mileage
             </p>
-            <p className="text-xl font-light">{mileage.toLocaleString()} mi</p>
+            <p className="text-base font-light">{mileage.toLocaleString()} mi</p>
           </div>
-          <div className="text-center py-6 border-t border-border">
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+          <div className="text-center py-4 border-t border-border">
+            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
               Fuel Type
             </p>
-            <p className="text-xl font-light">{fuelType}</p>
+            <p className="text-base font-light">{fuelType}</p>
           </div>
-          <div className="text-center py-6 border-t border-border">
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+          <div className="text-center py-4 border-t border-border">
+            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
               Transmission
             </p>
-            <p className="text-xl font-light">{transmission}</p>
+            <p className="text-base font-light">{transmission}</p>
           </div>
-          <div className="text-center py-6 border-t border-border">
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+          <div className="text-center py-4 border-t border-border">
+            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
               Year
             </p>
-            <p className="text-xl font-light">{year}</p>
+            <p className="text-base font-light">{year}</p>
           </div>
         </div>
       </div>
 
       {/* Carfax Link */}
       {carfaxUrl && (
-        <div className="px-6 pb-16">
+        <div className="px-5 pb-10">
           <a
             href={carfaxUrl}
             target="_blank"

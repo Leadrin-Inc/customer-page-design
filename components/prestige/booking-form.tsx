@@ -53,36 +53,36 @@ export const PrestigeBookingForm = forwardRef<HTMLElement, PrestigeBookingFormPr
     return (
       <section ref={ref} className="bg-background text-foreground">
         {/* Header */}
-        <div className="px-6 pt-16 pb-10 text-center">
-          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-4">
+        <div className="px-5 pt-8 pb-5 text-center">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
             Private Viewing
           </p>
-          <h2 className="font-serif text-[32px] leading-tight mb-3">
+          <h2 className="font-serif text-[26px] leading-tight mb-2">
             Schedule Your Visit
           </h2>
-          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-            Reserve a time for an exclusive, personalized experience.
+          <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+            Reserve a time for an exclusive experience.
           </p>
         </div>
 
         {/* Date Selection */}
         {step === "date" && (
-          <div className="px-6 pb-16">
-            <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-4 text-center">
+          <div className="px-5 pb-10">
+            <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground mb-3 text-center">
               Select a Date
             </p>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {availableDates.map((d) => (
                 <button
                   key={d.date}
                   onClick={() => handleDateSelect(d.date)}
-                  className="w-full flex items-center justify-between py-4 px-5 border border-border hover:border-foreground transition-colors text-left group"
+                  className="w-full flex items-center justify-between py-3 px-4 border border-border hover:border-foreground transition-colors text-left group"
                 >
                   <div>
-                    <p className="text-sm font-medium">{d.day}, {d.date}</p>
-                    <p className="text-xs text-muted-foreground">{d.slots} times available</p>
+                    <p className="text-xs font-medium">{d.day}, {d.date}</p>
+                    <p className="text-[10px] text-muted-foreground">{d.slots} times available</p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </button>
               ))}
             </div>
@@ -91,16 +91,16 @@ export const PrestigeBookingForm = forwardRef<HTMLElement, PrestigeBookingFormPr
 
         {/* Time Selection */}
         {step === "time" && (
-          <div className="px-6 pb-16">
-            <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-4 text-center">
+          <div className="px-5 pb-10">
+            <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground mb-3 text-center">
               {selectedDate} - Select a Time
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {availableTimes.map((time) => (
                 <button
                   key={time}
                   onClick={() => handleTimeSelect(time)}
-                  className="py-4 border border-border text-sm font-medium hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
+                  className="py-3 border border-border text-xs font-medium hover:border-foreground hover:bg-foreground hover:text-background transition-colors"
                 >
                   {time}
                 </button>
@@ -108,7 +108,7 @@ export const PrestigeBookingForm = forwardRef<HTMLElement, PrestigeBookingFormPr
             </div>
             <button
               onClick={() => setStep("date")}
-              className="mt-6 w-full py-3 text-xs uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors"
+              className="mt-4 w-full py-2 text-[10px] uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground transition-colors"
             >
               Back to dates
             </button>
@@ -117,23 +117,23 @@ export const PrestigeBookingForm = forwardRef<HTMLElement, PrestigeBookingFormPr
 
         {/* Confirmation */}
         {step === "confirm" && (
-          <div className="px-6 pb-16 text-center">
-            <div className="py-8 border border-border mb-6">
-              <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-2">
+          <div className="px-5 pb-10 text-center">
+            <div className="py-5 border border-border mb-4">
+              <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground mb-1">
                 Your Appointment
               </p>
-              <p className="font-serif text-2xl mb-1">{selectedDate}</p>
-              <p className="text-lg text-muted-foreground">{selectedTime}</p>
+              <p className="font-serif text-xl mb-0.5">{selectedDate}</p>
+              <p className="text-base text-muted-foreground">{selectedTime}</p>
             </div>
             <button
               onClick={handleConfirm}
-              className="w-full py-4 bg-foreground text-background text-sm uppercase tracking-[0.15em] hover:bg-foreground/90 transition-colors mb-4"
+              className="w-full py-3 bg-foreground text-background text-xs uppercase tracking-[0.12em] hover:bg-foreground/90 transition-colors mb-3"
             >
               Confirm Appointment
             </button>
             <button
               onClick={() => setStep("time")}
-              className="w-full py-3 text-xs uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors"
+              className="w-full py-2 text-[10px] uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground transition-colors"
             >
               Change time
             </button>
@@ -142,16 +142,16 @@ export const PrestigeBookingForm = forwardRef<HTMLElement, PrestigeBookingFormPr
 
         {/* Success */}
         {step === "success" && (
-          <div className="px-6 pb-16 text-center">
-            <div className="py-10">
-              <h3 className="font-serif text-2xl mb-3">
+          <div className="px-5 pb-10 text-center">
+            <div className="py-6">
+              <h3 className="font-serif text-xl mb-2">
                 {"You're confirmed, "}{firstName}
               </h3>
-              <p className="text-sm text-muted-foreground mb-6">
+              <p className="text-xs text-muted-foreground mb-4">
                 We look forward to seeing you on {selectedDate} at {selectedTime}.
               </p>
-              <p className="text-xs text-muted-foreground">
-                A confirmation has been sent to your email. {dealershipName} will reach out with any final details.
+              <p className="text-[10px] text-muted-foreground">
+                A confirmation has been sent to your email.
               </p>
             </div>
           </div>

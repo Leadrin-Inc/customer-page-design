@@ -20,19 +20,19 @@ export function PrestigeSalespersonVideo({
 
   return (
     <section className="bg-foreground text-background">
-      <div className="px-6 pt-16 pb-8 text-center">
-        <p className="text-xs uppercase tracking-[0.25em] text-background/50 mb-4">
+      <div className="px-5 pt-8 pb-4 text-center">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-background/50 mb-2">
           Personal Introduction
         </p>
-        <h2 className="font-serif text-[32px] leading-tight mb-3">
+        <h2 className="font-serif text-[26px] leading-tight mb-2">
           A Message from {firstName}
         </h2>
-        <p className="text-sm text-background/60 max-w-xs mx-auto">
-          A personal video prepared exclusively for you.
+        <p className="text-xs text-background/60 max-w-xs mx-auto">
+          A personal video prepared for you.
         </p>
       </div>
 
-      <div className="px-6 pb-16">
+      <div className="px-5 pb-10">
         <div className="relative aspect-video">
           {!isPlaying ? (
             <button
