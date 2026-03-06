@@ -4,20 +4,14 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { X, ChevronLeft, ChevronRight, Play, Pause, Phone, Calendar, RotateCcw } from "lucide-react"
 import Image from "next/image"
 
-// 360 spin frames from Scaleflex CDN
-const spinFrames = Array.from({ length: 36 }, (_, i) => 
-  `https://scaleflex.cloudimg.io/v7/demo/360-car/car-${i + 1}.jpg`
-)
-
-// Tour segment data model with targetFrame for spin viewer (1-36)
-// Frame mapping: 1 = front, 10 = right side, 19 = rear, 28 = left side
+// Tour segment data model with targetRotation for spin viewer
 interface TourSegment {
   id: string
   label: string
   icon: string
   narrationEN: string
   narrationES: string
-  targetFrame: number // frame 1-36 for vehicle spin
+  targetRotation: number // degrees 0-360 for vehicle spin
   accentColor: string
   durationMs: number
 }
@@ -34,9 +28,7 @@ interface VirtualTourProps {
   onCall?: () => void
 }
 
-// Sample tour data for 2024 Toyota RAV4 Limited AWD
-// Each segment has a targetFrame (1-36) to show the relevant angle
-// Frame mapping: 1 = front, 10 = right side, 19 = rear, 28 = left side
+// Sample tour data - each segment has a targetRotation (0-360)
 const tourSegments: TourSegment[] = [
   {
     id: "welcome",
@@ -44,7 +36,7 @@ const tourSegments: TourSegment[] = [
     icon: "hand-wave",
     narrationEN: "Welcome, Sarah. I'm excited to personally guide you through this exceptional vehicle. Let me show you why this could be the perfect match for you.",
     narrationES: "Bienvenida, Sarah. Estoy emocionado de guiarte personalmente a traves de este excepcional vehiculo. Dejame mostrarte por que este podria ser el auto perfecto para ti.",
-    targetFrame: 1, // front view
+    targetRotation: 0,
     accentColor: "#c9a227",
     durationMs: 8000,
   },
@@ -54,7 +46,7 @@ const tourSegments: TourSegment[] = [
     icon: "engine",
     narrationEN: "Under the hood, you'll find a refined powertrain that delivers both performance and efficiency. The smooth power delivery makes every drive a pleasure.",
     narrationES: "Bajo el capo, encontraras un tren motriz refinado que ofrece rendimiento y eficiencia. La entrega de potencia suave hace que cada viaje sea un placer.",
-    targetFrame: 4, // front quarter angle
+    targetRotation: 30,
     accentColor: "#dc2626",
     durationMs: 7000,
   },
@@ -64,7 +56,7 @@ const tourSegments: TourSegment[] = [
     icon: "armchair",
     narrationEN: "Step inside and experience true luxury. Premium materials, meticulous craftsmanship, and thoughtful design create an environment you'll love spending time in.",
     narrationES: "Entra y experimenta el verdadero lujo. Materiales premium, artesania meticulosa y diseno pensado crean un ambiente en el que te encantara pasar tiempo.",
-    targetFrame: 10, // side view
+    targetRotation: 90,
     accentColor: "#7c3aed",
     durationMs: 7000,
   },
@@ -74,7 +66,7 @@ const tourSegments: TourSegment[] = [
     icon: "cpu",
     narrationEN: "Advanced technology keeps you connected and in control. The intuitive interface and premium audio system make every journey more enjoyable.",
     narrationES: "La tecnologia avanzada te mantiene conectado y en control. La interfaz intuitiva y el sistema de audio premium hacen que cada viaje sea mas agradable.",
-    targetFrame: 13, // slightly past side view
+    targetRotation: 120,
     accentColor: "#0ea5e9",
     durationMs: 7000,
   },
@@ -84,7 +76,7 @@ const tourSegments: TourSegment[] = [
     icon: "shield",
     narrationEN: "Your safety is paramount. This vehicle comes equipped with a comprehensive suite of advanced safety features to protect you and your loved ones.",
     narrationES: "Tu seguridad es primordial. Este vehiculo viene equipado con un conjunto completo de funciones de seguridad avanzadas para protegerte a ti y a tus seres queridos.",
-    targetFrame: 16, // rear quarter angle
+    targetRotation: 150,
     accentColor: "#22c55e",
     durationMs: 7000,
   },
@@ -94,7 +86,7 @@ const tourSegments: TourSegment[] = [
     icon: "package",
     narrationEN: "Generous cargo space and flexible configurations adapt to your lifestyle. Whether it's a weekend getaway or daily errands, you'll have room for it all.",
     narrationES: "Amplio espacio de carga y configuraciones flexibles se adaptan a tu estilo de vida. Ya sea una escapada de fin de semana o recados diarios, tendras espacio para todo.",
-    targetFrame: 19, // rear view
+    targetRotation: 180,
     accentColor: "#f59e0b",
     durationMs: 7000,
   },
@@ -104,7 +96,7 @@ const tourSegments: TourSegment[] = [
     icon: "calendar",
     narrationEN: "I hope you've enjoyed this tour, Sarah. I'd love to show you this vehicle in person. Let's schedule a time that works for you.",
     narrationES: "Espero que hayas disfrutado este recorrido, Sarah. Me encantaria mostrarte este vehiculo en persona. Programemos un horario que te funcione.",
-    targetFrame: 1, // back to front
+    targetRotation: 360,
     accentColor: "#c9a227",
     durationMs: 6000,
   },
@@ -129,20 +121,17 @@ export function PrestigeVirtualTour({
   const [progress, setProgress] = useState(0)
   const [showCTA, setShowCTA] = useState(false)
   
-  // Spin viewer state - frame-based (1-36)
-  const [currentFrame, setCurrentFrame] = useState(1)
-  const [prevFrame, setPrevFrame] = useState(1)
-  const [crossfadeOpacity, setCrossfadeOpacity] = useState(1)
+  // Spin viewer state - CSS 3D rotation based
+  const [rotation, setRotation] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStartX, setDragStartX] = useState(0)
-  const [dragStartFrame, setDragStartFrame] = useState(1)
+  const [dragStartRotation, setDragStartRotation] = useState(0)
   const [velocity, setVelocity] = useState(0)
   const [lastDragX, setLastDragX] = useState(0)
   const [lastDragTime, setLastDragTime] = useState(0)
   const [captionExpanded, setCaptionExpanded] = useState(false)
-  const [particles, setParticles] = useState<Array<{ id: number; frame: number; opacity: number }>>([])
-  const [framesLoaded, setFramesLoaded] = useState(false)
-  const [loadingProgress, setLoadingProgress] = useState(0)
+  const [particles, setParticles] = useState<Array<{ id: number; angle: number; opacity: number }>>([])
+  const [oscillationOffset, setOscillationOffset] = useState(0)
   
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const typewriterIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -150,74 +139,9 @@ export function PrestigeVirtualTour({
   const autoSpinRef = useRef<NodeJS.Timeout | null>(null)
   const oscillationRef = useRef<NodeJS.Timeout | null>(null)
   const spinContainerRef = useRef<HTMLDivElement>(null)
-  const preloadedImages = useRef<HTMLImageElement[]>([])
-  
-  // Helper: wrap frame index 1-36
-  const wrapFrame = (frame: number): number => {
-    const wrapped = ((frame - 1) % 36 + 36) % 36 + 1
-    return wrapped
-  }
-  
-  // Crossfade between frames
-  const transitionToFrame = useCallback((newFrame: number) => {
-    const wrappedFrame = wrapFrame(newFrame)
-    if (wrappedFrame !== currentFrame) {
-      setPrevFrame(currentFrame)
-      setCrossfadeOpacity(0)
-      setCurrentFrame(wrappedFrame)
-      // Fade in new frame
-      setTimeout(() => setCrossfadeOpacity(1), 10)
-    }
-  }, [currentFrame])
 
   const currentSegment = tourSegments[currentSegmentIndex]
   const narrationText = language === "en" ? currentSegment.narrationEN : currentSegment.narrationES
-
-  // Preload all 36 frames on mount
-  useEffect(() => {
-    let loadedCount = 0
-    let errorCount = 0
-    const images: HTMLImageElement[] = []
-    
-    console.log("[v0] Starting to preload 36 spin frames...")
-    
-    spinFrames.forEach((src, index) => {
-      const img = new window.Image()
-      img.crossOrigin = "anonymous"
-      img.onload = () => {
-        loadedCount++
-        console.log(`[v0] Frame ${index + 1} loaded (${loadedCount}/36)`)
-        setLoadingProgress(Math.round((loadedCount / 36) * 100))
-        if (loadedCount + errorCount === 36) {
-          console.log("[v0] All frames processed, loaded:", loadedCount, "errors:", errorCount)
-          setFramesLoaded(true)
-        }
-      }
-      img.onerror = (e) => {
-        errorCount++
-        console.error(`[v0] Frame ${index + 1} failed to load:`, src, e)
-        setLoadingProgress(Math.round(((loadedCount + errorCount) / 36) * 100))
-        if (loadedCount + errorCount === 36) {
-          console.log("[v0] All frames processed, loaded:", loadedCount, "errors:", errorCount)
-          setFramesLoaded(true)
-        }
-      }
-      img.src = src
-      images[index] = img
-    })
-    
-    preloadedImages.current = images
-    
-    // Fallback: if loading takes more than 5 seconds, show anyway
-    const fallbackTimer = setTimeout(() => {
-      if (!framesLoaded) {
-        console.log("[v0] Fallback timer triggered - showing frames anyway")
-        setFramesLoaded(true)
-      }
-    }, 5000)
-    
-    return () => clearTimeout(fallbackTimer)
-  }, [])
 
   // Cleanup function
   const cleanup = useCallback(() => {
@@ -234,12 +158,12 @@ export function PrestigeVirtualTour({
     }
   }, [])
 
-  // Auto-spin for pre-tour mode - cycle through frames at ~100ms intervals
+  // Auto-spin for pre-tour mode (continuous rotation)
   useEffect(() => {
-    if (!isTourActive && framesLoaded) {
+    if (!isTourActive) {
       autoSpinRef.current = setInterval(() => {
-        setCurrentFrame(prev => wrapFrame(prev + 1))
-      }, 100)
+        setRotation(prev => (prev + 0.5) % 360)
+      }, 16)
     } else {
       if (autoSpinRef.current) {
         clearInterval(autoSpinRef.current)
@@ -251,20 +175,21 @@ export function PrestigeVirtualTour({
         clearInterval(autoSpinRef.current)
       }
     }
-  }, [isTourActive, framesLoaded])
+  }, [isTourActive])
 
-  // Oscillation effect when paused - alternate ±1 frame every 2 seconds
-  const baseFrameRef = useRef(currentFrame)
+  // Oscillation effect when paused (subtle ±3° movement)
   useEffect(() => {
-    if (isTourActive && !isPlaying && !isDragging && framesLoaded) {
-      baseFrameRef.current = currentFrame
+    if (isTourActive && !isPlaying && !isDragging) {
       let direction = 1
+      let offset = 0
       oscillationRef.current = setInterval(() => {
-        const newFrame = wrapFrame(baseFrameRef.current + direction)
-        setCurrentFrame(newFrame)
-        direction *= -1
-      }, 2000)
+        offset += direction * 0.15
+        if (offset >= 3) direction = -1
+        if (offset <= -3) direction = 1
+        setOscillationOffset(offset)
+      }, 50)
     } else {
+      setOscillationOffset(0)
       if (oscillationRef.current) {
         clearInterval(oscillationRef.current)
         oscillationRef.current = null
@@ -275,72 +200,41 @@ export function PrestigeVirtualTour({
         clearInterval(oscillationRef.current)
       }
     }
-  }, [isTourActive, isPlaying, isDragging, framesLoaded])
+  }, [isTourActive, isPlaying, isDragging])
 
-  // Smoothly advance to target frame when segment changes
+  // Smoothly interpolate to target rotation when segment changes
   useEffect(() => {
-    if (isTourActive && isPlaying && !isDragging && framesLoaded) {
-      const target = currentSegment.targetFrame
-      let current = currentFrame
-      
-      // If already at target, skip
-      if (current === target) return
-      
-      const advanceInterval = setInterval(() => {
-        if (current === target) {
-          clearInterval(advanceInterval)
-          return
-        }
-        // Determine direction for shortest path
-        let diff = target - current
-        if (Math.abs(diff) > 18) {
-          // Wrap around is shorter
-          diff = diff > 0 ? diff - 36 : diff + 36
-        }
-        const step = diff > 0 ? 1 : -1
-        current = wrapFrame(current + step)
-        setCurrentFrame(current)
-      }, 80) // ~12.5 fps for smooth advance
-      
-      return () => clearInterval(advanceInterval)
+    if (isTourActive && isPlaying && !isDragging) {
+      setRotation(currentSegment.targetRotation)
     }
-  }, [currentSegmentIndex, isTourActive, isPlaying, isDragging, framesLoaded, currentSegment.targetFrame])
+  }, [currentSegmentIndex, isTourActive, isPlaying, isDragging, currentSegment.targetRotation])
 
-  // Momentum/inertia effect - decelerate after flick (frame-based)
+  // Momentum/inertia effect - decelerate after flick
   useEffect(() => {
-    if (!isDragging && Math.abs(velocity) > 0.3) {
-      let vel = velocity
-      let accumulatedDelta = 0
-      
+    if (!isDragging && Math.abs(velocity) > 0.5) {
       const momentumInterval = setInterval(() => {
-        vel *= 0.92 // friction
-        accumulatedDelta += vel
-        
-        // Every 15px of accumulated movement = 1 frame change
-        if (Math.abs(accumulatedDelta) >= 15) {
-          const frameChange = Math.sign(accumulatedDelta)
-          accumulatedDelta = 0
-          transitionToFrame(currentFrame + frameChange)
+        setVelocity(prev => {
+          const newVelocity = prev * 0.95 // friction
+          if (Math.abs(newVelocity) < 0.5) {
+            clearInterval(momentumInterval)
+            return 0
+          }
+          setRotation(r => (r + newVelocity) % 360)
           
           // Add particle trail during momentum
-          if (Math.abs(vel) > 1) {
+          if (Math.abs(newVelocity) > 2) {
             setParticles(prev => [
               ...prev.slice(-8),
-              { id: Date.now(), frame: currentFrame, opacity: Math.min(Math.abs(vel) / 5, 1) }
+              { id: Date.now(), angle: rotation, opacity: Math.min(Math.abs(newVelocity) / 10, 1) }
             ])
           }
-        }
-        
-        if (Math.abs(vel) < 0.3) {
-          clearInterval(momentumInterval)
-          setVelocity(0)
-        } else {
-          setVelocity(vel)
-        }
+          
+          return newVelocity
+        })
       }, 16)
       return () => clearInterval(momentumInterval)
     }
-  }, [isDragging, velocity, currentFrame, transitionToFrame])
+  }, [isDragging, velocity, rotation])
 
   // Fade out particles
   useEffect(() => {
@@ -354,33 +248,28 @@ export function PrestigeVirtualTour({
     }
   }, [particles.length])
 
-  // Drag to rotate handlers - map ~15px drag to ±1 frame change
+  // Drag to rotate handlers
   const handleDragStart = (clientX: number) => {
-    if (!isTourActive || isPlaying || !framesLoaded) return
+    if (!isTourActive || isPlaying) return
     setIsDragging(true)
     setVelocity(0)
     setDragStartX(clientX)
-    setDragStartFrame(currentFrame)
+    setDragStartRotation(rotation)
     setLastDragX(clientX)
     setLastDragTime(Date.now())
   }
 
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return
-    const totalDelta = clientX - dragStartX
-    // Every 15px = 1 frame change
-    const frameChange = Math.round(totalDelta / 15)
-    const newFrame = wrapFrame(dragStartFrame + frameChange)
-    if (newFrame !== currentFrame) {
-      transitionToFrame(newFrame)
-    }
+    const delta = (clientX - dragStartX) * 0.5 // sensitivity
+    setRotation((dragStartRotation + delta) % 360)
     
     // Track velocity for momentum
     const now = Date.now()
     const timeDelta = now - lastDragTime
     if (timeDelta > 0) {
-      const moveDelta = clientX - lastDragX
-      setVelocity(moveDelta / Math.max(timeDelta, 16) * 16) // normalize to ~60fps
+      const moveDelta = (clientX - lastDragX) * 0.5
+      setVelocity(moveDelta / Math.max(timeDelta, 16) * 16)
     }
     setLastDragX(clientX)
     setLastDragTime(now)
@@ -388,7 +277,6 @@ export function PrestigeVirtualTour({
 
   const handleDragEnd = () => {
     setIsDragging(false)
-    // Velocity is already set from handleDragMove, momentum effect will take over
   }
 
   // Mouse events
@@ -489,7 +377,7 @@ export function PrestigeVirtualTour({
     return cleanup
   }, [currentSegmentIndex, isPlaying, isTourActive, startSegment, cleanup])
 
-  // Handle language change - restart current segment
+  // Handle language change
   useEffect(() => {
     if (isTourActive && isPlaying) {
       startSegment()
@@ -499,7 +387,7 @@ export function PrestigeVirtualTour({
   const handleStartTour = () => {
     setIsTourActive(true)
     setCurrentSegmentIndex(0)
-    transitionToFrame(1)
+    setRotation(0)
     setIsPlaying(true)
     setShowCTA(false)
   }
@@ -519,8 +407,7 @@ export function PrestigeVirtualTour({
         window.speechSynthesis.cancel()
       }
     } else {
-      // When resuming, smoothly go back to target frame
-      transitionToFrame(currentSegment.targetFrame)
+      setRotation(currentSegment.targetRotation)
     }
     setIsPlaying(!isPlaying)
   }
@@ -547,7 +434,7 @@ export function PrestigeVirtualTour({
   const handleReplay = () => {
     setShowCTA(false)
     setCurrentSegmentIndex(0)
-    transitionToFrame(1)
+    setRotation(0)
     setIsPlaying(true)
   }
 
@@ -558,155 +445,152 @@ export function PrestigeVirtualTour({
     setIsPlaying(true)
   }
 
-  // Spin Viewer Component - Frame-based 360 viewer
-  const SpinViewer = ({ autoSpin = false }: { autoSpin?: boolean }) => {
-    // Calculate frame angle for particle positioning
-    const frameAngle = (currentFrame - 1) * 10 // 36 frames = 360 degrees
-    
-    return (
-      <div 
-        ref={spinContainerRef}
-        className={`relative w-full h-full flex items-center justify-center ${!autoSpin && !isPlaying ? 'cursor-grab active:cursor-grabbing' : ''}`}
-        onMouseDown={!autoSpin ? onMouseDown : undefined}
-        onMouseMove={!autoSpin ? onMouseMove : undefined}
-        onMouseUp={!autoSpin ? onMouseUp : undefined}
-        onMouseLeave={!autoSpin ? onMouseLeave : undefined}
-        onTouchStart={!autoSpin ? onTouchStart : undefined}
-        onTouchMove={!autoSpin ? onTouchMove : undefined}
-        onTouchEnd={!autoSpin ? onTouchEnd : undefined}
+  // Calculate display rotation (target + oscillation when paused)
+  const displayRotation = isTourActive && !isPlaying ? rotation + oscillationOffset : rotation
+
+  // Spin Viewer Component with CSS 3D rotation
+  const SpinViewer = ({ autoSpin = false }: { autoSpin?: boolean }) => (
+    <div 
+      ref={spinContainerRef}
+      className={`relative w-full h-full flex items-center justify-center ${!autoSpin && !isPlaying ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      style={{ perspective: "1000px" }}
+      onMouseDown={!autoSpin ? onMouseDown : undefined}
+      onMouseMove={!autoSpin ? onMouseMove : undefined}
+      onMouseUp={!autoSpin ? onMouseUp : undefined}
+      onMouseLeave={!autoSpin ? onMouseLeave : undefined}
+      onTouchStart={!autoSpin ? onTouchStart : undefined}
+      onTouchMove={!autoSpin ? onTouchMove : undefined}
+      onTouchEnd={!autoSpin ? onTouchEnd : undefined}
+    >
+      {/* Light streak particles */}
+      {!autoSpin && particles.map(particle => (
+        <div
+          key={particle.id}
+          className="absolute left-1/2 top-1/2 w-20 h-0.5 rounded-full pointer-events-none"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${currentSegment.accentColor})`,
+            opacity: particle.opacity * 0.5,
+            transform: `translate(-50%, -50%) rotate(${particle.angle}deg) translateX(100px)`,
+            filter: "blur(1px)",
+          }}
+        />
+      ))}
+
+      {/* Vehicle with 3D rotation */}
+      <div
+        className={`relative w-[85%] aspect-[16/10] ${isDragging || Math.abs(velocity) > 0.5 ? '' : 'transition-transform duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)]'}`}
+        style={{
+          transform: `rotateY(${displayRotation}deg)`,
+          transformStyle: "preserve-3d",
+        }}
       >
-        {/* Loading indicator - positioned at bottom, doesn't block view */}
-        {!framesLoaded && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
-            <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-[#c9a227] transition-all duration-200"
-                style={{ width: `${loadingProgress}%` }}
-              />
-            </div>
-            <p className="mt-2 text-[10px] text-white/40 font-mono">Loading... {loadingProgress}%</p>
-          </div>
-        )}
+        <Image
+          src={vehicleImage}
+          alt={vehicleTitle}
+          fill
+          className="object-contain pointer-events-none"
+          priority
+        />
+      </div>
 
-        {/* Light streak particles following rotation */}
-        {!autoSpin && particles.map(particle => (
-          <div
-            key={particle.id}
-            className="absolute left-1/2 top-1/2 w-20 h-0.5 rounded-full pointer-events-none"
-            style={{
-              background: `linear-gradient(90deg, transparent, ${currentSegment.accentColor})`,
-              opacity: particle.opacity * 0.5,
-              transform: `translate(-50%, -50%) rotate(${particle.frame * 10}deg) translateX(100px)`,
-              filter: "blur(1px)",
-            }}
-          />
-        ))}
-
-        {/* Vehicle frames with crossfade */}
-        <div className="relative w-[90%] aspect-[16/10]">
-          {/* Previous frame (for crossfade) */}
-          {prevFrame !== currentFrame && (
-            <img
-              src={spinFrames[prevFrame - 1]}
-              alt=""
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-              style={{ opacity: 1 - crossfadeOpacity }}
-            />
-          )}
-          {/* Current frame - always show, even while loading */}
-          <img
-            src={spinFrames[currentFrame - 1]}
-            alt={vehicleTitle}
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-opacity duration-150"
-            style={{ opacity: crossfadeOpacity }}
-            onError={(e) => console.error("[v0] Image display error:", e)}
+      {/* Ground reflection */}
+      <div 
+        className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[80%] h-[30%] overflow-hidden opacity-20 blur-[2px]"
+        style={{ 
+          transform: `translateX(-50%) rotateX(180deg) rotateY(${displayRotation}deg)`,
+          maskImage: "linear-gradient(to top, black 0%, transparent 80%)",
+          WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 80%)",
+        }}
+      >
+        <div className="relative w-full h-full">
+          <Image
+            src={vehicleImage}
+            alt=""
+            fill
+            className="object-contain"
           />
         </div>
-
-        {/* Ground reflection */}
-        {framesLoaded && (
-          <div 
-            className="absolute bottom-[2%] left-1/2 -translate-x-1/2 w-[85%] h-[25%] overflow-hidden opacity-15 blur-[2px] pointer-events-none"
-            style={{ 
-              transform: "translateX(-50%) scaleY(-1)",
-              maskImage: "linear-gradient(to top, black 0%, transparent 70%)",
-              WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 70%)",
-            }}
-          >
-            <img
-              src={spinFrames[currentFrame - 1]}
-              alt=""
-              className="w-full h-full object-contain"
-            />
-          </div>
-        )}
-
-        {/* Ground shadow */}
-        <div 
-          className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[65%] h-6 rounded-[100%] bg-black/30 blur-xl pointer-events-none"
-        />
-
-        {/* Drag hint when paused */}
-        {!autoSpin && !isPlaying && framesLoaded && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white/30 text-xs font-mono">
-            <span>← Drag to rotate →</span>
-          </div>
-        )}
       </div>
-    )
-  }
+
+      {/* Ground shadow */}
+      <div 
+        className="absolute bottom-[8%] left-1/2 -translate-x-1/2 w-[70%] h-8 rounded-[100%] bg-black/40 blur-xl"
+        style={{
+          transform: `translateX(-50%) scaleX(${1 + Math.abs(Math.sin(displayRotation * Math.PI / 180)) * 0.2})`,
+        }}
+      />
+
+      {/* Drag hint when paused */}
+      {!autoSpin && !isPlaying && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white/30 text-xs font-mono">
+          <span>{"<-"} Drag to rotate {"->"}</span>
+        </div>
+      )}
+    </div>
+  )
 
   // Pre-tour landing view
   if (!isTourActive) {
     return (
-      <section className="relative mx-5 my-8 overflow-hidden rounded-sm bg-[#0d1117]">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0d1117] via-[#0d1117]/80 to-[#0d1117]" />
-        
-        <div className="relative aspect-[4/5] flex flex-col items-center justify-between py-8 px-6">
-          {/* Top - Personalization */}
-          <div className="text-center z-10">
-            <p className="text-xs tracking-[0.25em] text-[#c9a227] uppercase font-mono">
-              Personalized for {buyerName}
-            </p>
+      <section className="relative bg-[#0d1117] overflow-hidden">
+        {/* Spin Viewer Background */}
+        <div className="absolute inset-0 opacity-30">
+          <SpinViewer autoSpin />
+        </div>
+
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0d1117] via-transparent to-[#0d1117]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0d1117]/80 via-transparent to-[#0d1117]/80" />
+
+        {/* Content */}
+        <div className="relative z-10 px-6 py-12 flex flex-col items-center">
+          {/* Personalized greeting */}
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#c9a227] mb-2">
+            Exclusive Preview for
+          </p>
+          <h2 className="text-2xl font-serif text-white mb-6">
+            {buyerName}
+          </h2>
+
+          {/* Vehicle info */}
+          <h3 className="text-lg font-light text-white/80 text-center mb-2">
+            {vehicleTitle}
+          </h3>
+          <p className="text-2xl font-serif text-white mb-8">
+            ${price.toLocaleString()}
+          </p>
+
+          {/* Start Tour CTA */}
+          <button
+            onClick={handleStartTour}
+            className="group relative px-8 py-4 bg-[#c9a227] text-[#0d1117] font-semibold tracking-wide overflow-hidden transition-all hover:scale-105 active:scale-95"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              <Play className="h-4 w-4" />
+              Start Virtual Tour
+            </span>
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            {/* Glow effect */}
+            <div className="absolute -inset-1 bg-[#c9a227]/30 blur-lg animate-pulse" />
+          </button>
+
+          {/* Tour metadata */}
+          <div className="flex items-center gap-4 mt-6 text-xs text-white/40 font-mono">
+            <span>{tourSegments.length} segments</span>
+            <span>•</span>
+            <span>~3 min</span>
+            <span>•</span>
+            <span>EN/ES</span>
           </div>
 
-          {/* Center - Spin Viewer */}
-          <div className="flex-1 w-full relative my-4">
-            <SpinViewer autoSpin />
-          </div>
-
-          {/* Vehicle Info & CTA */}
-          <div className="flex flex-col items-center text-center z-10">
-            <h2 className="font-serif text-2xl text-white mb-1">{vehicleTitle}</h2>
-            <p className="text-white/60 text-sm mb-6">
-              ${price.toLocaleString()}
-            </p>
-
-            {/* Start Button with glow */}
-            <button
-              onClick={handleStartTour}
-              className="group relative flex items-center gap-3 px-8 py-4 bg-[#c9a227] text-[#0d1117] font-semibold transition-all hover:bg-[#d4af37]"
-            >
-              <span className="absolute inset-0 bg-[#c9a227] blur-xl opacity-40 group-hover:opacity-60 transition-opacity" />
-              <Play className="relative h-5 w-5" fill="currentColor" />
-              <span className="relative">Start Virtual Tour</span>
-            </button>
-
-            {/* Tour metadata */}
-            <p className="mt-4 text-xs text-white/40 font-mono">
-              AI-narrated · 6 features · ~90 seconds
-            </p>
-          </div>
-
-          {/* Bottom - Salesperson card */}
-          <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm px-4 py-3 rounded-sm mt-6 z-10">
-            <div className="h-10 w-10 rounded-full bg-[#c9a227] flex items-center justify-center text-[#0d1117] font-semibold">
+          {/* Salesperson card */}
+          <div className="mt-8 flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-3">
+            <div className="w-10 h-10 rounded-full bg-[#c9a227]/20 border border-[#c9a227]/30 flex items-center justify-center text-[#c9a227] font-serif">
               {salespersonInitial}
             </div>
             <div>
-              <p className="text-white text-sm font-medium">{salespersonName}</p>
-              <p className="text-white/50 text-xs">{dealershipName}</p>
+              <p className="text-sm text-white">{salespersonName}</p>
+              <p className="text-xs text-white/50">{dealershipName}</p>
             </div>
           </div>
         </div>
@@ -716,77 +600,31 @@ export function PrestigeVirtualTour({
 
   // Active tour view
   return (
-    <div className="fixed inset-0 z-50 bg-[#0d1117] flex flex-col">
-      {/* CTA Overlay */}
-      {showCTA && (
-        <div className="absolute inset-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm flex flex-col items-center justify-center px-6 animate-in fade-in duration-500">
-          <div className="text-center">
-            <p className="text-xs tracking-[0.25em] text-[#c9a227] uppercase font-mono mb-2">
-              Tour Complete
-            </p>
-            <h2 className="font-serif text-3xl text-white mb-3">
-              Ready to see it in person?
-            </h2>
-            <p className="text-white/60 text-sm mb-8 max-w-xs">
-              {salespersonName} is ready to show you this {vehicleTitle}
-            </p>
-
-            <div className="space-y-3 w-full max-w-xs">
-              <button
-                onClick={onBook}
-                className="w-full flex items-center justify-center gap-2 py-4 bg-[#c9a227] text-[#0d1117] font-semibold transition-colors hover:bg-[#d4af37]"
-              >
-                <Calendar className="h-4 w-4" />
-                Book Appointment
-              </button>
-              
-              {onCall && (
-                <button
-                  onClick={onCall}
-                  className="w-full flex items-center justify-center gap-2 py-4 border border-white/20 text-white transition-colors hover:bg-white/5"
-                >
-                  <Phone className="h-4 w-4" />
-                  Call {salespersonName.split(" ")[0]}
-                </button>
-              )}
-
-              <button
-                onClick={handleReplay}
-                className="w-full flex items-center justify-center gap-2 py-3 text-white/50 text-sm hover:text-white transition-colors"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Replay Tour
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Top Bar */}
+    <section className="relative bg-[#0d1117] min-h-[600px] flex flex-col">
+      {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
         <button
           onClick={handleExitTour}
-          className="p-2 text-white/60 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
+          Exit
         </button>
-        
-        <p className="text-white text-sm font-medium">{vehicleTitle}</p>
-        
-        {/* Language Toggle */}
-        <div className="flex bg-white/10 rounded-sm overflow-hidden">
+
+        {/* Language toggle */}
+        <div className="flex items-center gap-1 bg-white/5 p-0.5">
           <button
             onClick={() => setLanguage("en")}
-            className={`px-3 py-1.5 text-xs font-mono transition-colors ${
-              language === "en" ? "bg-[#c9a227] text-[#0d1117]" : "text-white/60 hover:text-white"
+            className={`px-3 py-1 text-xs font-mono transition-colors ${
+              language === "en" ? "bg-white/10 text-white" : "text-white/40"
             }`}
           >
             EN
           </button>
           <button
             onClick={() => setLanguage("es")}
-            className={`px-3 py-1.5 text-xs font-mono transition-colors ${
-              language === "es" ? "bg-[#c9a227] text-[#0d1117]" : "text-white/60 hover:text-white"
+            className={`px-3 py-1 text-xs font-mono transition-colors ${
+              language === "es" ? "bg-white/10 text-white" : "text-white/40"
             }`}
           >
             ES
@@ -794,8 +632,53 @@ export function PrestigeVirtualTour({
         </div>
       </div>
 
+      {/* Spin Viewer Area */}
+      <div className="flex-1 relative min-h-[300px]">
+        <SpinViewer />
+
+        {/* CTA Overlay */}
+        {showCTA && (
+          <div className="absolute inset-0 bg-[#0d1117]/90 flex flex-col items-center justify-center z-20 animate-in fade-in duration-500">
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#c9a227] mb-2">
+              Tour Complete
+            </p>
+            <h3 className="text-xl font-serif text-white mb-6">
+              Ready for the next step?
+            </h3>
+            
+            <div className="flex flex-col gap-3 w-full max-w-xs px-6">
+              <button
+                onClick={onBook}
+                className="flex items-center justify-center gap-2 py-3 bg-[#c9a227] text-[#0d1117] font-semibold"
+              >
+                <Calendar className="h-4 w-4" />
+                Schedule Appointment
+              </button>
+              
+              {onCall && (
+                <button
+                  onClick={onCall}
+                  className="flex items-center justify-center gap-2 py-3 border border-white/20 text-white hover:bg-white/5"
+                >
+                  <Phone className="h-4 w-4" />
+                  Call {salespersonName.split(" ")[0]}
+                </button>
+              )}
+              
+              <button
+                onClick={handleReplay}
+                className="flex items-center justify-center gap-2 py-2 text-white/50 hover:text-white text-sm"
+              >
+                <RotateCcw className="h-3 w-3" />
+                Replay Tour
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Segment Navigation - Named Tabs */}
-      <div className="flex items-center gap-1 px-3 py-2 overflow-x-auto scrollbar-hide">
+      <div className="flex items-center gap-1 px-3 py-2 overflow-x-auto scrollbar-hide border-t border-white/10">
         {tourSegments.map((segment, index) => (
           <button
             key={segment.id}
@@ -814,61 +697,8 @@ export function PrestigeVirtualTour({
         ))}
       </div>
 
-      {/* Main Visual Area */}
-      <div 
-        className="flex-1 relative overflow-hidden transition-all duration-1000"
-        style={{
-          background: `radial-gradient(ellipse at center, ${currentSegment.accentColor}15, #0d1117)`,
-        }}
-      >
-        {/* Floating Segment Label */}
-        <div 
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-sm rounded-sm animate-in fade-in slide-in-from-top-2 duration-500"
-          style={{ borderLeft: `2px solid ${currentSegment.accentColor}` }}
-        >
-          <span className="text-xs text-white font-mono uppercase tracking-wider">
-            {currentSegment.label}
-          </span>
-        </div>
-
-        {/* Drag hint when paused */}
-        {!isPlaying && !showCTA && (
-          <div className="absolute top-4 right-4 z-10 px-3 py-1.5 bg-black/40 backdrop-blur-sm rounded-sm animate-in fade-in duration-500">
-            <span className="text-xs text-white/50 font-mono">
-              Drag to rotate
-            </span>
-          </div>
-        )}
-
-        {/* Spin Viewer */}
-        <SpinViewer />
-
-        {/* Pulsing indicator for feature segments */}
-        {currentSegmentIndex !== 0 && currentSegmentIndex !== tourSegments.length - 1 && (
-          <div
-            className="absolute z-10 pointer-events-none animate-pulse"
-            style={{
-              left: "50%",
-              top: "45%",
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <div
-              className="h-3 w-3 rounded-full"
-              style={{
-                backgroundColor: currentSegment.accentColor,
-                boxShadow: `0 0 15px ${currentSegment.accentColor}, 0 0 30px ${currentSegment.accentColor}50`,
-              }}
-            />
-          </div>
-        )}
-
-        {/* Gradient overlays */}
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0d1117] to-transparent pointer-events-none" />
-      </div>
-
-      {/* Caption Area - Collapsible on mobile */}
-      <div className="px-6 py-3">
+      {/* Caption Area - Collapsible */}
+      <div className="px-6 py-3 border-t border-white/10">
         <div className="relative">
           <p 
             className={`text-white/90 text-[15px] leading-relaxed font-serif transition-all duration-300 ${
@@ -893,45 +723,48 @@ export function PrestigeVirtualTour({
       </div>
 
       {/* Playback Controls */}
-      <div className="flex items-center justify-center gap-8 pb-4">
-        <button
-          onClick={handlePrevious}
-          disabled={currentSegmentIndex === 0}
-          className="p-3 text-white/60 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <ChevronLeft className="h-6 w-6" />
-        </button>
+      <div className="px-6 py-4 border-t border-white/10">
+        {/* Progress bar */}
+        <div className="h-1 bg-white/10 rounded-full mb-4 overflow-hidden">
+          <div
+            className="h-full transition-all duration-100"
+            style={{ 
+              width: `${progress}%`,
+              backgroundColor: currentSegment.accentColor,
+            }}
+          />
+        </div>
 
-        <button
-          onClick={handlePlayPause}
-          className="h-14 w-14 rounded-full flex items-center justify-center transition-all hover:scale-105"
-          style={{ backgroundColor: currentSegment.accentColor }}
-        >
-          {isPlaying ? (
-            <Pause className="h-6 w-6 text-[#0d1117]" fill="currentColor" />
-          ) : (
-            <Play className="h-6 w-6 text-[#0d1117] ml-1" fill="currentColor" />
-          )}
-        </button>
+        {/* Controls */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={handlePrevious}
+            disabled={currentSegmentIndex === 0}
+            className="p-2 text-white/60 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
 
-        <button
-          onClick={handleNext}
-          className="p-3 text-white/60 hover:text-white transition-colors"
-        >
-          <ChevronRight className="h-6 w-6" />
-        </button>
+          <button
+            onClick={handlePlayPause}
+            className="w-12 h-12 rounded-full flex items-center justify-center transition-colors"
+            style={{ backgroundColor: currentSegment.accentColor }}
+          >
+            {isPlaying ? (
+              <Pause className="h-5 w-5 text-[#0d1117]" />
+            ) : (
+              <Play className="h-5 w-5 text-[#0d1117] ml-0.5" />
+            )}
+          </button>
+
+          <button
+            onClick={handleNext}
+            className="p-2 text-white/60 hover:text-white"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+        </div>
       </div>
-
-      {/* Progress Bar */}
-      <div className="h-1 bg-white/10">
-        <div
-          className="h-full transition-all duration-100"
-          style={{
-            width: `${progress}%`,
-            backgroundColor: currentSegment.accentColor,
-          }}
-        />
-      </div>
-    </div>
+    </section>
   )
 }
