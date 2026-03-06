@@ -525,14 +525,14 @@ export function PrestigeVirtualTour({
     </div>
   )
 
-  // Pre-tour landing view
+  // Pre-tour landing view - full width immersive
   if (!isTourActive) {
     return (
-      <section className="relative mx-5 my-6 overflow-hidden bg-[#0d1117]">
+      <section className="relative w-full overflow-hidden bg-[#0d1117]">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0d1117] via-[#0d1117]/80 to-[#0d1117]" />
         
-        <div className="relative aspect-[4/5] flex flex-col items-center justify-between py-6 px-5">
+        <div className="relative min-h-[85vh] flex flex-col items-center justify-between py-8 px-6">
           {/* Top - Personalization */}
           <div className="text-center z-10">
             <p className="text-[10px] tracking-[0.2em] text-[#c9a227] uppercase">
