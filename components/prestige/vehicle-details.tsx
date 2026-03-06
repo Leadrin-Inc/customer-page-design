@@ -94,32 +94,20 @@ export function PrestigeVehicleDetails({
         </p>
       </div>
 
-      {/* Specs Grid */}
-      <div className="px-5 pb-8">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center py-4 border-t border-border">
-            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
-              Mileage
-            </p>
-            <p className="text-base font-light">{mileage.toLocaleString()} mi</p>
+      {/* Specs - Horizontal inline */}
+      <div className="px-5 pb-6">
+        <div className="flex flex-wrap justify-center gap-x-5 gap-y-1 py-3 border-t border-border text-center">
+          <div>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Mileage </span>
+            <span className="text-sm">{mileage.toLocaleString()} mi</span>
           </div>
-          <div className="text-center py-4 border-t border-border">
-            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
-              Fuel Type
-            </p>
-            <p className="text-base font-light">{fuelType}</p>
+          <div>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Fuel </span>
+            <span className="text-sm">{fuelType}</span>
           </div>
-          <div className="text-center py-4 border-t border-border">
-            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
-              Transmission
-            </p>
-            <p className="text-base font-light">{transmission}</p>
-          </div>
-          <div className="text-center py-4 border-t border-border">
-            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">
-              Year
-            </p>
-            <p className="text-base font-light">{year}</p>
+          <div>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Trans </span>
+            <span className="text-sm">{transmission}</span>
           </div>
         </div>
       </div>

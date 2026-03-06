@@ -80,19 +80,21 @@ export function VehicleDetails({
         </div>
       )}
 
-      {/* Specs - Horizontal cards */}
-      <div className="grid grid-cols-3 gap-2 mb-6">
-        <div className="p-3 rounded-xl bg-slate-50">
-          <p className="text-[10px] font-medium text-slate-400 uppercase mb-0.5">Mileage</p>
-          <p className="text-sm font-semibold text-slate-900">{mileage.toLocaleString()}</p>
+      {/* Specs - Compact inline */}
+      <div className="flex items-center justify-between gap-3 py-3 px-1 mb-4 border-t border-slate-100">
+        <div className="text-center flex-1">
+          <p className="text-[9px] font-medium text-slate-400 uppercase">Miles</p>
+          <p className="text-xs font-semibold text-slate-900">{mileage.toLocaleString()}</p>
         </div>
-        <div className="p-3 rounded-xl bg-slate-50">
-          <p className="text-[10px] font-medium text-slate-400 uppercase mb-0.5">Fuel</p>
-          <p className="text-sm font-semibold text-slate-900">{fuelType}</p>
+        <div className="w-px h-6 bg-slate-200" />
+        <div className="text-center flex-1">
+          <p className="text-[9px] font-medium text-slate-400 uppercase">Fuel</p>
+          <p className="text-xs font-semibold text-slate-900">{fuelType}</p>
         </div>
-        <div className="p-3 rounded-xl bg-slate-50">
-          <p className="text-[10px] font-medium text-slate-400 uppercase mb-0.5">Trans</p>
-          <p className="text-sm font-semibold text-slate-900 truncate">{transmission}</p>
+        <div className="w-px h-6 bg-slate-200" />
+        <div className="text-center flex-1">
+          <p className="text-[9px] font-medium text-slate-400 uppercase">Trans</p>
+          <p className="text-xs font-semibold text-slate-900 truncate">{transmission}</p>
         </div>
       </div>
 
