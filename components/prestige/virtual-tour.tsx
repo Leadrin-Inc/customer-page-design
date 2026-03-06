@@ -4,14 +4,20 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { X, ChevronLeft, ChevronRight, Play, Pause, Phone, Calendar, RotateCcw } from "lucide-react"
 import Image from "next/image"
 
-// Tour segment data model with targetRotation for spin viewer
+// 360 spin frames from Scaleflex CDN
+const spinFrames = Array.from({ length: 36 }, (_, i) => 
+  `https://scaleflex.cloudimg.io/v7/demo/360-car/car-${i + 1}.jpg`
+)
+
+// Tour segment data model with targetFrame for spin viewer (1-36)
+// Frame mapping: 1 = front, 10 = right side, 19 = rear, 28 = left side
 interface TourSegment {
   id: string
   label: string
   icon: string
   narrationEN: string
   narrationES: string
-  targetRotation: number // degrees 0-360 for vehicle spin
+  targetFrame: number // frame 1-36 for vehicle spin
   accentColor: string
   durationMs: number
 }
@@ -29,7 +35,8 @@ interface VirtualTourProps {
 }
 
 // Sample tour data for 2024 Toyota RAV4 Limited AWD
-// Each segment has a targetRotation to show the relevant angle
+// Each segment has a targetFrame (1-36) to show the relevant angle
+// Frame mapping: 1 = front, 10 = right side, 19 = rear, 28 = left side
 const tourSegments: TourSegment[] = [
   {
     id: "welcome",
@@ -37,7 +44,7 @@ const tourSegments: TourSegment[] = [
     icon: "hand-wave",
     narrationEN: "Welcome, Sarah. I'm excited to personally guide you through this exceptional vehicle. Let me show you why this could be the perfect match for you.",
     narrationES: "Bienvenida, Sarah. Estoy emocionado de guiarte personalmente a traves de este excepcional vehiculo. Dejame mostrarte por que este podria ser el auto perfecto para ti.",
-    targetRotation: 0,
+    targetFrame: 1, // front view
     accentColor: "#c9a227",
     durationMs: 8000,
   },
@@ -47,7 +54,7 @@ const tourSegments: TourSegment[] = [
     icon: "engine",
     narrationEN: "Under the hood, you'll find a refined powertrain that delivers both performance and efficiency. The smooth power delivery makes every drive a pleasure.",
     narrationES: "Bajo el capo, encontraras un tren motriz refinado que ofrece rendimiento y eficiencia. La entrega de potencia suave hace que cada viaje sea un placer.",
-    targetRotation: 30, // front quarter angle
+    targetFrame: 4, // front quarter angle
     accentColor: "#dc2626",
     durationMs: 7000,
   },
@@ -57,7 +64,7 @@ const tourSegments: TourSegment[] = [
     icon: "armchair",
     narrationEN: "Step inside and experience true luxury. Premium materials, meticulous craftsmanship, and thoughtful design create an environment you'll love spending time in.",
     narrationES: "Entra y experimenta el verdadero lujo. Materiales premium, artesania meticulosa y diseno pensado crean un ambiente en el que te encantara pasar tiempo.",
-    targetRotation: 90, // side view (door open angle)
+    targetFrame: 10, // side view
     accentColor: "#7c3aed",
     durationMs: 7000,
   },
@@ -67,7 +74,7 @@ const tourSegments: TourSegment[] = [
     icon: "cpu",
     narrationEN: "Advanced technology keeps you connected and in control. The intuitive interface and premium audio system make every journey more enjoyable.",
     narrationES: "La tecnologia avanzada te mantiene conectado y en control. La interfaz intuitiva y el sistema de audio premium hacen que cada viaje sea mas agradable.",
-    targetRotation: 110, // slightly past side view
+    targetFrame: 13, // slightly past side view
     accentColor: "#0ea5e9",
     durationMs: 7000,
   },
@@ -77,7 +84,7 @@ const tourSegments: TourSegment[] = [
     icon: "shield",
     narrationEN: "Your safety is paramount. This vehicle comes equipped with a comprehensive suite of advanced safety features to protect you and your loved ones.",
     narrationES: "Tu seguridad es primordial. Este vehiculo viene equipado con un conjunto completo de funciones de seguridad avanzadas para protegerte a ti y a tus seres queridos.",
-    targetRotation: 150, // rear quarter angle
+    targetFrame: 16, // rear quarter angle
     accentColor: "#22c55e",
     durationMs: 7000,
   },
@@ -87,7 +94,7 @@ const tourSegments: TourSegment[] = [
     icon: "package",
     narrationEN: "Generous cargo space and flexible configurations adapt to your lifestyle. Whether it's a weekend getaway or daily errands, you'll have room for it all.",
     narrationES: "Amplio espacio de carga y configuraciones flexibles se adaptan a tu estilo de vida. Ya sea una escapada de fin de semana o recados diarios, tendras espacio para todo.",
-    targetRotation: 180, // rear view
+    targetFrame: 19, // rear view
     accentColor: "#f59e0b",
     durationMs: 7000,
   },
@@ -97,7 +104,7 @@ const tourSegments: TourSegment[] = [
     icon: "calendar",
     narrationEN: "I hope you've enjoyed this tour, Sarah. I'd love to show you this vehicle in person. Let's schedule a time that works for you.",
     narrationES: "Espero que hayas disfrutado este recorrido, Sarah. Me encantaria mostrarte este vehiculo en persona. Programemos un horario que te funcione.",
-    targetRotation: 360, // full rotation back to front
+    targetFrame: 1, // back to front
     accentColor: "#c9a227",
     durationMs: 6000,
   },
@@ -122,17 +129,20 @@ export function PrestigeVirtualTour({
   const [progress, setProgress] = useState(0)
   const [showCTA, setShowCTA] = useState(false)
   
-  // Spin viewer state
-  const [rotation, setRotation] = useState(0)
+  // Spin viewer state - frame-based (1-36)
+  const [currentFrame, setCurrentFrame] = useState(1)
+  const [prevFrame, setPrevFrame] = useState(1)
+  const [crossfadeOpacity, setCrossfadeOpacity] = useState(1)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStartX, setDragStartX] = useState(0)
-  const [dragStartRotation, setDragStartRotation] = useState(0)
-  const [oscillationOffset, setOscillationOffset] = useState(0)
+  const [dragStartFrame, setDragStartFrame] = useState(1)
   const [velocity, setVelocity] = useState(0)
   const [lastDragX, setLastDragX] = useState(0)
   const [lastDragTime, setLastDragTime] = useState(0)
   const [captionExpanded, setCaptionExpanded] = useState(false)
-  const [particles, setParticles] = useState<Array<{ id: number; angle: number; opacity: number }>>([])
+  const [particles, setParticles] = useState<Array<{ id: number; frame: number; opacity: number }>>([])
+  const [framesLoaded, setFramesLoaded] = useState(false)
+  const [loadingProgress, setLoadingProgress] = useState(0)
   
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const typewriterIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -140,9 +150,57 @@ export function PrestigeVirtualTour({
   const autoSpinRef = useRef<NodeJS.Timeout | null>(null)
   const oscillationRef = useRef<NodeJS.Timeout | null>(null)
   const spinContainerRef = useRef<HTMLDivElement>(null)
+  const preloadedImages = useRef<HTMLImageElement[]>([])
+  
+  // Helper: wrap frame index 1-36
+  const wrapFrame = (frame: number): number => {
+    const wrapped = ((frame - 1) % 36 + 36) % 36 + 1
+    return wrapped
+  }
+  
+  // Crossfade between frames
+  const transitionToFrame = useCallback((newFrame: number) => {
+    const wrappedFrame = wrapFrame(newFrame)
+    if (wrappedFrame !== currentFrame) {
+      setPrevFrame(currentFrame)
+      setCrossfadeOpacity(0)
+      setCurrentFrame(wrappedFrame)
+      // Fade in new frame
+      setTimeout(() => setCrossfadeOpacity(1), 10)
+    }
+  }, [currentFrame])
 
   const currentSegment = tourSegments[currentSegmentIndex]
   const narrationText = language === "en" ? currentSegment.narrationEN : currentSegment.narrationES
+
+  // Preload all 36 frames on mount
+  useEffect(() => {
+    let loadedCount = 0
+    const images: HTMLImageElement[] = []
+    
+    spinFrames.forEach((src, index) => {
+      const img = new window.Image()
+      img.crossOrigin = "anonymous"
+      img.onload = () => {
+        loadedCount++
+        setLoadingProgress(Math.round((loadedCount / 36) * 100))
+        if (loadedCount === 36) {
+          setFramesLoaded(true)
+        }
+      }
+      img.onerror = () => {
+        loadedCount++
+        setLoadingProgress(Math.round((loadedCount / 36) * 100))
+        if (loadedCount === 36) {
+          setFramesLoaded(true)
+        }
+      }
+      img.src = src
+      images[index] = img
+    })
+    
+    preloadedImages.current = images
+  }, [])
 
   // Cleanup function
   const cleanup = useCallback(() => {
@@ -159,12 +217,12 @@ export function PrestigeVirtualTour({
     }
   }, [])
 
-  // Auto-spin for pre-tour mode (8° per second)
+  // Auto-spin for pre-tour mode - cycle through frames at ~100ms intervals
   useEffect(() => {
-    if (!isTourActive) {
+    if (!isTourActive && framesLoaded) {
       autoSpinRef.current = setInterval(() => {
-        setRotation(prev => (prev + 0.4) % 360) // ~8° per second at 50ms interval
-      }, 50)
+        setCurrentFrame(prev => wrapFrame(prev + 1))
+      }, 100)
     } else {
       if (autoSpinRef.current) {
         clearInterval(autoSpinRef.current)
@@ -176,21 +234,20 @@ export function PrestigeVirtualTour({
         clearInterval(autoSpinRef.current)
       }
     }
-  }, [isTourActive])
+  }, [isTourActive, framesLoaded])
 
-  // Oscillation effect when paused (±3° subtle movement)
+  // Oscillation effect when paused - alternate ±1 frame every 2 seconds
+  const baseFrameRef = useRef(currentFrame)
   useEffect(() => {
-    if (isTourActive && !isPlaying && !isDragging) {
+    if (isTourActive && !isPlaying && !isDragging && framesLoaded) {
+      baseFrameRef.current = currentFrame
       let direction = 1
-      let offset = 0
       oscillationRef.current = setInterval(() => {
-        offset += direction * 0.15
-        if (offset >= 3) direction = -1
-        if (offset <= -3) direction = 1
-        setOscillationOffset(offset)
-      }, 50)
+        const newFrame = wrapFrame(baseFrameRef.current + direction)
+        setCurrentFrame(newFrame)
+        direction *= -1
+      }, 2000)
     } else {
-      setOscillationOffset(0)
       if (oscillationRef.current) {
         clearInterval(oscillationRef.current)
         oscillationRef.current = null
@@ -201,41 +258,72 @@ export function PrestigeVirtualTour({
         clearInterval(oscillationRef.current)
       }
     }
-  }, [isTourActive, isPlaying, isDragging])
+  }, [isTourActive, isPlaying, isDragging, framesLoaded])
 
-  // Smoothly interpolate to target rotation when segment changes
+  // Smoothly advance to target frame when segment changes
   useEffect(() => {
-    if (isTourActive && isPlaying && !isDragging) {
-      setRotation(currentSegment.targetRotation)
+    if (isTourActive && isPlaying && !isDragging && framesLoaded) {
+      const target = currentSegment.targetFrame
+      let current = currentFrame
+      
+      // If already at target, skip
+      if (current === target) return
+      
+      const advanceInterval = setInterval(() => {
+        if (current === target) {
+          clearInterval(advanceInterval)
+          return
+        }
+        // Determine direction for shortest path
+        let diff = target - current
+        if (Math.abs(diff) > 18) {
+          // Wrap around is shorter
+          diff = diff > 0 ? diff - 36 : diff + 36
+        }
+        const step = diff > 0 ? 1 : -1
+        current = wrapFrame(current + step)
+        setCurrentFrame(current)
+      }, 80) // ~12.5 fps for smooth advance
+      
+      return () => clearInterval(advanceInterval)
     }
-  }, [currentSegmentIndex, isTourActive, isPlaying, isDragging, currentSegment.targetRotation])
+  }, [currentSegmentIndex, isTourActive, isPlaying, isDragging, framesLoaded, currentSegment.targetFrame])
 
-  // Momentum/inertia effect - decelerate after flick
+  // Momentum/inertia effect - decelerate after flick (frame-based)
   useEffect(() => {
-    if (!isDragging && Math.abs(velocity) > 0.5) {
+    if (!isDragging && Math.abs(velocity) > 0.3) {
+      let vel = velocity
+      let accumulatedDelta = 0
+      
       const momentumInterval = setInterval(() => {
-        setVelocity(prev => {
-          const newVelocity = prev * 0.95 // friction
-          if (Math.abs(newVelocity) < 0.5) {
-            clearInterval(momentumInterval)
-            return 0
-          }
-          setRotation(r => (r + newVelocity) % 360)
+        vel *= 0.92 // friction
+        accumulatedDelta += vel
+        
+        // Every 15px of accumulated movement = 1 frame change
+        if (Math.abs(accumulatedDelta) >= 15) {
+          const frameChange = Math.sign(accumulatedDelta)
+          accumulatedDelta = 0
+          transitionToFrame(currentFrame + frameChange)
           
           // Add particle trail during momentum
-          if (Math.abs(newVelocity) > 2) {
+          if (Math.abs(vel) > 1) {
             setParticles(prev => [
               ...prev.slice(-8),
-              { id: Date.now(), angle: rotation, opacity: Math.min(Math.abs(newVelocity) / 10, 1) }
+              { id: Date.now(), frame: currentFrame, opacity: Math.min(Math.abs(vel) / 5, 1) }
             ])
           }
-          
-          return newVelocity
-        })
+        }
+        
+        if (Math.abs(vel) < 0.3) {
+          clearInterval(momentumInterval)
+          setVelocity(0)
+        } else {
+          setVelocity(vel)
+        }
       }, 16)
       return () => clearInterval(momentumInterval)
     }
-  }, [isDragging, velocity, rotation])
+  }, [isDragging, velocity, currentFrame, transitionToFrame])
 
   // Fade out particles
   useEffect(() => {
@@ -249,27 +337,32 @@ export function PrestigeVirtualTour({
     }
   }, [particles.length])
 
-  // Drag to rotate handlers with velocity tracking
+  // Drag to rotate handlers - map ~15px drag to ±1 frame change
   const handleDragStart = (clientX: number) => {
-    if (!isTourActive || isPlaying) return
+    if (!isTourActive || isPlaying || !framesLoaded) return
     setIsDragging(true)
     setVelocity(0)
     setDragStartX(clientX)
-    setDragStartRotation(rotation)
+    setDragStartFrame(currentFrame)
     setLastDragX(clientX)
     setLastDragTime(Date.now())
   }
 
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return
-    const delta = (clientX - dragStartX) * 0.5 // sensitivity
-    setRotation((dragStartRotation + delta) % 360)
+    const totalDelta = clientX - dragStartX
+    // Every 15px = 1 frame change
+    const frameChange = Math.round(totalDelta / 15)
+    const newFrame = wrapFrame(dragStartFrame + frameChange)
+    if (newFrame !== currentFrame) {
+      transitionToFrame(newFrame)
+    }
     
     // Track velocity for momentum
     const now = Date.now()
     const timeDelta = now - lastDragTime
     if (timeDelta > 0) {
-      const moveDelta = (clientX - lastDragX) * 0.5
+      const moveDelta = clientX - lastDragX
       setVelocity(moveDelta / Math.max(timeDelta, 16) * 16) // normalize to ~60fps
     }
     setLastDragX(clientX)
@@ -389,7 +482,7 @@ export function PrestigeVirtualTour({
   const handleStartTour = () => {
     setIsTourActive(true)
     setCurrentSegmentIndex(0)
-    setRotation(0)
+    transitionToFrame(1)
     setIsPlaying(true)
     setShowCTA(false)
   }
@@ -409,8 +502,8 @@ export function PrestigeVirtualTour({
         window.speechSynthesis.cancel()
       }
     } else {
-      // When resuming, smoothly go back to target rotation
-      setRotation(currentSegment.targetRotation)
+      // When resuming, smoothly go back to target frame
+      transitionToFrame(currentSegment.targetFrame)
     }
     setIsPlaying(!isPlaying)
   }
@@ -437,7 +530,7 @@ export function PrestigeVirtualTour({
   const handleReplay = () => {
     setShowCTA(false)
     setCurrentSegmentIndex(0)
-    setRotation(0)
+    transitionToFrame(1)
     setIsPlaying(true)
   }
 
@@ -448,82 +541,104 @@ export function PrestigeVirtualTour({
     setIsPlaying(true)
   }
 
-  // Calculate the display rotation (target + oscillation when paused)
-  const displayRotation = isTourActive && !isPlaying ? rotation + oscillationOffset : rotation
-
-  // Spin Viewer Component
-  const SpinViewer = ({ autoSpin = false }: { autoSpin?: boolean }) => (
-    <div 
-      ref={spinContainerRef}
-      className={`relative w-full h-full flex items-center justify-center ${!autoSpin && !isPlaying ? 'cursor-grab active:cursor-grabbing' : ''}`}
-      style={{ perspective: "1000px" }}
-      onMouseDown={!autoSpin ? onMouseDown : undefined}
-      onMouseMove={!autoSpin ? onMouseMove : undefined}
-      onMouseUp={!autoSpin ? onMouseUp : undefined}
-      onMouseLeave={!autoSpin ? onMouseLeave : undefined}
-      onTouchStart={!autoSpin ? onTouchStart : undefined}
-      onTouchMove={!autoSpin ? onTouchMove : undefined}
-      onTouchEnd={!autoSpin ? onTouchEnd : undefined}
-    >
-      {/* Light streak particles following rotation */}
-      {!autoSpin && particles.map(particle => (
-        <div
-          key={particle.id}
-          className="absolute left-1/2 top-1/2 w-16 h-1 rounded-full pointer-events-none"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${currentSegment.accentColor})`,
-            opacity: particle.opacity * 0.6,
-            transform: `translate(-50%, -50%) rotate(${particle.angle}deg) translateX(120px)`,
-            filter: "blur(2px)",
-          }}
-        />
-      ))}
-
-      {/* Vehicle with 3D rotation */}
-      <div
-        className={`relative w-[85%] aspect-[16/10] ${isDragging || Math.abs(velocity) > 0.5 ? '' : 'transition-transform duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)]'}`}
-        style={{
-          transform: `rotateY(${displayRotation}deg)`,
-          transformStyle: "preserve-3d",
-        }}
-      >
-        <Image
-          src={vehicleImage}
-          alt={vehicleTitle}
-          fill
-          className="object-contain pointer-events-none"
-          priority
-        />
-      </div>
-
-      {/* Ground reflection - blurred, flipped, low opacity */}
+  // Spin Viewer Component - Frame-based 360 viewer
+  const SpinViewer = ({ autoSpin = false }: { autoSpin?: boolean }) => {
+    // Calculate frame angle for particle positioning
+    const frameAngle = (currentFrame - 1) * 10 // 36 frames = 360 degrees
+    
+    return (
       <div 
-        className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[80%] h-[30%] overflow-hidden opacity-20 blur-[2px]"
-        style={{ 
-          transform: `translateX(-50%) rotateX(180deg) rotateY(${displayRotation}deg)`,
-          maskImage: "linear-gradient(to top, black 0%, transparent 80%)",
-          WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 80%)",
-        }}
+        ref={spinContainerRef}
+        className={`relative w-full h-full flex items-center justify-center ${!autoSpin && !isPlaying ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        onMouseDown={!autoSpin ? onMouseDown : undefined}
+        onMouseMove={!autoSpin ? onMouseMove : undefined}
+        onMouseUp={!autoSpin ? onMouseUp : undefined}
+        onMouseLeave={!autoSpin ? onMouseLeave : undefined}
+        onTouchStart={!autoSpin ? onTouchStart : undefined}
+        onTouchMove={!autoSpin ? onTouchMove : undefined}
+        onTouchEnd={!autoSpin ? onTouchEnd : undefined}
       >
-        <div className="relative w-full h-full">
-          <Image
-            src={vehicleImage}
-            alt=""
-            fill
-            className="object-contain"
+        {/* Loading indicator */}
+        {!framesLoaded && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0d1117] z-20">
+            <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-[#c9a227] transition-all duration-200"
+                style={{ width: `${loadingProgress}%` }}
+              />
+            </div>
+            <p className="mt-3 text-xs text-white/40 font-mono">Loading 360° view... {loadingProgress}%</p>
+          </div>
+        )}
+
+        {/* Light streak particles following rotation */}
+        {!autoSpin && particles.map(particle => (
+          <div
+            key={particle.id}
+            className="absolute left-1/2 top-1/2 w-20 h-0.5 rounded-full pointer-events-none"
+            style={{
+              background: `linear-gradient(90deg, transparent, ${currentSegment.accentColor})`,
+              opacity: particle.opacity * 0.5,
+              transform: `translate(-50%, -50%) rotate(${particle.frame * 10}deg) translateX(100px)`,
+              filter: "blur(1px)",
+            }}
           />
-        </div>
-      </div>
+        ))}
 
-      {/* Ground shadow - elliptical gradient */}
-      <div 
-        className="absolute bottom-[8%] left-1/2 -translate-x-1/2 w-[70%] h-8 rounded-[100%] bg-black/40 blur-xl"
-        style={{
-          transform: `translateX(-50%) scaleX(${1 + Math.abs(Math.sin(displayRotation * Math.PI / 180)) * 0.2})`,
-        }}
-      />
-    </div>
-  )
+        {/* Vehicle frames with crossfade */}
+        <div className="relative w-[90%] aspect-[16/10]">
+          {/* Previous frame (for crossfade) */}
+          {prevFrame !== currentFrame && framesLoaded && (
+            <img
+              src={spinFrames[prevFrame - 1]}
+              alt=""
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+              style={{ opacity: 1 - crossfadeOpacity }}
+            />
+          )}
+          {/* Current frame */}
+          {framesLoaded && (
+            <img
+              src={spinFrames[currentFrame - 1]}
+              alt={vehicleTitle}
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-opacity duration-150"
+              style={{ opacity: crossfadeOpacity }}
+            />
+          )}
+        </div>
+
+        {/* Ground reflection */}
+        {framesLoaded && (
+          <div 
+            className="absolute bottom-[2%] left-1/2 -translate-x-1/2 w-[85%] h-[25%] overflow-hidden opacity-15 blur-[2px] pointer-events-none"
+            style={{ 
+              transform: "translateX(-50%) scaleY(-1)",
+              maskImage: "linear-gradient(to top, black 0%, transparent 70%)",
+              WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 70%)",
+            }}
+          >
+            <img
+              src={spinFrames[currentFrame - 1]}
+              alt=""
+              className="w-full h-full object-contain"
+            />
+          </div>
+        )}
+
+        {/* Ground shadow */}
+        <div 
+          className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[65%] h-6 rounded-[100%] bg-black/30 blur-xl pointer-events-none"
+        />
+
+        {/* Drag hint when paused */}
+        {!autoSpin && !isPlaying && framesLoaded && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white/30 text-xs font-mono">
+            <span>← Drag to rotate →</span>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   // Pre-tour landing view
   if (!isTourActive) {
