@@ -138,33 +138,24 @@ export function VehicleDetails({
           </span>
         </div>
 
-        {/* Specs Grid - Airbnb amenity style */}
-        <div className="grid grid-cols-2 gap-4 py-6 border-t border-border">
+        {/* Specs Grid - Compact */}
+        <div className="flex flex-wrap gap-x-6 gap-y-2 py-4 border-t border-border">
           {mileage !== undefined && (
-            <div className="flex items-center gap-3">
-              <Gauge className="h-6 w-6 text-foreground" />
-              <div>
-                <p className="text-sm font-medium text-foreground">{mileage.toLocaleString()} miles</p>
-                <p className="text-xs text-muted-foreground">Odometer</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <Gauge className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm text-foreground">{mileage.toLocaleString()} mi</span>
             </div>
           )}
           {fuelType && (
-            <div className="flex items-center gap-3">
-              <Fuel className="h-6 w-6 text-foreground" />
-              <div>
-                <p className="text-sm font-medium text-foreground">{fuelType}</p>
-                <p className="text-xs text-muted-foreground">Fuel type</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <Fuel className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm text-foreground">{fuelType}</span>
             </div>
           )}
           {transmission && (
-            <div className="flex items-center gap-3">
-              <Settings className="h-6 w-6 text-foreground" />
-              <div>
-                <p className="text-sm font-medium text-foreground">{transmission}</p>
-                <p className="text-xs text-muted-foreground">Transmission</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <Settings className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm text-foreground">{transmission}</span>
             </div>
           )}
         </div>

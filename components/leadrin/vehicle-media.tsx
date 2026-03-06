@@ -87,70 +87,92 @@ export function VehicleMedia({
 
       {/* Features View */}
       {(activeTab === "features" || (!showTabs && hasFeatures)) && hasFeatures && (
-        <div className="relative mx-6 mb-6 overflow-hidden rounded-xl">
+        <div className="mx-6 mb-6">
           <div className="relative aspect-[4/3]">
-            <Image
-              src={vehicleImage}
-              alt={vehicleTitle}
-              fill
-              className="object-cover"
-            />
-
-            {/* Hotspot Markers */}
-            {features.map((feature) => (
-              <button
-                key={feature.id}
-                onClick={() => setSelectedFeature(feature)}
-                className={cn(
-                  "absolute h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full",
-                  "bg-white text-foreground",
-                  "flex items-center justify-center",
-                  "shadow-lg border border-border",
-                  "transition-transform hover:scale-110 active:scale-95"
-                )}
-                style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
-                aria-label={`View ${feature.name} details`}
-              >
-                <span className="text-xs font-bold">+</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Feature Detail Panel */}
-          {selectedFeature && (
-            <div className="absolute inset-0 bg-white flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-300">
-              <button
-                onClick={() => setSelectedFeature(null)}
-                className="absolute top-3 right-3 p-2 rounded-full hover:bg-secondary transition-colors z-10"
-                aria-label="Close feature details"
-              >
-                <X className="h-5 w-5 text-foreground" />
-              </button>
-
-              {selectedFeature.closeUpImage && (
-                <div className="relative h-40 w-full overflow-hidden">
-                  <Image
-                    src={selectedFeature.closeUpImage}
-                    alt={selectedFeature.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-
-              <div className="p-5 flex-1">
-                <span className="text-xs font-semibold text-primary uppercase tracking-wide">
-                  {selectedFeature.category}
-                </span>
-                <h3 className="text-lg font-semibold text-foreground mt-1 mb-2">
-                  {selectedFeature.name}
-                </h3>
-                <p className="text-[15px] text-muted-foreground leading-relaxed">
-                  {selectedFeature.description}
-                </p>
-              </div>
+            {/* Image with rounded corners */}
+            <div className="absolute inset-0 rounded-xl overflow-hidden">
+              <Image
+                src={vehicleImage}
+                alt={vehicleTitle}
+                fill
+                className="object-cover"
+              />
             </div>
-          )}
+
+            {/* Hotspot Markers - positioned relative to image but can overflow */}
+            {features.map((feature) => {
+              // Calculate tooltip position to prevent overflow
+              const getHorizontalPosition = () => {
+                if (feature.position.x < 25) {
+                  return { left: "0", transform: "none" }
+                } else if (feature.position.x > 75) {
+                  return { left: "auto", right: "0", transform: "none" }
+                }
+                return { left: "50%", transform: "translateX(-50%)" }
+              }
+              const horizPos = getHorizontalPosition()
+              const showAbove = feature.position.y > 50
+              
+              return (
+                <div
+                  key={feature.id}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
+                  style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
+                >
+                  <button
+                    onClick={() => setSelectedFeature(selectedFeature?.id === feature.id ? null : feature)}
+                    className={cn(
+                      "h-7 w-7 rounded-full",
+                      "bg-white text-foreground",
+                      "flex items-center justify-center",
+                      "shadow-lg border border-border",
+                      "transition-transform hover:scale-110 active:scale-95",
+                      selectedFeature?.id === feature.id && "ring-2 ring-primary"
+                    )}
+                    aria-label={`View ${feature.name} details`}
+                  >
+                    <span className="text-xs font-bold">{selectedFeature?.id === feature.id ? "×" : "+"}</span>
+                  </button>
+
+                  {/* IKEA-style tooltip card */}
+                  {selectedFeature?.id === feature.id && (
+                    <div 
+                      className="absolute z-50 w-40 bg-white rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                      style={{
+                        ...horizPos,
+                        top: showAbove ? "auto" : "100%",
+                        bottom: showAbove ? "100%" : "auto",
+                        marginTop: showAbove ? 0 : 8,
+                        marginBottom: showAbove ? 8 : 0,
+                      }}
+                    >
+                      {feature.closeUpImage && (
+                        <div className="relative h-20 w-full">
+                          <Image
+                            src={feature.closeUpImage}
+                            alt={feature.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="p-2.5">
+                        <p className="text-[9px] font-medium text-primary uppercase tracking-wide">
+                          {feature.category}
+                        </p>
+                        <h4 className="text-xs font-semibold text-foreground mt-0.5">
+                          {feature.name}
+                        </h4>
+                        <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 

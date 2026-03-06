@@ -1,0 +1,20 @@
+/* Modern Theme - Clean tech-forward design */
+/* Blue accents (Honda-style), clean minimal aesthetic */
+
+.theme-modern {
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.15 0.01 240);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.01 240);
+  --primary: oklch(0.5 0.18 250);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0.005 240);
+  --secondary-foreground: oklch(0.15 0.01 240);
+  --muted: oklch(0.96 0.003 240);
+  --muted-foreground: oklch(0.45 0.01 240);
+  --accent: oklch(0.5 0.18 250);
+  --accent-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0.003 240);
+  --ring: oklch(0.5 0.18 250);
+  --radius: 0.5rem;
+}
