@@ -156,6 +156,7 @@ export function VehicleMedia({
                 )}
               </div>
             ))}
+          </div>
         </div>
       )}
 

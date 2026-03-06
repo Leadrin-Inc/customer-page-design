@@ -26,10 +26,12 @@ export function BookingForm({
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [dates, setDates] = useState<DateOption[]>([])
+  const [mounted, setMounted] = useState(false)
 
   const firstName = salespersonName.split(" ")[0]
 
   useEffect(() => {
+    setMounted(true)
     const generatedDates = [...Array(7)].map((_, i) => {
       const date = new Date()
       date.setDate(date.getDate() + i)
@@ -68,7 +70,7 @@ export function BookingForm({
       {step === "date" && (
         <div className="bg-white rounded-2xl p-5">
           <p className="text-sm font-semibold text-slate-900 mb-4">Pick a day</p>
-          {dates.length === 0 ? (
+          {!mounted ? (
             <div className="grid grid-cols-4 gap-2 mb-2">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="p-3 rounded-xl bg-slate-50 animate-pulse h-16" />
@@ -94,7 +96,7 @@ export function BookingForm({
             ))}
           </div>
           )}
-          {dates.length > 0 && (
+          {mounted && dates.length > 0 && (
           <div className="grid grid-cols-3 gap-2">
             {dates.slice(4).map((date) => (
               <button
