@@ -128,6 +128,11 @@ export function PrestigeVirtualTour({
   const [dragStartX, setDragStartX] = useState(0)
   const [dragStartRotation, setDragStartRotation] = useState(0)
   const [oscillationOffset, setOscillationOffset] = useState(0)
+  const [velocity, setVelocity] = useState(0)
+  const [lastDragX, setLastDragX] = useState(0)
+  const [lastDragTime, setLastDragTime] = useState(0)
+  const [captionExpanded, setCaptionExpanded] = useState(false)
+  const [particles, setParticles] = useState<Array<{ id: number; angle: number; opacity: number }>>([])
   
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const typewriterIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -205,22 +210,75 @@ export function PrestigeVirtualTour({
     }
   }, [currentSegmentIndex, isTourActive, isPlaying, isDragging, currentSegment.targetRotation])
 
-  // Drag to rotate handlers
+  // Momentum/inertia effect - decelerate after flick
+  useEffect(() => {
+    if (!isDragging && Math.abs(velocity) > 0.5) {
+      const momentumInterval = setInterval(() => {
+        setVelocity(prev => {
+          const newVelocity = prev * 0.95 // friction
+          if (Math.abs(newVelocity) < 0.5) {
+            clearInterval(momentumInterval)
+            return 0
+          }
+          setRotation(r => (r + newVelocity) % 360)
+          
+          // Add particle trail during momentum
+          if (Math.abs(newVelocity) > 2) {
+            setParticles(prev => [
+              ...prev.slice(-8),
+              { id: Date.now(), angle: rotation, opacity: Math.min(Math.abs(newVelocity) / 10, 1) }
+            ])
+          }
+          
+          return newVelocity
+        })
+      }, 16)
+      return () => clearInterval(momentumInterval)
+    }
+  }, [isDragging, velocity, rotation])
+
+  // Fade out particles
+  useEffect(() => {
+    if (particles.length > 0) {
+      const fadeInterval = setInterval(() => {
+        setParticles(prev => 
+          prev.map(p => ({ ...p, opacity: p.opacity * 0.9 })).filter(p => p.opacity > 0.05)
+        )
+      }, 50)
+      return () => clearInterval(fadeInterval)
+    }
+  }, [particles.length])
+
+  // Drag to rotate handlers with velocity tracking
   const handleDragStart = (clientX: number) => {
     if (!isTourActive || isPlaying) return
     setIsDragging(true)
+    setVelocity(0)
     setDragStartX(clientX)
     setDragStartRotation(rotation)
+    setLastDragX(clientX)
+    setLastDragTime(Date.now())
   }
 
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return
     const delta = (clientX - dragStartX) * 0.5 // sensitivity
     setRotation((dragStartRotation + delta) % 360)
+    
+    // Track velocity for momentum
+    const now = Date.now()
+    const timeDelta = now - lastDragTime
+    if (timeDelta > 0) {
+      const moveDelta = (clientX - lastDragX) * 0.5
+      setVelocity(moveDelta / Math.max(timeDelta, 16) * 16) // normalize to ~60fps
+    }
+    setLastDragX(clientX)
+    setLastDragTime(now)
   }
 
   const handleDragEnd = () => {
     setIsDragging(false)
+    // Velocity is already set from handleDragMove, momentum effect will take over
   }
 
   // Mouse events
@@ -291,6 +349,7 @@ export function PrestigeVirtualTour({
     cleanup()
     setProgress(0)
     setDisplayedText("")
+    setCaptionExpanded(false)
     
     if (isPlaying) {
       const text = language === "en" ? currentSegment.narrationEN : currentSegment.narrationES
@@ -406,9 +465,23 @@ export function PrestigeVirtualTour({
       onTouchMove={!autoSpin ? onTouchMove : undefined}
       onTouchEnd={!autoSpin ? onTouchEnd : undefined}
     >
+      {/* Light streak particles following rotation */}
+      {!autoSpin && particles.map(particle => (
+        <div
+          key={particle.id}
+          className="absolute left-1/2 top-1/2 w-16 h-1 rounded-full pointer-events-none"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${currentSegment.accentColor})`,
+            opacity: particle.opacity * 0.6,
+            transform: `translate(-50%, -50%) rotate(${particle.angle}deg) translateX(120px)`,
+            filter: "blur(2px)",
+          }}
+        />
+      ))}
+
       {/* Vehicle with 3D rotation */}
       <div
-        className="relative w-[85%] aspect-[16/10] transition-transform duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+        className={`relative w-[85%] aspect-[16/10] ${isDragging || Math.abs(velocity) > 0.5 ? '' : 'transition-transform duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)]'}`}
         style={{
           transform: `rotateY(${displayRotation}deg)`,
           transformStyle: "preserve-3d",
@@ -590,21 +663,23 @@ export function PrestigeVirtualTour({
         </div>
       </div>
 
-      {/* Segment Navigation Dots */}
-      <div className="flex items-center justify-center gap-2 py-3">
+      {/* Segment Navigation - Named Tabs */}
+      <div className="flex items-center gap-1 px-3 py-2 overflow-x-auto scrollbar-hide">
         {tourSegments.map((segment, index) => (
           <button
             key={segment.id}
             onClick={() => handleSegmentClick(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${
+            className={`flex-shrink-0 px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded-sm transition-all duration-300 ${
               index === currentSegmentIndex
-                ? "w-6"
-                : "w-2 bg-white/20 hover:bg-white/40"
+                ? "text-[#0d1117]"
+                : "text-white/40 hover:text-white/70 bg-transparent"
             }`}
             style={{
-              backgroundColor: index === currentSegmentIndex ? currentSegment.accentColor : undefined,
+              backgroundColor: index === currentSegmentIndex ? segment.accentColor : undefined,
             }}
-          />
+          >
+            {segment.label}
+          </button>
         ))}
       </div>
 
@@ -661,14 +736,29 @@ export function PrestigeVirtualTour({
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0d1117] to-transparent pointer-events-none" />
       </div>
 
-      {/* Caption Area */}
-      <div className="px-6 py-4 min-h-[120px]">
-        <p className="text-white/90 text-[15px] leading-relaxed font-serif">
-          {displayedText}
-          {displayedText.length < narrationText.length && isPlaying && (
-            <span className="animate-pulse">|</span>
+      {/* Caption Area - Collapsible on mobile */}
+      <div className="px-6 py-3">
+        <div className="relative">
+          <p 
+            className={`text-white/90 text-[15px] leading-relaxed font-serif transition-all duration-300 ${
+              !captionExpanded ? "line-clamp-3" : ""
+            }`}
+          >
+            {displayedText}
+            {displayedText.length < narrationText.length && isPlaying && (
+              <span className="animate-pulse">|</span>
+            )}
+          </p>
+          {displayedText.length > 100 && (
+            <button
+              onClick={() => setCaptionExpanded(!captionExpanded)}
+              className="mt-1 text-xs font-mono uppercase tracking-wider transition-colors"
+              style={{ color: currentSegment.accentColor }}
+            >
+              {captionExpanded ? "Show less" : "Read more"}
+            </button>
           )}
-        </p>
+        </div>
       </div>
 
       {/* Playback Controls */}
