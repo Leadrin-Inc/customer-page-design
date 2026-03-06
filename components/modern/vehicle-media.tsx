@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Play, X, Video } from "lucide-react"
+import { Play, Video, ChevronRight } from "lucide-react"
 import Image from "next/image"
 
 interface Feature {
@@ -34,56 +34,6 @@ export function VehicleMedia({
 
   return (
     <section className="relative">
-      {/* Feature Modal - Full page takeover */}
-      {selectedFeature && (
-        <div className="fixed inset-0 z-50 bg-white">
-          <div className="h-full flex flex-col">
-            {/* Close */}
-            <div className="flex items-center justify-between px-5 py-4">
-              <span className="text-[10px] font-semibold tracking-widest text-blue-600 uppercase">
-                {selectedFeature.category}
-              </span>
-              <button
-                onClick={() => setSelectedFeature(null)}
-                className="p-1 rounded-full hover:bg-slate-100 transition-colors"
-              >
-                <X className="h-5 w-5 text-slate-400" />
-              </button>
-            </div>
-
-            {/* Image */}
-            <div className="relative aspect-square bg-slate-100">
-              <Image
-                src={selectedFeature.closeUpImage || heroImage}
-                alt={selectedFeature.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 px-5 py-6">
-              <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                {selectedFeature.name}
-              </h3>
-              <p className="text-base text-slate-600 leading-relaxed">
-                {selectedFeature.description}
-              </p>
-            </div>
-
-            {/* Back */}
-            <div className="px-5 pb-8">
-              <button
-                onClick={() => setSelectedFeature(null)}
-                className="w-full h-12 bg-slate-900 text-white text-sm font-semibold rounded-full hover:bg-slate-800 transition-colors"
-              >
-                Back to Vehicle
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Tab Toggle */}
       {hasVideo && (
         <div className="px-5 mb-4">
@@ -99,7 +49,7 @@ export function VehicleMedia({
               Explore
             </button>
             <button
-              onClick={() => setActiveTab("video")}
+              onClick={() => { setActiveTab("video"); setSelectedFeature(null); }}
               className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-colors flex items-center gap-1.5 ${
                 activeTab === "video"
                   ? "bg-white text-slate-900 shadow-sm"
@@ -125,18 +75,63 @@ export function VehicleMedia({
               priority
             />
             
-            {/* Hotspots */}
+            {/* Hotspots with IKEA-style tooltips */}
             {features.map((feature) => (
-              <button
+              <div
                 key={feature.id}
-                onClick={() => setSelectedFeature(feature)}
-                className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10 group"
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10"
                 style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold shadow-lg ring-[3px] ring-white/80 group-hover:scale-110 transition-transform">
-                  {feature.id}
-                </span>
-              </button>
+                <button
+                  onClick={() => setSelectedFeature(selectedFeature?.id === feature.id ? null : feature)}
+                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold shadow-lg ring-[3px] ring-white/80 hover:scale-110 transition-transform ${
+                    selectedFeature?.id === feature.id ? "bg-blue-700" : ""
+                  }`}
+                >
+                  {selectedFeature?.id === feature.id ? "×" : feature.id}
+                </button>
+
+                {/* IKEA-style tooltip */}
+                {selectedFeature?.id === feature.id && (
+                  <div 
+                    className="absolute z-20 w-48 bg-white rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                    style={{
+                      left: feature.position.x > 50 ? "auto" : "100%",
+                      right: feature.position.x > 50 ? "100%" : "auto",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      marginLeft: feature.position.x > 50 ? 0 : 10,
+                      marginRight: feature.position.x > 50 ? 10 : 0,
+                    }}
+                  >
+                    {feature.closeUpImage && (
+                      <div className="relative h-24 w-full">
+                        <Image
+                          src={feature.closeUpImage}
+                          alt={feature.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="p-3">
+                      <p className="text-[9px] font-semibold text-blue-600 uppercase tracking-wide">
+                        {feature.category}
+                      </p>
+                      <h4 className="text-sm font-bold text-slate-900 mt-0.5">
+                        {feature.name}
+                      </h4>
+                      <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                        {feature.description}
+                      </p>
+                      <div className="flex items-center gap-1 mt-2 text-blue-600">
+                        <span className="text-[10px] font-semibold">View details</span>
+                        <ChevronRight className="h-3 w-3" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
           

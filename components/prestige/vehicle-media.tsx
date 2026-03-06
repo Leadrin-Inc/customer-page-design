@@ -82,43 +82,70 @@ export function PrestigeVehicleMedia({
               fill
               className="object-cover"
             />
-            {/* Hotspots */}
+            {/* Hotspots with IKEA-style tooltips */}
             {features.map((feature) => (
-              <button
+              <div
                 key={feature.id}
-                onClick={() => setActiveFeature(feature)}
+                className="absolute -translate-x-1/2 -translate-y-1/2"
                 style={{
                   left: `${feature.position.x}%`,
                   top: `${feature.position.y}%`,
                 }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 group"
-                aria-label={`View ${feature.name}`}
               >
-                <span className="flex h-6 w-6 items-center justify-center bg-background text-foreground text-xs font-semibold shadow-lg group-hover:scale-110 transition-transform">
-                  +
-                </span>
-              </button>
+                <button
+                  onClick={() => setActiveFeature(activeFeature?.id === feature.id ? null : feature)}
+                  className={`flex h-6 w-6 items-center justify-center bg-background text-foreground text-xs font-semibold shadow-lg hover:scale-110 transition-transform ${
+                    activeFeature?.id === feature.id ? "ring-1 ring-background/50" : ""
+                  }`}
+                  aria-label={`View ${feature.name}`}
+                >
+                  {activeFeature?.id === feature.id ? "×" : "+"}
+                </button>
+
+                {/* Tooltip card */}
+                {activeFeature?.id === feature.id && (
+                  <div 
+                    className="absolute z-20 w-44 bg-background text-foreground shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                    style={{
+                      left: feature.position.x > 50 ? "auto" : "100%",
+                      right: feature.position.x > 50 ? "100%" : "auto",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      marginLeft: feature.position.x > 50 ? 0 : 8,
+                      marginRight: feature.position.x > 50 ? 8 : 0,
+                    }}
+                  >
+                    {feature.closeUpImage && (
+                      <div className="relative h-20 w-full">
+                        <Image
+                          src={feature.closeUpImage}
+                          alt={feature.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="p-3">
+                      <p className="text-[9px] uppercase tracking-[0.1em] text-muted-foreground">
+                        {feature.category}
+                      </p>
+                      <h4 className="text-sm font-medium mt-0.5">
+                        {feature.name}
+                      </h4>
+                      <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
 
-          {/* Feature List */}
-          <div className="space-y-0">
-            {features.map((feature) => (
-              <button
-                key={feature.id}
-                onClick={() => setActiveFeature(feature)}
-                className="w-full flex items-center justify-between py-3 border-b border-background/20 text-left group"
-              >
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.12em] text-background/50 mb-0.5">
-                    {feature.category}
-                  </p>
-                  <p className="text-sm font-medium">{feature.name}</p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-background/40 group-hover:text-background transition-colors" />
-              </button>
-            ))}
-          </div>
+          {/* Caption */}
+          <p className="text-[10px] text-background/50 text-center mt-3">
+            Tap hotspots to explore features
+          </p>
         </div>
       )}
 
@@ -155,39 +182,6 @@ export function PrestigeVehicleMedia({
                 className="absolute inset-0 h-full w-full object-cover"
               />
             )}
-          </div>
-        </div>
-      )}
-
-      {/* Feature Detail Modal */}
-      {activeFeature && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/80 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-background text-foreground animate-in slide-in-from-bottom-4">
-            {activeFeature.closeUpImage && (
-              <div className="relative aspect-video">
-                <Image
-                  src={activeFeature.closeUpImage}
-                  alt={activeFeature.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
-            <div className="p-6">
-              <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-2">
-                {activeFeature.category}
-              </p>
-              <h3 className="font-serif text-2xl mb-3">{activeFeature.name}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                {activeFeature.description}
-              </p>
-              <button
-                onClick={() => setActiveFeature(null)}
-                className="w-full py-3 border border-foreground text-foreground text-xs uppercase tracking-[0.15em] hover:bg-foreground hover:text-background transition-colors"
-              >
-                Close
-              </button>
-            </div>
           </div>
         </div>
       )}
