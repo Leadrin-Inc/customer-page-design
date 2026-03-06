@@ -123,12 +123,13 @@ export function VehicleMedia({
                   <div 
                     className="absolute z-20 w-48 bg-white rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                     style={{
-                      left: feature.position.x > 50 ? "auto" : "100%",
-                      right: feature.position.x > 50 ? "100%" : "auto",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      marginLeft: feature.position.x > 50 ? 0 : 8,
-                      marginRight: feature.position.x > 50 ? 8 : 0,
+                      left: feature.position.x > 60 ? "auto" : "100%",
+                      right: feature.position.x > 60 ? "100%" : "auto",
+                      top: feature.position.y < 30 ? "0" : feature.position.y > 70 ? "auto" : "50%",
+                      bottom: feature.position.y > 70 ? "0" : "auto",
+                      transform: feature.position.y >= 30 && feature.position.y <= 70 ? "translateY(-50%)" : "none",
+                      marginLeft: feature.position.x > 60 ? 0 : 8,
+                      marginRight: feature.position.x > 60 ? 8 : 0,
                     }}
                   >
                     {feature.closeUpImage && (
