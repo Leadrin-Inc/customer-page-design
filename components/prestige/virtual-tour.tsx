@@ -176,22 +176,29 @@ export function PrestigeVirtualTour({
   // Preload all 36 frames on mount
   useEffect(() => {
     let loadedCount = 0
+    let errorCount = 0
     const images: HTMLImageElement[] = []
+    
+    console.log("[v0] Starting to preload 36 spin frames...")
     
     spinFrames.forEach((src, index) => {
       const img = new window.Image()
       img.crossOrigin = "anonymous"
       img.onload = () => {
         loadedCount++
+        console.log(`[v0] Frame ${index + 1} loaded (${loadedCount}/36)`)
         setLoadingProgress(Math.round((loadedCount / 36) * 100))
-        if (loadedCount === 36) {
+        if (loadedCount + errorCount === 36) {
+          console.log("[v0] All frames processed, loaded:", loadedCount, "errors:", errorCount)
           setFramesLoaded(true)
         }
       }
-      img.onerror = () => {
-        loadedCount++
-        setLoadingProgress(Math.round((loadedCount / 36) * 100))
-        if (loadedCount === 36) {
+      img.onerror = (e) => {
+        errorCount++
+        console.error(`[v0] Frame ${index + 1} failed to load:`, src, e)
+        setLoadingProgress(Math.round(((loadedCount + errorCount) / 36) * 100))
+        if (loadedCount + errorCount === 36) {
+          console.log("[v0] All frames processed, loaded:", loadedCount, "errors:", errorCount)
           setFramesLoaded(true)
         }
       }
@@ -200,6 +207,16 @@ export function PrestigeVirtualTour({
     })
     
     preloadedImages.current = images
+    
+    // Fallback: if loading takes more than 5 seconds, show anyway
+    const fallbackTimer = setTimeout(() => {
+      if (!framesLoaded) {
+        console.log("[v0] Fallback timer triggered - showing frames anyway")
+        setFramesLoaded(true)
+      }
+    }, 5000)
+    
+    return () => clearTimeout(fallbackTimer)
   }, [])
 
   // Cleanup function
@@ -558,16 +575,16 @@ export function PrestigeVirtualTour({
         onTouchMove={!autoSpin ? onTouchMove : undefined}
         onTouchEnd={!autoSpin ? onTouchEnd : undefined}
       >
-        {/* Loading indicator */}
+        {/* Loading indicator - positioned at bottom, doesn't block view */}
         {!framesLoaded && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0d1117] z-20">
-            <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
+            <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-[#c9a227] transition-all duration-200"
                 style={{ width: `${loadingProgress}%` }}
               />
             </div>
-            <p className="mt-3 text-xs text-white/40 font-mono">Loading 360° view... {loadingProgress}%</p>
+            <p className="mt-2 text-[10px] text-white/40 font-mono">Loading... {loadingProgress}%</p>
           </div>
         )}
 
@@ -588,7 +605,7 @@ export function PrestigeVirtualTour({
         {/* Vehicle frames with crossfade */}
         <div className="relative w-[90%] aspect-[16/10]">
           {/* Previous frame (for crossfade) */}
-          {prevFrame !== currentFrame && framesLoaded && (
+          {prevFrame !== currentFrame && (
             <img
               src={spinFrames[prevFrame - 1]}
               alt=""
@@ -596,15 +613,14 @@ export function PrestigeVirtualTour({
               style={{ opacity: 1 - crossfadeOpacity }}
             />
           )}
-          {/* Current frame */}
-          {framesLoaded && (
-            <img
-              src={spinFrames[currentFrame - 1]}
-              alt={vehicleTitle}
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-opacity duration-150"
-              style={{ opacity: crossfadeOpacity }}
-            />
-          )}
+          {/* Current frame - always show, even while loading */}
+          <img
+            src={spinFrames[currentFrame - 1]}
+            alt={vehicleTitle}
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-opacity duration-150"
+            style={{ opacity: crossfadeOpacity }}
+            onError={(e) => console.error("[v0] Image display error:", e)}
+          />
         </div>
 
         {/* Ground reflection */}
