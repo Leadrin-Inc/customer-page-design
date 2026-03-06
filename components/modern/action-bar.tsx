@@ -22,7 +22,7 @@ export function ActionBar({
         onClick={onBook}
         className="w-full h-14 bg-blue-600 text-white font-semibold text-[15px] rounded-full flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/25"
       >
-        Let{"'"}s talk, {salespersonFirstName}
+        Schedule a Test Drive
         <ArrowRight className="h-4 w-4" />
       </button>
 
