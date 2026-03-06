@@ -66,18 +66,20 @@ export function VehicleMedia({
       {/* Features View */}
       {activeTab === "features" && (
         <div className="px-5">
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100">
-            <Image
-              src={heroImage}
-              alt={vehicleTitle}
-              fill
-              className="object-cover"
-              priority
-            />
+          <div className="relative aspect-[4/3]">
+            {/* Image container with overflow hidden for rounded corners */}
+            <div className="absolute inset-0 rounded-2xl overflow-hidden bg-slate-100">
+              <Image
+                src={heroImage}
+                alt={vehicleTitle}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
             
-            {/* Hotspots with IKEA-style tooltips */}
+            {/* Hotspots - can overflow outside image bounds */}
             {features.map((feature) => {
-              // Calculate horizontal position to prevent overflow
               const getHorizontalPosition = () => {
                 if (feature.position.x < 25) {
                   return { left: "0", transform: "none" }
@@ -87,7 +89,7 @@ export function VehicleMedia({
                 return { left: "50%", transform: "translateX(-50%)" }
               }
               const horizPos = getHorizontalPosition()
-              const showAbove = feature.position.y > 60
+              const showAbove = feature.position.y > 50
               
               return (
                 <div
@@ -107,7 +109,7 @@ export function VehicleMedia({
                   {/* IKEA-style tooltip */}
                   {selectedFeature?.id === feature.id && (
                     <div 
-                      className="absolute z-20 w-40 bg-white rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                      className="absolute z-50 w-40 bg-white rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                       style={{
                         ...horizPos,
                         top: showAbove ? "auto" : "100%",

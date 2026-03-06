@@ -75,19 +75,20 @@ export function PrestigeVehicleMedia({
       {activeTab === "features" && (
         <div className="px-5 pb-10">
           {/* Vehicle Image with Hotspots */}
-          <div className="relative aspect-[4/3] mb-5 overflow-visible">
-            <Image
-              src={vehicleImage}
-              alt={vehicleTitle}
-              fill
-              className="object-cover"
-            />
-            {/* Hotspots with IKEA-style tooltips */}
+          <div className="relative aspect-[4/3]">
+            {/* Image container with overflow hidden for rounded corners */}
+            <div className="absolute inset-0 overflow-hidden">
+              <Image
+                src={vehicleImage}
+                alt={vehicleTitle}
+                fill
+                className="object-cover"
+              />
+            </div>
+            {/* Hotspots - can overflow outside image bounds */}
             {features.map((feature) => {
-              // Determine tooltip position based on hotspot location
-              const showAbove = feature.position.y > 60
+              const showAbove = feature.position.y > 50
               
-              // Calculate horizontal position to prevent overflow
               const getHorizontalPosition = () => {
                 if (feature.position.x < 25) {
                   return { left: "0", transform: "none" }
@@ -101,7 +102,7 @@ export function PrestigeVehicleMedia({
               return (
                 <div
                   key={feature.id}
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
                   style={{
                     left: `${feature.position.x}%`,
                     top: `${feature.position.y}%`,
@@ -120,7 +121,7 @@ export function PrestigeVehicleMedia({
                   {/* Tooltip card */}
                   {activeFeature?.id === feature.id && (
                     <div 
-                      className="absolute z-20 w-40 bg-background text-foreground shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                      className="absolute z-50 w-40 bg-background text-foreground shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                       style={{
                         ...horizPos,
                         top: showAbove ? "auto" : "100%",

@@ -87,19 +87,21 @@ export function VehicleMedia({
 
       {/* Features View */}
       {(activeTab === "features" || (!showTabs && hasFeatures)) && hasFeatures && (
-        <div className="relative mx-6 mb-6 overflow-hidden rounded-xl">
+        <div className="mx-6 mb-6">
           <div className="relative aspect-[4/3]">
-            <Image
-              src={vehicleImage}
-              alt={vehicleTitle}
-              fill
-              className="object-cover"
-            />
+            {/* Image with rounded corners */}
+            <div className="absolute inset-0 rounded-xl overflow-hidden">
+              <Image
+                src={vehicleImage}
+                alt={vehicleTitle}
+                fill
+                className="object-cover"
+              />
+            </div>
 
-            {/* Hotspot Markers */}
+            {/* Hotspot Markers - positioned relative to image but can overflow */}
             {features.map((feature) => {
-              // Calculate tooltip horizontal position to prevent overflow
-              // Tooltip is 160px (w-40), so shift when within 80px of edges
+              // Calculate tooltip position to prevent overflow
               const getHorizontalPosition = () => {
                 if (feature.position.x < 25) {
                   return { left: "0", transform: "none" }
@@ -109,11 +111,12 @@ export function VehicleMedia({
                 return { left: "50%", transform: "translateX(-50%)" }
               }
               const horizPos = getHorizontalPosition()
+              const showAbove = feature.position.y > 50
               
               return (
                 <div
                   key={feature.id}
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
                   style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
                 >
                   <button
@@ -134,13 +137,13 @@ export function VehicleMedia({
                   {/* IKEA-style tooltip card */}
                   {selectedFeature?.id === feature.id && (
                     <div 
-                      className="absolute z-20 w-40 bg-white rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                      className="absolute z-50 w-40 bg-white rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                       style={{
                         ...horizPos,
-                        top: feature.position.y > 60 ? "auto" : "100%",
-                        bottom: feature.position.y > 60 ? "100%" : "auto",
-                        marginTop: feature.position.y > 60 ? 0 : 8,
-                        marginBottom: feature.position.y > 60 ? 8 : 0,
+                        top: showAbove ? "auto" : "100%",
+                        bottom: showAbove ? "100%" : "auto",
+                        marginTop: showAbove ? 0 : 8,
+                        marginBottom: showAbove ? 8 : 0,
                       }}
                     >
                       {feature.closeUpImage && (
