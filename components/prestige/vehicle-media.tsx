@@ -75,7 +75,7 @@ export function PrestigeVehicleMedia({
       {activeTab === "features" && (
         <div className="px-5 pb-10">
           {/* Vehicle Image with Hotspots */}
-          <div className="relative aspect-[4/3] mb-5">
+          <div className="relative aspect-[4/3] mb-5 overflow-visible">
             <Image
               src={vehicleImage}
               alt={vehicleTitle}
@@ -83,64 +83,72 @@ export function PrestigeVehicleMedia({
               className="object-cover"
             />
             {/* Hotspots with IKEA-style tooltips */}
-            {features.map((feature) => (
-              <div
-                key={feature.id}
-                className="absolute -translate-x-1/2 -translate-y-1/2"
-                style={{
-                  left: `${feature.position.x}%`,
-                  top: `${feature.position.y}%`,
-                }}
-              >
-                <button
-                  onClick={() => setActiveFeature(activeFeature?.id === feature.id ? null : feature)}
-                  className={`flex h-6 w-6 items-center justify-center bg-background text-foreground text-xs font-semibold shadow-lg hover:scale-110 transition-transform ${
-                    activeFeature?.id === feature.id ? "ring-1 ring-background/50" : ""
-                  }`}
-                  aria-label={`View ${feature.name}`}
+            {features.map((feature) => {
+              // Determine tooltip position based on hotspot location
+              const showLeft = feature.position.x > 50
+              const showAbove = feature.position.y > 60
+              const showBelow = feature.position.y < 40
+              
+              return (
+                <div
+                  key={feature.id}
+                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  style={{
+                    left: `${feature.position.x}%`,
+                    top: `${feature.position.y}%`,
+                  }}
                 >
-                  {activeFeature?.id === feature.id ? "×" : "+"}
-                </button>
-
-                {/* Tooltip card */}
-                {activeFeature?.id === feature.id && (
-                  <div 
-                    className="absolute z-20 w-44 bg-background text-foreground shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-                    style={{
-                      left: feature.position.x > 60 ? "auto" : "100%",
-                      right: feature.position.x > 60 ? "100%" : "auto",
-                      top: feature.position.y < 30 ? "0" : feature.position.y > 70 ? "auto" : "50%",
-                      bottom: feature.position.y > 70 ? "0" : "auto",
-                      transform: feature.position.y >= 30 && feature.position.y <= 70 ? "translateY(-50%)" : "none",
-                      marginLeft: feature.position.x > 60 ? 0 : 8,
-                      marginRight: feature.position.x > 60 ? 8 : 0,
-                    }}
+                  <button
+                    onClick={() => setActiveFeature(activeFeature?.id === feature.id ? null : feature)}
+                    className={`flex h-6 w-6 items-center justify-center bg-background text-foreground text-xs font-semibold shadow-lg hover:scale-110 transition-transform ${
+                      activeFeature?.id === feature.id ? "ring-1 ring-background/50" : ""
+                    }`}
+                    aria-label={`View ${feature.name}`}
                   >
-                    {feature.closeUpImage && (
-                      <div className="relative h-20 w-full">
-                        <Image
-                          src={feature.closeUpImage}
-                          alt={feature.name}
-                          fill
-                          className="object-cover"
-                        />
+                    {activeFeature?.id === feature.id ? "×" : "+"}
+                  </button>
+
+                  {/* Tooltip card - appears below/above when near edges */}
+                  {activeFeature?.id === feature.id && (
+                    <div 
+                      className="absolute z-20 w-40 bg-background text-foreground shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                      style={{
+                        // Horizontal: center the tooltip, shift if near edge
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        // Vertical: show below by default, above if near bottom
+                        top: showAbove ? "auto" : "100%",
+                        bottom: showAbove ? "100%" : "auto",
+                        marginTop: showAbove ? 0 : 8,
+                        marginBottom: showAbove ? 8 : 0,
+                      }}
+                    >
+                      {feature.closeUpImage && (
+                        <div className="relative h-20 w-full">
+                          <Image
+                            src={feature.closeUpImage}
+                            alt={feature.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="p-2.5">
+                        <p className="text-[9px] uppercase tracking-[0.1em] text-muted-foreground">
+                          {feature.category}
+                        </p>
+                        <h4 className="text-xs font-medium mt-0.5">
+                          {feature.name}
+                        </h4>
+                        <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
+                          {feature.description}
+                        </p>
                       </div>
-                    )}
-                    <div className="p-3">
-                      <p className="text-[9px] uppercase tracking-[0.1em] text-muted-foreground">
-                        {feature.category}
-                      </p>
-                      <h4 className="text-sm font-medium mt-0.5">
-                        {feature.name}
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
-                        {feature.description}
-                      </p>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              )
+            })}
           </div>
 
           {/* Caption */}

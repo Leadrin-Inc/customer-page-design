@@ -91,22 +91,21 @@ export function VehicleMedia({
                   {selectedFeature?.id === feature.id ? "×" : feature.id}
                 </button>
 
-                {/* IKEA-style tooltip */}
+                {/* IKEA-style tooltip - centered below/above hotspot */}
                 {selectedFeature?.id === feature.id && (
                   <div 
-                    className="absolute z-20 w-48 bg-white rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                    className="absolute z-20 w-40 bg-white rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                     style={{
-                      left: feature.position.x > 60 ? "auto" : "100%",
-                      right: feature.position.x > 60 ? "100%" : "auto",
-                      top: feature.position.y < 30 ? "0" : feature.position.y > 70 ? "auto" : "50%",
-                      bottom: feature.position.y > 70 ? "0" : "auto",
-                      transform: feature.position.y >= 30 && feature.position.y <= 70 ? "translateY(-50%)" : "none",
-                      marginLeft: feature.position.x > 60 ? 0 : 10,
-                      marginRight: feature.position.x > 60 ? 10 : 0,
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      top: feature.position.y > 60 ? "auto" : "100%",
+                      bottom: feature.position.y > 60 ? "100%" : "auto",
+                      marginTop: feature.position.y > 60 ? 0 : 8,
+                      marginBottom: feature.position.y > 60 ? 8 : 0,
                     }}
                   >
                     {feature.closeUpImage && (
-                      <div className="relative h-24 w-full">
+                      <div className="relative h-20 w-full">
                         <Image
                           src={feature.closeUpImage}
                           alt={feature.name}
@@ -115,20 +114,16 @@ export function VehicleMedia({
                         />
                       </div>
                     )}
-                    <div className="p-3">
+                    <div className="p-2.5">
                       <p className="text-[9px] font-semibold text-blue-600 uppercase tracking-wide">
                         {feature.category}
                       </p>
-                      <h4 className="text-sm font-bold text-slate-900 mt-0.5">
+                      <h4 className="text-xs font-bold text-slate-900 mt-0.5">
                         {feature.name}
                       </h4>
-                      <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                      <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
                         {feature.description}
                       </p>
-                      <div className="flex items-center gap-1 mt-2 text-blue-600">
-                        <span className="text-[10px] font-semibold">View details</span>
-                        <ChevronRight className="h-3 w-3" />
-                      </div>
                     </div>
                   </div>
                 )}

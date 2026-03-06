@@ -118,22 +118,21 @@ export function VehicleMedia({
                   <span className="text-xs font-bold">{selectedFeature?.id === feature.id ? "×" : "+"}</span>
                 </button>
 
-                {/* IKEA-style tooltip card */}
+                {/* IKEA-style tooltip card - centered below/above hotspot */}
                 {selectedFeature?.id === feature.id && (
                   <div 
-                    className="absolute z-20 w-48 bg-white rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                    className="absolute z-20 w-40 bg-white rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                     style={{
-                      left: feature.position.x > 60 ? "auto" : "100%",
-                      right: feature.position.x > 60 ? "100%" : "auto",
-                      top: feature.position.y < 30 ? "0" : feature.position.y > 70 ? "auto" : "50%",
-                      bottom: feature.position.y > 70 ? "0" : "auto",
-                      transform: feature.position.y >= 30 && feature.position.y <= 70 ? "translateY(-50%)" : "none",
-                      marginLeft: feature.position.x > 60 ? 0 : 8,
-                      marginRight: feature.position.x > 60 ? 8 : 0,
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      top: feature.position.y > 60 ? "auto" : "100%",
+                      bottom: feature.position.y > 60 ? "100%" : "auto",
+                      marginTop: feature.position.y > 60 ? 0 : 8,
+                      marginBottom: feature.position.y > 60 ? 8 : 0,
                     }}
                   >
                     {feature.closeUpImage && (
-                      <div className="relative h-24 w-full">
+                      <div className="relative h-20 w-full">
                         <Image
                           src={feature.closeUpImage}
                           alt={feature.name}
@@ -142,14 +141,14 @@ export function VehicleMedia({
                         />
                       </div>
                     )}
-                    <div className="p-3">
-                      <p className="text-[10px] font-medium text-primary uppercase tracking-wide">
+                    <div className="p-2.5">
+                      <p className="text-[9px] font-medium text-primary uppercase tracking-wide">
                         {feature.category}
                       </p>
-                      <h4 className="text-sm font-semibold text-foreground mt-0.5">
+                      <h4 className="text-xs font-semibold text-foreground mt-0.5">
                         {feature.name}
                       </h4>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                      <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
                         {feature.description}
                       </p>
                     </div>
