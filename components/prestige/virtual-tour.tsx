@@ -528,54 +528,54 @@ export function PrestigeVirtualTour({
   // Pre-tour landing view
   if (!isTourActive) {
     return (
-      <section className="relative mx-5 my-8 overflow-hidden rounded-sm bg-[#0d1117]">
+      <section className="relative mx-5 my-6 overflow-hidden bg-[#0d1117]">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0d1117] via-[#0d1117]/80 to-[#0d1117]" />
         
-        <div className="relative aspect-[4/5] flex flex-col items-center justify-between py-8 px-6">
+        <div className="relative aspect-[4/5] flex flex-col items-center justify-between py-6 px-5">
           {/* Top - Personalization */}
           <div className="text-center z-10">
-            <p className="text-xs tracking-[0.25em] text-[#c9a227] uppercase font-mono">
+            <p className="text-[10px] tracking-[0.2em] text-[#c9a227] uppercase">
               Personalized for {buyerName}
             </p>
           </div>
 
           {/* Center - Spin Viewer */}
-          <div className="flex-1 w-full relative my-4">
+          <div className="flex-1 w-full relative my-3">
             <SpinViewer autoSpin />
           </div>
 
           {/* Vehicle Info & CTA */}
           <div className="flex flex-col items-center text-center z-10">
-            <h2 className="font-serif text-2xl text-white mb-1">{vehicleTitle}</h2>
-            <p className="text-white/60 text-sm mb-6">
+            <h2 className="font-serif text-[22px] text-white mb-0.5 leading-tight">{vehicleTitle}</h2>
+            <p className="text-white/50 text-xs mb-5">
               ${price.toLocaleString()}
             </p>
 
             {/* Start Button with glow */}
             <button
               onClick={handleStartTour}
-              className="group relative flex items-center gap-3 px-8 py-4 bg-[#c9a227] text-[#0d1117] font-semibold transition-all hover:bg-[#d4af37]"
+              className="group relative flex items-center gap-2.5 px-6 py-3 bg-[#c9a227] text-[#0d1117] text-sm uppercase tracking-[0.1em] transition-all hover:bg-[#d4af37]"
             >
               <span className="absolute inset-0 bg-[#c9a227] blur-xl opacity-40 group-hover:opacity-60 transition-opacity" />
-              <Play className="relative h-5 w-5" fill="currentColor" />
+              <Play className="relative h-4 w-4" fill="currentColor" />
               <span className="relative">Start Virtual Tour</span>
             </button>
 
             {/* Tour metadata */}
-            <p className="mt-4 text-xs text-white/40 font-mono">
-              AI-narrated · 6 features · ~90 seconds
+            <p className="mt-3 text-[10px] text-white/30 uppercase tracking-[0.15em]">
+              AI-narrated · 6 features · ~90 sec
             </p>
           </div>
 
           {/* Bottom - Salesperson card */}
-          <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm px-4 py-3 rounded-sm mt-6 z-10">
-            <div className="h-10 w-10 rounded-full bg-[#c9a227] flex items-center justify-center text-[#0d1117] font-semibold">
+          <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm px-3 py-2.5 mt-4 z-10">
+            <div className="h-9 w-9 rounded-full bg-[#c9a227] flex items-center justify-center text-[#0d1117] text-sm font-medium">
               {salespersonInitial}
             </div>
             <div>
-              <p className="text-white text-sm font-medium">{salespersonName}</p>
-              <p className="text-white/50 text-xs">{dealershipName}</p>
+              <p className="text-white text-[13px]">{salespersonName}</p>
+              <p className="text-white/40 text-[11px]">{dealershipName}</p>
             </div>
           </div>
         </div>
@@ -588,22 +588,22 @@ export function PrestigeVirtualTour({
     <div className="fixed inset-0 z-50 bg-[#0d1117] flex flex-col">
       {/* CTA Overlay */}
       {showCTA && (
-        <div className="absolute inset-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm flex flex-col items-center justify-center px-6 animate-in fade-in duration-500">
+        <div className="absolute inset-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm flex flex-col items-center justify-center px-5 animate-in fade-in duration-500">
           <div className="text-center">
-            <p className="text-xs tracking-[0.25em] text-[#c9a227] uppercase font-mono mb-2">
+            <p className="text-[10px] tracking-[0.2em] text-[#c9a227] uppercase mb-1.5">
               Tour Complete
             </p>
-            <h2 className="font-serif text-3xl text-white mb-3">
+            <h2 className="font-serif text-[26px] text-white mb-2 leading-tight">
               Ready to see it in person?
             </h2>
-            <p className="text-white/60 text-sm mb-8 max-w-xs">
+            <p className="text-white/50 text-[13px] mb-6 max-w-[260px]">
               {salespersonName} is ready to show you this {vehicleTitle}
             </p>
 
-            <div className="space-y-3 w-full max-w-xs">
+            <div className="space-y-2.5 w-full max-w-[260px]">
               <button
                 onClick={onBook}
-                className="w-full flex items-center justify-center gap-2 py-4 bg-[#c9a227] text-[#0d1117] font-semibold transition-colors hover:bg-[#d4af37]"
+                className="w-full flex items-center justify-center gap-2 py-3 bg-[#c9a227] text-[#0d1117] text-sm uppercase tracking-[0.1em] transition-colors hover:bg-[#d4af37]"
               >
                 <Calendar className="h-4 w-4" />
                 Book Appointment
@@ -612,7 +612,7 @@ export function PrestigeVirtualTour({
               {onCall && (
                 <button
                   onClick={onCall}
-                  className="w-full flex items-center justify-center gap-2 py-4 border border-white/20 text-white transition-colors hover:bg-white/5"
+                  className="w-full flex items-center justify-center gap-2 py-3 border border-white/20 text-white text-sm uppercase tracking-[0.1em] transition-colors hover:bg-white/5"
                 >
                   <Phone className="h-4 w-4" />
                   Call {salespersonName.split(" ")[0]}
@@ -621,9 +621,9 @@ export function PrestigeVirtualTour({
 
               <button
                 onClick={handleReplay}
-                className="w-full flex items-center justify-center gap-2 py-3 text-white/50 text-sm hover:text-white transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2 text-white/40 text-xs uppercase tracking-wider hover:text-white transition-colors"
               >
-                <RotateCcw className="h-4 w-4" />
+                <RotateCcw className="h-3.5 w-3.5" />
                 Replay Tour
               </button>
             </div>
@@ -632,30 +632,30 @@ export function PrestigeVirtualTour({
       )}
 
       {/* Top Bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+      <div className="flex items-center justify-between px-3 py-2">
         <button
           onClick={handleExitTour}
-          className="p-2 text-white/60 hover:text-white transition-colors"
+          className="p-1.5 text-white/60 hover:text-white transition-colors"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </button>
         
-        <p className="text-white text-sm font-medium">{vehicleTitle}</p>
+        <p className="text-white/80 text-xs uppercase tracking-[0.15em]">{vehicleTitle}</p>
         
         {/* Language Toggle */}
-        <div className="flex bg-white/10 rounded-sm overflow-hidden">
+        <div className="flex bg-white/10 overflow-hidden">
           <button
             onClick={() => setLanguage("en")}
-            className={`px-3 py-1.5 text-xs font-mono transition-colors ${
-              language === "en" ? "bg-[#c9a227] text-[#0d1117]" : "text-white/60 hover:text-white"
+            className={`px-2 py-1 text-[10px] uppercase tracking-wider transition-colors ${
+              language === "en" ? "bg-[#c9a227] text-[#0d1117]" : "text-white/50 hover:text-white"
             }`}
           >
             EN
           </button>
           <button
             onClick={() => setLanguage("es")}
-            className={`px-3 py-1.5 text-xs font-mono transition-colors ${
-              language === "es" ? "bg-[#c9a227] text-[#0d1117]" : "text-white/60 hover:text-white"
+            className={`px-2 py-1 text-[10px] uppercase tracking-wider transition-colors ${
+              language === "es" ? "bg-[#c9a227] text-[#0d1117]" : "text-white/50 hover:text-white"
             }`}
           >
             ES
@@ -664,15 +664,15 @@ export function PrestigeVirtualTour({
       </div>
 
       {/* Segment Navigation - Named Tabs */}
-      <div className="flex items-center gap-1 px-3 py-2 overflow-x-auto scrollbar-hide">
+      <div className="flex items-center gap-0.5 px-2 py-1 overflow-x-auto scrollbar-hide border-b border-white/5">
         {tourSegments.map((segment, index) => (
           <button
             key={segment.id}
             onClick={() => handleSegmentClick(index)}
-            className={`flex-shrink-0 px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded-sm transition-all duration-300 ${
+            className={`flex-shrink-0 px-2.5 py-1 text-[9px] uppercase tracking-[0.15em] transition-all duration-300 ${
               index === currentSegmentIndex
                 ? "text-[#0d1117]"
-                : "text-white/40 hover:text-white/70 bg-transparent"
+                : "text-white/30 hover:text-white/60 bg-transparent"
             }`}
             style={{
               backgroundColor: index === currentSegmentIndex ? segment.accentColor : undefined,
@@ -692,18 +692,18 @@ export function PrestigeVirtualTour({
       >
         {/* Floating Segment Label */}
         <div 
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-sm rounded-sm animate-in fade-in slide-in-from-top-2 duration-500"
+          className="absolute top-2 left-3 z-10 flex items-center gap-2 px-2 py-1 bg-black/40 backdrop-blur-sm animate-in fade-in slide-in-from-top-2 duration-500"
           style={{ borderLeft: `2px solid ${currentSegment.accentColor}` }}
         >
-          <span className="text-xs text-white font-mono uppercase tracking-wider">
+          <span className="text-[10px] text-white uppercase tracking-[0.15em]">
             {currentSegment.label}
           </span>
         </div>
 
         {/* Drag hint when paused */}
         {!isPlaying && !showCTA && (
-          <div className="absolute top-4 right-4 z-10 px-3 py-1.5 bg-black/40 backdrop-blur-sm rounded-sm animate-in fade-in duration-500">
-            <span className="text-xs text-white/50 font-mono">
+          <div className="absolute top-2 right-3 z-10 px-2 py-1 bg-black/40 backdrop-blur-sm animate-in fade-in duration-500">
+            <span className="text-[10px] text-white/40 uppercase tracking-wider">
               Drag to rotate
             </span>
           </div>
@@ -733,15 +733,15 @@ export function PrestigeVirtualTour({
         )}
 
         {/* Gradient overlays */}
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0d1117] to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#0d1117] to-transparent pointer-events-none" />
       </div>
 
       {/* Caption Area - Collapsible on mobile */}
-      <div className="px-6 py-3">
+      <div className="px-4 py-2">
         <div className="relative">
           <p 
-            className={`text-white/90 text-[15px] leading-relaxed font-serif transition-all duration-300 ${
-              !captionExpanded ? "line-clamp-3" : ""
+            className={`text-white/80 text-[13px] leading-relaxed font-serif transition-all duration-300 ${
+              !captionExpanded ? "line-clamp-2" : ""
             }`}
           >
             {displayedText}
@@ -749,50 +749,50 @@ export function PrestigeVirtualTour({
               <span className="animate-pulse">|</span>
             )}
           </p>
-          {displayedText.length > 100 && (
+          {displayedText.length > 80 && (
             <button
               onClick={() => setCaptionExpanded(!captionExpanded)}
-              className="mt-1 text-xs font-mono uppercase tracking-wider transition-colors"
+              className="text-[10px] uppercase tracking-[0.15em] transition-colors"
               style={{ color: currentSegment.accentColor }}
             >
-              {captionExpanded ? "Show less" : "Read more"}
+              {captionExpanded ? "Less" : "More"}
             </button>
           )}
         </div>
       </div>
 
       {/* Playback Controls */}
-      <div className="flex items-center justify-center gap-8 pb-4">
+      <div className="flex items-center justify-center gap-6 py-2">
         <button
           onClick={handlePrevious}
           disabled={currentSegmentIndex === 0}
-          className="p-3 text-white/60 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-2 text-white/50 hover:text-white transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
         >
-          <ChevronLeft className="h-6 w-6" />
+          <ChevronLeft className="h-5 w-5" />
         </button>
 
         <button
           onClick={handlePlayPause}
-          className="h-14 w-14 rounded-full flex items-center justify-center transition-all hover:scale-105"
+          className="h-11 w-11 rounded-full flex items-center justify-center transition-all hover:scale-105"
           style={{ backgroundColor: currentSegment.accentColor }}
         >
           {isPlaying ? (
-            <Pause className="h-6 w-6 text-[#0d1117]" fill="currentColor" />
+            <Pause className="h-5 w-5 text-[#0d1117]" fill="currentColor" />
           ) : (
-            <Play className="h-6 w-6 text-[#0d1117] ml-1" fill="currentColor" />
+            <Play className="h-5 w-5 text-[#0d1117] ml-0.5" fill="currentColor" />
           )}
         </button>
 
         <button
           onClick={handleNext}
-          className="p-3 text-white/60 hover:text-white transition-colors"
+          className="p-2 text-white/50 hover:text-white transition-colors"
         >
-          <ChevronRight className="h-6 w-6" />
+          <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 
       {/* Progress Bar */}
-      <div className="h-1 bg-white/10">
+      <div className="h-0.5 bg-white/10">
         <div
           className="h-full transition-all duration-100"
           style={{
