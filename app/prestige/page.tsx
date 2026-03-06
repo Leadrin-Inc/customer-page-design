@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { PrestigeHero } from "@/components/prestige/hero"
 import { PrestigeActionBar } from "@/components/prestige/action-bar"
+import { PrestigeVirtualTour } from "@/components/prestige/virtual-tour"
 import { PrestigeVehicleMedia } from "@/components/prestige/vehicle-media"
 import { PrestigeVehicleDetails } from "@/components/prestige/vehicle-details"
 import { PrestigeSalespersonVideo } from "@/components/prestige/salesperson-video"
@@ -46,6 +47,18 @@ export default function PrestigePage() {
         buyerName={buyer.name}
         vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
         rating={dealership.rating}
+      />
+
+      <PrestigeVirtualTour
+        buyerName={buyer.name}
+        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model} ${vehicle.trim}`}
+        vehicleImage={vehicle.photos[0]}
+        price={vehicle.price}
+        salespersonName={salesperson.name}
+        salespersonInitial={salesperson.name.charAt(0)}
+        dealershipName={dealership.name}
+        onBook={scrollToBooking}
+        onCall={() => window.location.href = `tel:${salesperson.phone}`}
       />
 
       <PrestigeVehicleMedia
