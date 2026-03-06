@@ -85,9 +85,18 @@ export function PrestigeVehicleMedia({
             {/* Hotspots with IKEA-style tooltips */}
             {features.map((feature) => {
               // Determine tooltip position based on hotspot location
-              const showLeft = feature.position.x > 50
               const showAbove = feature.position.y > 60
-              const showBelow = feature.position.y < 40
+              
+              // Calculate horizontal position to prevent overflow
+              const getHorizontalPosition = () => {
+                if (feature.position.x < 25) {
+                  return { left: "0", transform: "none" }
+                } else if (feature.position.x > 75) {
+                  return { left: "auto", right: "0", transform: "none" }
+                }
+                return { left: "50%", transform: "translateX(-50%)" }
+              }
+              const horizPos = getHorizontalPosition()
               
               return (
                 <div
@@ -108,15 +117,12 @@ export function PrestigeVehicleMedia({
                     {activeFeature?.id === feature.id ? "×" : "+"}
                   </button>
 
-                  {/* Tooltip card - appears below/above when near edges */}
+                  {/* Tooltip card */}
                   {activeFeature?.id === feature.id && (
                     <div 
                       className="absolute z-20 w-40 bg-background text-foreground shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                       style={{
-                        // Horizontal: center the tooltip, shift if near edge
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        // Vertical: show below by default, above if near bottom
+                        ...horizPos,
                         top: showAbove ? "auto" : "100%",
                         bottom: showAbove ? "100%" : "auto",
                         marginTop: showAbove ? 0 : 8,

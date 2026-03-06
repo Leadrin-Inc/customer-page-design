@@ -76,59 +76,72 @@ export function VehicleMedia({
             />
             
             {/* Hotspots with IKEA-style tooltips */}
-            {features.map((feature) => (
-              <div
-                key={feature.id}
-                className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10"
-                style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
-              >
-                <button
-                  onClick={() => setSelectedFeature(selectedFeature?.id === feature.id ? null : feature)}
-                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold shadow-lg ring-[3px] ring-white/80 hover:scale-110 transition-transform ${
-                    selectedFeature?.id === feature.id ? "bg-blue-700" : ""
-                  }`}
+            {features.map((feature) => {
+              // Calculate horizontal position to prevent overflow
+              const getHorizontalPosition = () => {
+                if (feature.position.x < 25) {
+                  return { left: "0", transform: "none" }
+                } else if (feature.position.x > 75) {
+                  return { left: "auto", right: "0", transform: "none" }
+                }
+                return { left: "50%", transform: "translateX(-50%)" }
+              }
+              const horizPos = getHorizontalPosition()
+              const showAbove = feature.position.y > 60
+              
+              return (
+                <div
+                  key={feature.id}
+                  className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10"
+                  style={{ left: `${feature.position.x}%`, top: `${feature.position.y}%` }}
                 >
-                  {selectedFeature?.id === feature.id ? "×" : feature.id}
-                </button>
-
-                {/* IKEA-style tooltip - centered below/above hotspot */}
-                {selectedFeature?.id === feature.id && (
-                  <div 
-                    className="absolute z-20 w-40 bg-white rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-                    style={{
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      top: feature.position.y > 60 ? "auto" : "100%",
-                      bottom: feature.position.y > 60 ? "100%" : "auto",
-                      marginTop: feature.position.y > 60 ? 0 : 8,
-                      marginBottom: feature.position.y > 60 ? 8 : 0,
-                    }}
+                  <button
+                    onClick={() => setSelectedFeature(selectedFeature?.id === feature.id ? null : feature)}
+                    className={`flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold shadow-lg ring-[3px] ring-white/80 hover:scale-110 transition-transform ${
+                      selectedFeature?.id === feature.id ? "bg-blue-700" : ""
+                    }`}
                   >
-                    {feature.closeUpImage && (
-                      <div className="relative h-20 w-full">
-                        <Image
-                          src={feature.closeUpImage}
-                          alt={feature.name}
-                          fill
-                          className="object-cover"
-                        />
+                    {selectedFeature?.id === feature.id ? "×" : feature.id}
+                  </button>
+
+                  {/* IKEA-style tooltip */}
+                  {selectedFeature?.id === feature.id && (
+                    <div 
+                      className="absolute z-20 w-40 bg-white rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                      style={{
+                        ...horizPos,
+                        top: showAbove ? "auto" : "100%",
+                        bottom: showAbove ? "100%" : "auto",
+                        marginTop: showAbove ? 0 : 8,
+                        marginBottom: showAbove ? 8 : 0,
+                      }}
+                    >
+                      {feature.closeUpImage && (
+                        <div className="relative h-20 w-full">
+                          <Image
+                            src={feature.closeUpImage}
+                            alt={feature.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="p-2.5">
+                        <p className="text-[9px] font-semibold text-blue-600 uppercase tracking-wide">
+                          {feature.category}
+                        </p>
+                        <h4 className="text-xs font-bold text-slate-900 mt-0.5">
+                          {feature.name}
+                        </h4>
+                        <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
+                          {feature.description}
+                        </p>
                       </div>
-                    )}
-                    <div className="p-2.5">
-                      <p className="text-[9px] font-semibold text-blue-600 uppercase tracking-wide">
-                        {feature.category}
-                      </p>
-                      <h4 className="text-xs font-bold text-slate-900 mt-0.5">
-                        {feature.name}
-                      </h4>
-                      <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
-                        {feature.description}
-                      </p>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              )
+            })}
           </div>
           
           {/* Caption */}
