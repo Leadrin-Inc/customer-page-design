@@ -296,8 +296,15 @@ export function VirtualTour({
   }, [isTourActive, heroKenBurnsActive])
 
   // Ken Burns animation for active tour
-  const startKenBurnsAnimation = useCallback((segment: TourSegment, duration: number) => {
-    if (!currentPhotoRef.current || !previousPhotoRef.current) return
+  const startKenBurnsAnimation = useCallback((segment: TourSegment, duration: number, isFirstSegment: boolean = false) => {
+    console.log("[v0] startKenBurnsAnimation called", { segment: segment.id, duration, isFirstSegment })
+    console.log("[v0] currentPhotoRef:", currentPhotoRef.current)
+    console.log("[v0] previousPhotoRef:", previousPhotoRef.current)
+    
+    if (!currentPhotoRef.current) {
+      console.log("[v0] No currentPhotoRef, skipping animation")
+      return
+    }
 
     if (kenBurnsTimelineRef.current) {
       kenBurnsTimelineRef.current.kill()
@@ -308,20 +315,28 @@ export function VirtualTour({
     const translateX = (50 - segment.visual_focus.x) * 0.5
     const translateY = (50 - segment.visual_focus.y) * 0.5
 
+    console.log("[v0] Creating GSAP timeline for Ken Burns", { translateX, translateY, zoom: segment.zoom_level })
+
     kenBurnsTimelineRef.current = gsap.timeline()
 
-    kenBurnsTimelineRef.current.fromTo(
-      previous,
-      { opacity: 1 },
-      { opacity: 0, duration: 0.6, ease: "power2.inOut" },
-      0
-    )
-    kenBurnsTimelineRef.current.fromTo(
-      current,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.6, ease: "power2.inOut" },
-      0
-    )
+    // Only do crossfade if we have a previous photo and it's not the first segment
+    if (previous && !isFirstSegment) {
+      kenBurnsTimelineRef.current.fromTo(
+        previous,
+        { opacity: 1 },
+        { opacity: 0, duration: 0.6, ease: "power2.inOut" },
+        0
+      )
+      kenBurnsTimelineRef.current.fromTo(
+        current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.6, ease: "power2.inOut" },
+        0
+      )
+    } else {
+      // First segment - just ensure it's visible
+      gsap.set(current, { opacity: 1 })
+    }
 
     kenBurnsTimelineRef.current.fromTo(
       current,
@@ -344,11 +359,28 @@ export function VirtualTour({
         0.4
       )
     }
+    
+    console.log("[v0] GSAP timeline created and started")
   }, [])
 
   // Speech synthesis
   const speak = useCallback((text: string, lang: "en" | "es") => {
-    if (typeof window === "undefined" || !window.speechSynthesis || isMuted) return
+    console.log("[v0] speak called", { text: text.substring(0, 50), lang, isMuted })
+    
+    if (typeof window === "undefined") {
+      console.log("[v0] No window object")
+      return
+    }
+    
+    if (!window.speechSynthesis) {
+      console.log("[v0] No speechSynthesis API")
+      return
+    }
+    
+    if (isMuted) {
+      console.log("[v0] Speech is muted")
+      return
+    }
 
     window.speechSynthesis.cancel()
     
@@ -356,9 +388,27 @@ export function VirtualTour({
     utterance.lang = lang === "en" ? "en-US" : "es-ES"
     utterance.rate = 0.9
     utterance.pitch = 1
+    
+    utterance.onstart = () => console.log("[v0] Speech started")
+    utterance.onend = () => console.log("[v0] Speech ended")
+    utterance.onerror = (e) => console.log("[v0] Speech error:", e.error)
+    
     speechRef.current = utterance
     
-    window.speechSynthesis.speak(utterance)
+    // Ensure voices are loaded before speaking
+    const voices = window.speechSynthesis.getVoices()
+    console.log("[v0] Available voices:", voices.length)
+    
+    if (voices.length === 0) {
+      // Voices not loaded yet, wait for them
+      window.speechSynthesis.onvoiceschanged = () => {
+        console.log("[v0] Voices loaded, now speaking")
+        window.speechSynthesis.speak(utterance)
+      }
+    } else {
+      console.log("[v0] Speaking immediately")
+      window.speechSynthesis.speak(utterance)
+    }
   }, [isMuted])
 
   // Typewriter effect
@@ -400,6 +450,7 @@ export function VirtualTour({
 
   // Start segment
   const startSegment = useCallback(() => {
+    console.log("[v0] startSegment called", { segmentId: currentSegment.id, isPlaying, currentSegmentIndex })
     cleanup()
     setProgress(0)
     setDisplayedText("")
@@ -407,12 +458,17 @@ export function VirtualTour({
     
     if (isPlaying) {
       const text = language === "en" ? currentSegment.narrationEN : currentSegment.narrationES
+      console.log("[v0] Starting segment playback", { text: text.substring(0, 50) })
       speak(text, language)
       startTypewriter(text, currentSegment.durationMs)
       startProgress(currentSegment.durationMs)
-      startKenBurnsAnimation(currentSegment, currentSegment.durationMs)
+      
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        startKenBurnsAnimation(currentSegment, currentSegment.durationMs, currentSegmentIndex === 0)
+      })
     }
-  }, [cleanup, isPlaying, language, currentSegment, speak, startTypewriter, startProgress, startKenBurnsAnimation])
+  }, [cleanup, isPlaying, language, currentSegment, currentSegmentIndex, speak, startTypewriter, startProgress, startKenBurnsAnimation])
 
   // Auto-advance when segment completes
   useEffect(() => {
@@ -447,6 +503,7 @@ export function VirtualTour({
   }, [currentSegmentIndex, tourSegments])
 
   const handleStartTour = () => {
+    console.log("[v0] handleStartTour called")
     setIsTourActive(true)
     setCurrentSegmentIndex(0)
     setIsPlaying(true)
@@ -527,7 +584,7 @@ export function VirtualTour({
         src={currentSegmentIndex > 0 ? tourSegments[currentSegmentIndex - 1].photo_url : currentSegment.photo_url}
         alt=""
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ opacity: 0 }}
+        style={{ opacity: currentSegmentIndex > 0 ? 1 : 0 }}
       />
       
       <img
@@ -535,7 +592,7 @@ export function VirtualTour({
         src={currentSegment.photo_url}
         alt={currentSegment.label}
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ transformOrigin: "center center" }}
+        style={{ transformOrigin: "center center", opacity: 1 }}
       />
 
       {currentSegment.id !== "welcome" && currentSegment.id !== "cta" && (
