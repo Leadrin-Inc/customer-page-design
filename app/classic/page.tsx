@@ -11,6 +11,7 @@ import { Reviews } from "@/components/leadrin/reviews"
 import { BookingForm } from "@/components/leadrin/booking-form"
 import { StickyBottomBar } from "@/components/leadrin/sticky-bottom-bar"
 import { Footer } from "@/components/leadrin/footer"
+import { ClassicVirtualTour } from "@/components/leadrin/virtual-tour"
 import { sampleData } from "@/lib/sample-data"
 import "./theme.css"
 
@@ -42,6 +43,19 @@ export default function ClassicPage() {
 
   return (
     <main className="theme-classic min-h-screen bg-background max-w-lg mx-auto">
+      {/* Virtual Tour */}
+      <ClassicVirtualTour
+        buyerName={buyer.name}
+        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        vehicleImage={vehicle.photos[0]}
+        price={vehicle.price}
+        salespersonName={salesperson.name}
+        salespersonInitial={salesperson.name.charAt(0)}
+        dealershipName={dealership.name}
+        onBook={scrollToBooking}
+        onCall={() => window.open(`tel:${salesperson.phone}`)}
+      />
+
       <Hero
         buyerName={buyer.name}
         dealershipName={dealership.name}

@@ -12,6 +12,7 @@ import { Reviews } from "@/components/modern/reviews"
 import { BookingForm } from "@/components/modern/booking-form"
 import { StickyBottomBar } from "@/components/modern/sticky-bottom-bar"
 import { Footer } from "@/components/modern/footer"
+import { ModernVirtualTour } from "@/components/modern/virtual-tour"
 import "./theme.css"
 
 export default function ModernPage() {
@@ -42,6 +43,19 @@ export default function ModernPage() {
 
   return (
     <main className="theme-modern min-h-screen bg-background max-w-lg mx-auto">
+      {/* Virtual Tour */}
+      <ModernVirtualTour
+        buyerName={buyer.name}
+        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        vehicleImage={vehicle.photos[0]}
+        price={vehicle.price}
+        salespersonName={salesperson.name}
+        salespersonInitial={salesperson.name.charAt(0)}
+        dealershipName={dealership.name}
+        onBook={scrollToBooking}
+        onCall={() => window.open(`tel:${salesperson.phone}`)}
+      />
+
       {/* Hero - Compact */}
       <Hero
         buyerName={buyer.name}
