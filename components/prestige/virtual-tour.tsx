@@ -626,6 +626,14 @@ export function PrestigeVirtualTour({
                 <RotateCcw className="h-3.5 w-3.5" />
                 Replay Tour
               </button>
+
+              <button
+                onClick={handleExitTour}
+                className="w-full flex items-center justify-center gap-2 py-2 text-white/30 text-xs uppercase tracking-wider hover:text-white/60 transition-colors mt-2"
+              >
+                <X className="h-3.5 w-3.5" />
+                Exit Tour
+              </button>
             </div>
           </div>
         </div>
