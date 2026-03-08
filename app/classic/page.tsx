@@ -46,7 +46,7 @@ export default function ClassicPage() {
       {/* Virtual Tour */}
       <ClassicVirtualTour
         buyerName={buyer.name}
-        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        vehicleTitle={`${vehicle.year} ${vehicle.make} ${vehicle.model} ${vehicle.trim}`}
         vehicleImage={vehicle.photos[0]}
         price={vehicle.price}
         salespersonName={salesperson.name}
