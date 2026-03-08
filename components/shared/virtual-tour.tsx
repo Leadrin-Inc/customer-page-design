@@ -654,6 +654,7 @@ export function VirtualTour({
                 ref={heroPhotoRef}
                 src={vehicleImage || DEMO_PHOTOS.exterior_hero}
                 alt={vehicleTitle}
+                loading="eager"
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ transformOrigin: "center center" }}
               />
