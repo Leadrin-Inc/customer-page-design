@@ -822,10 +822,6 @@ export function VirtualTour({
           <X className="h-4 w-4" />
         </button>
         
-        <p className={cn("text-xs uppercase tracking-[0.15em]", theme.textSecondary)}>
-          {vehicleTitle}
-        </p>
-        
         <div className="flex items-center gap-2">
           {/* Mute Toggle */}
           <button
