@@ -41,16 +41,8 @@ export function PrestigeVehicleDetails({
 
   return (
     <section className="bg-background text-foreground">
-      {/* Section Header */}
-      <div className="px-5 pt-8 pb-5 text-center">
-        <h2 className="font-serif text-[26px] leading-tight mb-1">
-          {year} {make} {model}
-        </h2>
-        <p className="text-xs text-muted-foreground">{trim}</p>
-      </div>
-
       {/* Photo Gallery */}
-      <div className="relative aspect-[4/3] mx-5 mb-6">
+      <div className="relative aspect-[4/3] mx-5 mt-6 mb-6">
         <Image
           src={photos[currentPhotoIndex]}
           alt={`${year} ${make} ${model} - Photo ${currentPhotoIndex + 1}`}

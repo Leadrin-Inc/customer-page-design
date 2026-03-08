@@ -71,16 +71,6 @@ export function VehicleDetails({
 
   return (
     <section className="bg-background border-b border-border">
-      {/* Section Header */}
-      <div className="px-6 pt-6">
-        <h2 className="text-[22px] font-semibold text-foreground mb-1">
-          {vehicleTitle}
-        </h2>
-        <p className="text-muted-foreground text-[15px] mb-4">
-          {[mileage && `${mileage.toLocaleString()} miles`, fuelType, transmission].filter(Boolean).join(" · ")}
-        </p>
-      </div>
-
       {/* Photo Gallery */}
       <div className="relative">
         <div
