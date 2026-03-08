@@ -751,7 +751,7 @@ export function VirtualTour({
               Ready to see it in person?
             </h2>
             <p className={cn("text-[13px] mb-6 max-w-[260px]", theme.textMuted)}>
-              {salespersonName} is ready to show you this {vehicleTitle}
+              {salespersonName} is ready to schedule your test drive
             </p>
 
             <div className="space-y-2.5 w-full max-w-[260px]">
